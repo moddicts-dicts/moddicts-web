@@ -7,56 +7,80 @@
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,600;9..144,700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
 <style>
-:root{--fluid:#0e7f93;--bg:#b9cfd3;--card:#dbe8ea;--ink:#041217;--mut:#34535b;--line:#8fadb4;--soft:#c5d9dc;--panel:#a9c6cc;--acc:#06596b;--amb:#d98a1c;--ok:#157a4b;--bad:#b3352c}
-[data-theme=dark]{--bg:#020a0e;--card:#071820;--ink:#dcecee;--mut:#8fb0b8;--line:#15353f;--soft:#0b2530;--panel:#04131a;--acc:#2fb5c8;--fluid:#1596ac}
+:root{--fluid:#0e8fa6;--bg:#d3e8eb;--card:#f3fafb;--ink:#06161c;--mut:#3b5a63;--line:#9cc0c7;--soft:#dcedef;--panel:#b4d4da;--acc:#066a80;--amb:#f08a24;--ok:#157a4b;--bad:#b3352c}
+[data-theme=dark]{--bg:#020a0e;--card:#071820;--ink:#dcecee;--mut:#8fb0b8;--line:#15353f;--soft:#0b2530;--panel:#04131a;--acc:#2fb5c8}
 *{box-sizing:border-box;margin:0;padding:0}
 html{scroll-behavior:smooth;scroll-padding-top:70px}
-body{font:16px/1.65 Inter,system-ui,-apple-system,"Segoe UI",sans-serif;background:var(--bg);color:var(--ink)}
-.wrap{width:min(1080px,calc(100% - 32px));margin:0 auto}
+body{font:16px/1.65 Inter,system-ui,sans-serif;background:var(--bg);color:var(--ink);overflow-x:hidden}
+.wrap{width:min(1080px,calc(100% - 32px));margin:0 auto;position:relative;z-index:1}
 h1,h2,h3,.big{font-family:Fraunces,Georgia,serif}
 :focus-visible{outline:2px solid var(--amb);outline-offset:2px}
-.top{position:sticky;top:0;z-index:20;background:color-mix(in srgb,var(--bg) 88%,transparent);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);border-bottom:1px solid var(--line)}
-.nav{display:flex;align-items:center;justify-content:space-between;gap:16px;height:58px}
-.logo{display:flex;gap:8px;align-items:center;font:700 19px Fraunces,Georgia,serif;color:var(--ink);text-decoration:none;white-space:nowrap}
-.nav nav{display:flex;gap:2px;overflow-x:auto}
+.top{position:sticky;top:0;z-index:50;background:color-mix(in srgb,var(--bg) 85%,transparent);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);border-bottom:1px solid var(--line)}
+.nav{display:flex;align-items:center;gap:12px;height:58px}
+.logo{display:flex;gap:8px;align-items:center;font:700 19px Fraunces,serif;color:var(--ink);text-decoration:none;white-space:nowrap}
+.nav nav{display:flex;gap:2px;overflow-x:auto;flex:1}
 .nav nav a{padding:6px 11px;border-radius:99px;color:var(--mut);text-decoration:none;font-size:13.5px;white-space:nowrap}
-.nav nav a:hover,.nav nav a.on{background:var(--soft);color:var(--ink)}
-.hero{position:relative;overflow:hidden;color:#fff;background:linear-gradient(165deg,#021219,#053d4d 70%,#085a6c)}
-.hero .wrap{display:grid;grid-template-columns:1.25fr 1fr;gap:36px;align-items:center;padding:60px 0 100px}
-.eyebrow{font-size:13.5px;color:#7de7f2;font-weight:600}
-.hero h1{font:700 clamp(34px,5.4vw,56px)/1.08 Fraunces,Georgia,serif;margin:12px 0 16px}
-.lead{color:var(--mut);max-width:62ch}
-.hero .lead{color:#bcdde3;max-width:52ch}
-.cta{display:flex;gap:12px;flex-wrap:wrap;margin:24px 0 18px}
-.chips{display:flex;flex-wrap:wrap;gap:8px}
-.chips a{padding:5px 14px;border:1px solid rgba(255,255,255,.3);border-radius:99px;color:#e2f6f8;font-size:13px;text-decoration:none}
-.wave{position:absolute;left:0;bottom:-1px;width:200%;height:70px;animation:wv 14s linear infinite}
-.wave path{fill:var(--bg)}
-@keyframes wv{to{transform:translateX(-50%)}}
-.btn{font:600 14px Inter,sans-serif;padding:11px 20px;border-radius:99px;border:1.5px solid var(--ink);background:transparent;color:var(--ink);cursor:pointer;text-decoration:none;display:inline-block;transition:transform .15s}
-.btn:hover:not(:disabled){transform:translateY(-2px)}
-.btn.pri{background:var(--amb);border-color:var(--amb);color:#1d1300}
-.btn.sm{padding:7px 12px;font-size:13px;width:100%}
-.btn:disabled{opacity:.5;cursor:not-allowed}
-.hero .btn{color:#fff;border-color:rgba(255,255,255,.6)}.hero .btn.pri{color:#1d1300;border-color:var(--amb)}
-.kust{background:var(--card);color:var(--ink);border-radius:18px;padding:20px;box-shadow:0 20px 50px -20px rgba(0,0,0,.6)}
-.kust h3{font-size:20px;display:flex;align-items:center;gap:10px;margin-bottom:4px}
-.kust small{color:var(--mut);display:block;margin-bottom:14px}
+.nav nav a:hover,.nav nav a.on{background:var(--acc);color:var(--card)}
+.set{position:relative}
+.set summary{list-style:none;cursor:pointer;padding:6px 13px;border:1.5px solid var(--line);border-radius:99px;font-size:13.5px;white-space:nowrap}
+.set summary::-webkit-details-marker{display:none}
+.pn{position:absolute;right:0;top:46px;width:310px;background:var(--card);border:1px solid var(--line);border-radius:16px;padding:14px;box-shadow:0 20px 50px -15px rgba(0,0,0,.5)}
 .row{display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-top:12px}
-.row>span{font-size:14px;color:var(--mut);min-width:96px}
+.row>span{font-size:14px;color:var(--mut);min-width:90px}
 .sw{width:26px;height:26px;border-radius:50%;border:2px solid var(--card);box-shadow:0 0 0 1px var(--line);cursor:pointer}
 #cpick{width:34px;height:28px;border:0;background:none;padding:0;cursor:pointer}
 .seg{display:inline-flex;border:1px solid var(--line);border-radius:99px;overflow:hidden}
 .seg button{border:0;background:none;padding:6px 14px;cursor:pointer;color:var(--ink);font:inherit;font-size:14px}
 .seg button.on{background:var(--acc);color:var(--card)}
 input[type=range]{width:100%;accent-color:var(--acc)}
+/* HERO */
+.hero{position:relative;min-height:680px;overflow:hidden;color:#fff;background:linear-gradient(180deg,#9be0f0 0%,#3a9fc0 38%,#0b4d66 100%)}
+#cv{position:absolute;inset:0;width:100%;height:100%}
+.hero .wrap{z-index:2;padding:64px 0 210px}
+.ht{max-width:520px;text-shadow:0 2px 18px rgba(0,30,45,.55)}
+.eyebrow{display:inline-block;font-size:13px;font-weight:600;background:rgba(255,255,255,.2);padding:4px 14px;border-radius:99px;backdrop-filter:blur(4px)}
+.hero h1{font:700 clamp(34px,5.4vw,56px)/1.08 Fraunces,serif;margin:14px 0 16px}
+.hero .lead{color:#e6f8fb;max-width:50ch}
+.cta{display:flex;gap:12px;flex-wrap:wrap;margin-top:24px}
+.drop{position:absolute;z-index:1;border-radius:50% 50% 50% 0;transform:rotate(-45deg);background:rgba(255,255,255,.35);animation:fl 6s ease-in-out infinite}
+@keyframes fl{50%{transform:rotate(-45deg) translateY(-18px)}}
+.pool{position:absolute;left:0;right:0;bottom:0;height:150px;z-index:3;overflow:hidden;background:linear-gradient(180deg,color-mix(in srgb,var(--fluid) 55%,#fff),color-mix(in srgb,var(--fluid) 70%,#001820) 45%,color-mix(in srgb,var(--fluid) 35%,#00141b))}
+.wv{position:absolute;left:0;top:10px;width:200%;height:26px;z-index:5;animation:wv 12s linear infinite}
+.wv.b{top:22px;opacity:.7;animation-duration:8s;animation-direction:reverse}
+.wv path{fill:var(--fluid);fill-opacity:.55}
+@keyframes wv{to{transform:translateX(-50%)}}
+.sm{position:absolute;width:88px;left:0;z-index:4;animation:sw calc(var(--d)/var(--sp,1)) linear infinite;animation-delay:var(--dl)}
+.sm.r{animation-name:swr}
+@keyframes sw{from{transform:translateX(-120px)}to{transform:translateX(calc(100vw + 120px))}}
+@keyframes swr{from{transform:translateX(calc(100vw + 120px)) scaleX(-1)}to{transform:translateX(-120px) scaleX(-1)}}
+.sm svg{display:block;animation:bob 1.8s ease-in-out infinite}
+@keyframes bob{50%{transform:translateY(4px) rotate(2deg)}}
+.ar{transform-origin:44px 18px;animation:arm .9s ease-in-out infinite alternate}
+.ar.o{animation-delay:-.45s}
+@keyframes arm{from{transform:rotate(-50deg)}to{transform:rotate(90deg)}}
+.lg{transform-origin:14px 19px;animation:kick .35s ease-in-out infinite alternate}
+@keyframes kick{from{transform:rotate(-14deg)}to{transform:rotate(14deg)}}
+.btn{font:600 14px Inter,sans-serif;padding:11px 20px;border-radius:99px;border:1.5px solid var(--ink);background:transparent;color:var(--ink);cursor:pointer;text-decoration:none;display:inline-block;transition:transform .15s}
+.btn:hover:not(:disabled){transform:translateY(-2px)}
+.btn.pri{background:var(--amb);border-color:var(--amb);color:#1d1300}
+.btn.sm2{padding:7px 12px;font-size:13px;width:100%}
+.btn:disabled{opacity:.5;cursor:not-allowed}
+.hero .btn{color:#fff;border-color:rgba(255,255,255,.7)}.hero .btn.pri{color:#1d1300;border-color:var(--amb)}
+/* SECTIONS + BENTUK ELEGAN */
 .fl{fill:var(--fluid)}
-.st{padding:56px 0 20px;border-top:1px solid var(--line)}
-#s1{border-top:0}
-.st h2{font-size:clamp(26px,4vw,36px);display:flex;gap:12px;align-items:baseline}
-.num{font:italic 600 20px Fraunces,serif;color:var(--acc)}
-.st .lead{margin:10px 0 18px}
-.lab{display:grid;grid-template-columns:1.5fr 1fr;gap:20px;background:var(--card);border:1px solid var(--line);border-radius:18px;padding:18px}
+.st{position:relative;padding:64px 0 28px;overflow:hidden}
+.st::before,.st::after{content:"";position:absolute;pointer-events:none;border-radius:50%;z-index:0}
+.st::before{width:460px;height:460px;right:-150px;top:-170px;border:1.5px solid color-mix(in srgb,var(--acc) 30%,transparent);box-shadow:0 0 0 38px color-mix(in srgb,var(--acc) 5%,transparent),0 0 0 39px color-mix(in srgb,var(--acc) 16%,transparent),0 0 0 92px color-mix(in srgb,var(--acc) 3%,transparent)}
+.st::after{width:360px;height:360px;left:-130px;bottom:-130px;background:radial-gradient(circle at 35% 35%,color-mix(in srgb,var(--fluid) 24%,transparent),color-mix(in srgb,var(--amb) 7%,transparent) 60%,transparent 72%)}
+.st:nth-of-type(even)::before{right:auto;left:-150px;top:auto;bottom:-190px}
+.st:nth-of-type(even)::after{left:auto;right:-110px;bottom:auto;top:30px;width:300px;height:300px;border-radius:42% 58% 55% 45%/50% 40% 60% 50%;background:linear-gradient(135deg,color-mix(in srgb,var(--fluid) 18%,transparent),transparent 70%)}
+.st h2{font-size:clamp(26px,4vw,38px);display:flex;gap:14px;align-items:center}
+.num{display:grid;place-items:center;width:46px;height:46px;border-radius:50% 50% 50% 8px;background:var(--acc);color:var(--card);font:700 22px Fraunces,serif;transform:rotate(-8deg)}
+.st .lead{margin:12px 0 18px;color:var(--mut);max-width:66ch}
+.lab,.quiz{background:var(--card);border:1px solid var(--line);border-radius:20px;padding:18px;box-shadow:0 10px 30px -18px rgba(0,50,70,.5);position:relative}
+.lab{display:grid;grid-template-columns:1.5fr 1fr;gap:20px;border-top:5px solid var(--fluid)}
+.quiz{margin-top:20px}
+.puz{border-top:5px solid var(--amb)}
 .scene{width:100%;height:auto;display:block;background:var(--panel);border-radius:12px}
 .ctl{margin-top:12px}.ctl label{font-size:14px;color:var(--mut);display:block;margin-bottom:4px}
 .side{display:flex;flex-direction:column;gap:12px}
@@ -83,7 +107,6 @@ input[type=range]{width:100%;accent-color:var(--acc)}
 .ball{fill:var(--ink);stroke:var(--card);stroke-width:2}
 .tubes{display:grid;grid-template-columns:repeat(3,1fr);gap:14px}
 .tcard{display:flex;flex-direction:column;gap:8px;align-items:center;text-align:center}
-.quiz{margin-top:22px;background:var(--card);border:1px solid var(--line);border-radius:18px;padding:20px}
 .qh{display:flex;justify-content:space-between;color:var(--mut);font-size:14px}
 .qt{font-size:21px;margin:8px 0 6px}
 .qk{font-size:13px;font-weight:600;color:var(--acc);margin-bottom:2px}
@@ -95,52 +118,71 @@ input[type=range]{width:100%;accent-color:var(--acc)}
 .mt{display:grid;grid-template-columns:1fr 1fr;gap:18px}
 .col{display:flex;flex-direction:column;gap:10px}
 .col button{padding:12px 14px;border:1.5px solid var(--line);border-radius:12px;background:var(--card);color:var(--ink);font:inherit;font-size:14.5px;text-align:left;cursor:pointer}
-.col button.sel{border-color:var(--amb);box-shadow:0 0 0 3px rgba(217,138,28,.35)}
+.col button.sel{border-color:var(--amb);box-shadow:0 0 0 3px rgba(240,138,36,.35)}
 .col button.done{border-color:var(--ok);background:color-mix(in srgb,var(--ok) 20%,var(--card));cursor:default}
 .shake{animation:sh .4s}
 @keyframes sh{25%{transform:translateX(-6px)}75%{transform:translateX(6px)}}
+/* PUZZLE FOTO TOKOH */
+.pzl{display:grid;grid-template-columns:minmax(0,380px) 1fr;gap:24px;align-items:center;margin-top:10px}
+.board{display:grid;grid-template-columns:repeat(3,1fr);gap:6px;padding:8px;border-radius:16px;background:var(--soft);transition:gap .5s,padding .5s}
+.tl{aspect-ratio:1;padding:0;border:3px solid transparent;border-radius:10px;overflow:hidden;cursor:pointer;background:var(--panel);transition:transform .15s,border-color .2s}
+.tl svg,.tl canvas{width:100%;height:100%;display:block}
+.tl:hover{transform:translateY(-2px)}
+.tl.sel{border-color:var(--amb);transform:scale(.93);box-shadow:0 0 0 3px rgba(240,138,36,.35)}
+.tl.lk{border-color:var(--ok);cursor:default}
+.tl.lk:hover{transform:none}
+.board.ok{gap:0;padding:0;animation:glow 1.2s ease 2;overflow:hidden}
+.board.ok .tl{border-width:0;border-radius:0;transform:none;cursor:default}
+@keyframes glow{50%{box-shadow:0 0 0 8px rgba(21,122,75,.3)}}
+.thumb{width:150px;margin-top:12px;border-radius:12px;overflow:hidden;border:2px solid var(--line)}
+.thumb svg,.thumb canvas{display:block;width:100%;height:auto}
+.credit{font-size:12px;color:var(--mut);margin-top:10px}
 .res{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:12px}
 .res .stat{text-align:center;padding:16px 10px}.res .stat b{font-size:26px;color:var(--acc);display:block}
 .bar{height:12px;background:var(--soft);border-radius:99px;overflow:hidden;margin:18px 0 8px}
 .bar i{display:block;height:100%;width:0;background:linear-gradient(90deg,var(--acc),var(--amb));transition:width .6s}
+.rv{opacity:0;transform:translateY(26px);transition:opacity .7s,transform .7s}.rv.in{opacity:1;transform:none}
 footer{padding:40px 0 60px;color:var(--mut);font-size:14px;text-align:center}
-@media(max-width:820px){.hero .wrap{grid-template-columns:1fr;padding:44px 0 90px}.lab,.mt{grid-template-columns:1fr}.nav .logo span{display:none}}
-@media(prefers-reduced-motion:reduce){.wave{animation:none}html{scroll-behavior:auto}}
+@media(max-width:820px){.lab,.mt,.pzl{grid-template-columns:1fr}.nav .logo span{display:none}.hero .wrap{padding-bottom:190px}.st::before{width:300px;height:300px;right:-120px}}
+@media(prefers-reduced-motion:reduce){.wv,.sm,.drop,.ar,.lg,.board.ok{animation:none}html{scroll-behavior:auto}.rv{opacity:1;transform:none}}
 </style>
 </head>
 <body>
 <header class="top"><div class="wrap nav">
   <a class="logo" href="#atas"><svg width="22" height="22" viewBox="0 0 60 60"><path d="M30 6C30 6 12 28 12 38a18 18 0 0 0 36 0C48 28 30 6 30 6z" fill="none" stroke="var(--acc)" stroke-width="4"/></svg><span>Fluida Dinamis</span></a>
   <nav><a href="#s1">1 Kontinuitas</a><a href="#s2">2 Bernoulli</a><a href="#s3">3 Torricelli</a><a href="#s4">4 Viskositas</a><a href="#s5">5 Cocokkan</a><a href="#hasil">Hasil</a></nav>
+  <details class="set"><summary>⚙ Tampilan</summary><div class="pn">
+    <div class="row" style="margin-top:0"><span>Warna cairan</span>
+      <button class="sw" data-c="#0e8fa6" aria-label="Tosca"></button><button class="sw" data-c="#2563c9" aria-label="Biru"></button><button class="sw" data-c="#6d3fd0" aria-label="Ungu"></button><button class="sw" data-c="#c64a70" aria-label="Merah muda"></button><button class="sw" data-c="#188a58" aria-label="Hijau"></button>
+      <input type="color" id="cpick" value="#0e8fa6" aria-label="Pilih warna sendiri"></div>
+    <div class="row"><span>Kecepatan: <b id="sspdv">1,0×</b></span><input type="range" id="sspd" min="0.2" max="2.5" step="0.1" value="1" aria-label="Kecepatan animasi" style="flex:1"></div>
+    <div class="row"><span>Label</span><label><input type="checkbox" id="slbl" checked> Tampilkan label</label></div>
+    <div class="row"><span>Tema</span><div class="seg" id="theme"><button data-t="light" class="on">Terang</button><button data-t="dark">Gelap</button></div></div>
+  </div></details>
 </div></header>
 
 <section class="hero" id="atas">
-  <div class="wrap">
-    <div>
-      <div class="eyebrow">Laboratorium fisika interaktif · 5 stasiun</div>
-      <h1>Rasakan cara fluida bergerak, bukan cuma menghafal rumusnya.</h1>
-      <p class="lead">Lima stasiun singkat menuntunmu memahami kontinuitas, hukum Bernoulli, teorema Torricelli, viskositas, hingga penerapannya sehari-hari. Setiap stasiun punya simulasi untuk diutak-atik dan kuis untuk menguji pemahamanmu.</p>
-      <div class="cta"><a class="btn pri" href="#s1">Mulai dari Stasiun 1</a><a class="btn" href="#hasil">Lihat papan skor</a></div>
-      <div class="chips"><a href="#s1">Kontinuitas</a><a href="#s2">Bernoulli</a><a href="#s3">Torricelli</a><a href="#s4">Viskositas</a><a href="#s5">Cocokkan Konsep</a></div>
-    </div>
-    <div class="kust">
-      <h3><svg width="30" height="30" viewBox="0 0 60 60"><path class="fl" d="M30 6C30 6 12 28 12 38a18 18 0 0 0 36 0C48 28 30 6 30 6z"/></svg>Kustomisasi gambar</h3>
-      <small>Ubah tampilan semua simulasi sesuai seleramu.</small>
-      <div class="row"><span>Warna cairan</span>
-        <button class="sw" data-c="#0e7f93" aria-label="Tosca"></button><button class="sw" data-c="#2563c9" aria-label="Biru"></button><button class="sw" data-c="#6d3fd0" aria-label="Ungu"></button><button class="sw" data-c="#c64a70" aria-label="Merah muda"></button><button class="sw" data-c="#188a58" aria-label="Hijau"></button>
-        <input type="color" id="cpick" value="#0e7f93" aria-label="Pilih warna sendiri"></div>
-      <div class="row"><span>Kecepatan animasi: <b id="sspdv">1,0×</b></span><input type="range" id="sspd" min="0.2" max="2.5" step="0.1" value="1" aria-label="Kecepatan animasi" style="flex:1"></div>
-      <div class="row"><span>Label gambar</span><label><input type="checkbox" id="slbl" checked> Tampilkan label</label></div>
-      <div class="row"><span>Tema</span><div class="seg" id="theme"><button data-t="light" class="on">Terang</button><button data-t="dark">Gelap</button></div></div>
-    </div>
+  <canvas id="cv" aria-hidden="true"></canvas>
+  <i class="drop" style="left:8%;top:60%;width:18px;height:18px"></i><i class="drop" style="left:46%;top:24%;width:12px;height:12px;animation-delay:-2s"></i><i class="drop" style="left:30%;top:72%;width:14px;height:14px;animation-delay:-4s"></i>
+  <div class="wrap"><div class="ht">
+    <div class="eyebrow">Laboratorium fisika interaktif · 5 stasiun + puzzle tokoh</div>
+    <h1>Rasakan cara fluida bergerak, bukan cuma menghafal rumusnya.</h1>
+    <p class="lead">Ikuti aliran air dari air terjun: pahami kontinuitas, Bernoulli, Torricelli, dan viskositas. Tiap stasiun punya simulasi, puzzle foto tokoh ilmuwan, dan kuis.</p>
+    <div class="cta"><a class="btn pri" href="#s1">Mulai dari Stasiun 1</a><a class="btn" href="#hasil">Lihat papan skor</a></div>
+  </div></div>
+  <div class="pool" aria-hidden="true">
+    <div class="sm" style="top:22px;--d:26s;--dl:-4s"><svg viewBox="0 0 70 34"><ellipse cx="36" cy="27" rx="34" ry="3" fill="#fff" opacity=".25"/><line class="lg" x1="14" y1="19" x2="1" y2="19" stroke="#f1c9a5" stroke-width="4" stroke-linecap="round"/><rect x="14" y="14" width="36" height="9" rx="4.5" fill="#e85d75"/><line class="ar" x1="44" y1="18" x2="44" y2="3" stroke="#f1c9a5" stroke-width="4" stroke-linecap="round"/><circle cx="56" cy="14" r="6" fill="#f1c9a5"/><path d="M50 14a6 6 0 0 1 12 0z" fill="#fff"/></svg></div>
+    <div class="sm r" style="top:50px;--d:34s;--dl:-12s"><svg viewBox="0 0 70 34"><ellipse cx="36" cy="27" rx="34" ry="3" fill="#fff" opacity=".25"/><line class="lg" x1="14" y1="19" x2="1" y2="19" stroke="#c98f62" stroke-width="4" stroke-linecap="round"/><rect x="14" y="14" width="36" height="9" rx="4.5" fill="#2d6cdf"/><line class="ar o" x1="44" y1="18" x2="44" y2="3" stroke="#c98f62" stroke-width="4" stroke-linecap="round"/><circle cx="56" cy="14" r="6" fill="#c98f62"/><path d="M50 14a6 6 0 0 1 12 0z" fill="#ffd34d"/></svg></div>
+    <div class="sm" style="top:76px;--d:30s;--dl:-20s"><svg viewBox="0 0 70 34"><ellipse cx="36" cy="27" rx="34" ry="3" fill="#fff" opacity=".25"/><line class="lg" x1="14" y1="19" x2="1" y2="19" stroke="#8d5a3b" stroke-width="4" stroke-linecap="round"/><rect x="14" y="14" width="36" height="9" rx="4.5" fill="#3fbf7f"/><line class="ar" x1="44" y1="18" x2="44" y2="3" stroke="#8d5a3b" stroke-width="4" stroke-linecap="round"/><circle cx="56" cy="14" r="6" fill="#8d5a3b"/><path d="M50 14a6 6 0 0 1 12 0z" fill="#e85d75"/></svg></div>
+    <svg class="wv" viewBox="0 0 2400 26" preserveAspectRatio="none"><path d="M0 13 C150 0 450 26 600 13 C750 0 1050 26 1200 13 C1350 0 1650 26 1800 13 C1950 0 2250 26 2400 13 V26 H0Z"/></svg>
+    <svg class="wv b" viewBox="0 0 2400 26" preserveAspectRatio="none"><path d="M0 13 C150 26 450 0 600 13 C750 26 1050 0 1200 13 C1350 26 1650 0 1800 13 C1950 26 2250 0 2400 13 V26 H0Z"/></svg>
   </div>
-  <svg class="wave" viewBox="0 0 2400 70" preserveAspectRatio="none" aria-hidden="true"><path d="M0 35 C150 0 450 70 600 35 C750 0 1050 70 1200 35 C1350 0 1650 70 1800 35 C1950 0 2250 70 2400 35 V70 H0Z"/></svg>
 </section>
 
 <main>
 <section class="st" id="s1"><div class="wrap">
   <h2><span class="num">1</span>Kontinuitas</h2>
-  <p class="lead">Debit air yang masuk pipa harus sama dengan debit yang keluar: A₁v₁ = A₂v₂. Semakin sempit pipanya, semakin cepat airnya mengalir. Tantanganmu: atur lebar pipa sempit supaya kecepatan air tepat menyalakan turbin mini (sekitar 6 m/s). Setelah itu, kerjakan kuisnya.</p>
+  <p class="lead">Debit air yang masuk pipa harus sama dengan debit yang keluar: A₁v₁ = A₂v₂. Semakin sempit pipanya, semakin cepat airnya. Tantanganmu: atur lebar pipa sempit supaya kecepatan air tepat menyalakan turbin mini (sekitar 6 m/s). Lalu susun puzzle fotonya dan kerjakan kuis.</p>
   <div class="lab">
     <div>
       <svg id="sv1" class="scene" viewBox="0 0 600 250" role="img" aria-label="Pipa dengan bagian menyempit dan turbin mini">
@@ -164,12 +206,13 @@ footer{padding:40px 0 60px;color:var(--mut);font-size:14px;text-align:center}
       <div class="msg" id="m1">Geser penampangnya, lalu perhatikan bagaimana air dipercepat saat ruangnya menyempit.</div>
     </div>
   </div>
+  <div class="quiz puz" id="pz1"></div>
   <div class="quiz" id="qz1"></div>
 </div></section>
 
 <section class="st" id="s2"><div class="wrap">
   <h2><span class="num">2</span>Bernoulli</h2>
-  <p class="lead">Hukum Bernoulli menghubungkan kecepatan aliran dengan tekanan: makin cepat fluida bergerak, makin rendah tekanannya. Ubah kecepatan air dan lebar leher pipa, lalu amati tinggi kolom air di ketiga tabung. Setelah itu, jawab lima soal untuk menguji pemahamanmu.</p>
+  <p class="lead">Hukum Bernoulli menghubungkan kecepatan aliran dengan tekanan: makin cepat fluida bergerak, makin rendah tekanannya. Ubah kecepatan air dan lebar leher pipa, lalu amati tinggi kolom air di ketiga tabung. Susun puzzle fotonya, lalu jawab lima soal.</p>
   <div class="lab">
     <div>
       <svg id="sv2" class="scene" viewBox="0 0 600 290" role="img" aria-label="Pipa venturi dengan tiga tabung pengukur tekanan">
@@ -192,12 +235,13 @@ footer{padding:40px 0 60px;color:var(--mut);font-size:14px;text-align:center}
       <div class="msg" id="m2">Di leher pipa air lebih cepat, sehingga tekanannya turun. Kolom air di tabung tengah pun lebih rendah.</div>
     </div>
   </div>
+  <div class="quiz puz" id="pz2"></div>
   <div class="quiz" id="qz"></div>
 </div></section>
 
 <section class="st" id="s3"><div class="wrap">
   <h2><span class="num">3</span>Torricelli</h2>
-  <p class="lead">Sebuah tangki air dibocorkan di satu titik (tangki dianggap terus terisi penuh). Semakin dalam lubangnya, semakin kencang semburannya, tetapi semakin sedikit waktu jatuhnya sebelum menyentuh tanah. Cari posisi lubang yang membuat air menyembur paling jauh, lalu kerjakan kuisnya.</p>
+  <p class="lead">Sebuah tangki air dibocorkan di satu titik (tangki dianggap terus terisi penuh). Semakin dalam lubangnya, semakin kencang semburannya, tetapi semakin sedikit waktu jatuhnya. Cari posisi lubang yang membuat air menyembur paling jauh, susun puzzle fotonya, lalu kerjakan kuis.</p>
   <div class="lab">
     <div>
       <svg id="sv3" class="scene" viewBox="0 0 600 275" role="img" aria-label="Tangki air dengan lubang dan lintasan semburan">
@@ -225,27 +269,30 @@ footer{padding:40px 0 60px;color:var(--mut);font-size:14px;text-align:center}
       <div><button class="btn" id="opt">Tampilkan posisi optimal</button></div>
     </div>
   </div>
+  <div class="quiz puz" id="pz3"></div>
   <div class="quiz" id="qz3"></div>
 </div></section>
 
 <section class="st" id="s4"><div class="wrap">
   <h2><span class="num">4</span>Viskositas</h2>
-  <p class="lead">Sebuah kelereng kecil dijatuhkan ke tiga wadah berbeda: air, minyak goreng, dan madu. Viskositas (kekentalan) fluida menghambat gerak benda yang jatuh di dalamnya. Tebak dulu urutan tercepat ke terlambat, jalankan balapannya, lalu kerjakan kuis.</p>
-  <p class="lead" style="font-size:13px;font-style:italic">Catatan: kecepatan di sini divisualisasikan sebanding dengan viskositas tiap fluida untuk memperjelas konsepnya, bukan hasil hitungan presisi rumus Stokes.</p>
+  <p class="lead">Sebuah kelereng kecil dijatuhkan ke tiga wadah: air, minyak goreng, dan madu. Viskositas (kekentalan) menghambat gerak benda yang jatuh. Tebak urutan tercepat ke terlambat, jalankan balapannya, susun puzzle fotonya, lalu kerjakan kuis.</p>
+  <p class="lead" style="font-size:13px;font-style:italic">Catatan: kecepatan divisualisasikan sebanding dengan viskositas tiap fluida untuk memperjelas konsep, bukan hasil hitungan presisi rumus Stokes.</p>
   <div class="lab" style="grid-template-columns:1fr">
     <div class="tubes" id="tubes"></div>
     <div class="ctl"><label for="r5">Suhu cairan: <b id="r5v">25 °C</b> (makin panas, makin encer)</label><input id="r5" type="range" min="15" max="70" value="25"></div>
     <div class="row"><button class="btn" id="rst">Ulangi tebakan</button><button class="btn pri" id="go" disabled>Mulai Balapan</button></div>
     <div class="msg" id="m4">Klik tombol di bawah ketiga wadah sesuai urutan tebakanmu, dari yang menurutmu paling cepat sampai paling lambat.</div>
   </div>
+  <div class="quiz puz" id="pz4"></div>
   <div class="quiz" id="qz4"></div>
 </div></section>
 
 <section class="st" id="s5"><div class="wrap">
   <h2><span class="num">5</span>Cocokkan Konsep</h2>
-  <p class="lead">Pilih satu fenomena di kolom kiri, lalu pilih penjelasan yang tepat di kolom kanan. Cocokkan semua pasangannya, lalu tutup dengan kuis akhir.</p>
+  <p class="lead">Pilih satu fenomena di kolom kiri, lalu pilih penjelasan yang tepat di kolom kanan. Susun puzzle foto tokoh hukum tekanan, lalu tutup dengan kuis akhir.</p>
   <div class="quiz"><div class="mt"><div class="col" id="ml"></div><div class="col" id="mr"></div></div>
   <div class="msg" id="mmsg" style="margin-top:14px">0 dari 5 pasangan cocok.</div></div>
+  <div class="quiz puz" id="pz5"></div>
   <div class="quiz" id="qz5"></div>
 </div></section>
 
@@ -260,14 +307,15 @@ footer{padding:40px 0 60px;color:var(--mut);font-size:14px;text-align:center}
       <div class="stat"><b id="rv">Belum</b><small>4. Tebakan viskositas</small></div>
       <div class="stat"><b id="rm">0 / 5</b><small>5. Pasangan konsep</small></div>
       <div class="stat"><b id="rq">0 / 12</b><small>Kuis stasiun 1, 3, 4, 5</small></div>
+      <div class="stat"><b id="rp">0 / 5</b><small>Puzzle tokoh</small></div>
     </div>
     <div class="bar"><i id="rbar"></i></div>
-    <p><b class="big" id="pts" style="font-size:22px">0 / 27 poin</b> · Predikat: <b id="pred">Belum mulai</b></p>
+    <p><b class="big" id="pts" style="font-size:22px">0 / 32 poin</b> · Predikat: <b id="pred">Belum mulai</b></p>
     <div style="margin-top:14px"><button class="btn" onclick="location.reload()">Ulangi semua</button></div>
   </div>
 </div></section>
 </main>
-<footer><div class="wrap">Fluida Dinamis · laboratorium interaktif fisika</div></footer>
+<footer><div class="wrap">Fluida Dinamis · laboratorium interaktif fisika<br><small>Foto tokoh: Wikimedia Commons (karya domain publik / lisensi terbuka)</small></div></footer>
 
 <script>
 (function () {
@@ -277,14 +325,14 @@ footer{padding:40px 0 60px;color:var(--mut);font-size:14px;text-align:center}
   var NS = 'http://www.w3.org/2000/svg', G = 9.8, W = 600;
   function el(n, a, p) { var e = document.createElementNS(NS, n); for (var k in a) e.setAttribute(k, a[k]); if (p) p.appendChild(e); return e; }
   function f(n, d) { return n.toFixed(d).replace('.', ','); }
-  var S = { speed: 1, k: false, b: 0, tr: 0, v: null, m: 0, q: { 1: 0, 3: 0, 4: 0, 5: 0 } };
+  var S = { speed: 1, k: false, b: 0, tr: 0, v: null, m: 0, pz: 0, col: '#0e8fa6', q: { 1: 0, 3: 0, 4: 0, 5: 0 } };
   if (window.matchMedia && matchMedia('(prefers-reduced-motion:reduce)').matches) S.speed = 0.3;
 
-  function setColor(c) { document.documentElement.style.setProperty('--fluid', c); $('#cpick').value = c; }
+  function setColor(c) { S.col = c; document.documentElement.style.setProperty('--fluid', c); $('#cpick').value = c; }
   $$('.sw').forEach(function (b) { b.style.background = b.dataset.c; b.onclick = function () { setColor(b.dataset.c); }; });
   $('#cpick').oninput = function () { setColor(this.value); };
   var sp = $('#sspd'); sp.value = S.speed;
-  function spl() { S.speed = parseFloat(sp.value); $('#sspdv').textContent = f(S.speed, 1) + '×'; }
+  function spl() { S.speed = parseFloat(sp.value); $('#sspdv').textContent = f(S.speed, 1) + '×'; document.documentElement.style.setProperty('--sp', S.speed); }
   sp.oninput = spl; spl();
   $('#slbl').onchange = function () { document.body.classList.toggle('nolabel', !this.checked); };
   $$('#theme button').forEach(function (b) {
@@ -317,6 +365,44 @@ footer{padding:40px 0 60px;color:var(--mut);font-size:14px;text-align:center}
       p.c.setAttribute('cx', p.x);
       p.c.setAttribute('cy', cy + p.o * lh(p.x, H, h) / 2 * 0.9);
     });
+  }
+
+  /* HERO: AIR TERJUN */
+  var cv = $('#cv'), cx = cv.getContext('2d'), HW = 0, HH = 0, FX = 0, PY = 0, TOP = 120, streaks = [], spl2 = [], tt = 0;
+  function rz() {
+    var h = $('#atas'); HW = cv.width = h.offsetWidth; HH = cv.height = h.offsetHeight;
+    FX = HW > 820 ? HW * 0.76 : HW * 0.82; PY = HH - 140; streaks = [];
+    for (var i = 0; i < 80; i++) streaks.push({ x: FX - 50 + Math.random() * 100, y: TOP + Math.random() * (PY - TOP), v: 260 + Math.random() * 260, l: 14 + Math.random() * 24 });
+  }
+  addEventListener('resize', rz); rz();
+  function drawHero(d) {
+    tt += d; cx.clearRect(0, 0, HW, HH);
+    cx.fillStyle = '#0f2f3a';
+    cx.beginPath(); cx.moveTo(FX + 56, TOP); cx.lineTo(HW, TOP - 24); cx.lineTo(HW, PY); cx.lineTo(FX + 72, PY); cx.lineTo(FX + 60, PY * 0.62); cx.closePath(); cx.fill();
+    cx.fillStyle = '#18424f';
+    cx.beginPath(); cx.moveTo(FX - 56, TOP); cx.lineTo(FX - 170, TOP + 8); cx.lineTo(FX - 240, TOP + 64); cx.lineTo(FX - 140, TOP + 96); cx.lineTo(FX - 64, PY * 0.55); cx.lineTo(FX - 58, PY); cx.lineTo(FX - 50, PY * .7); cx.closePath(); cx.fill();
+    cx.fillStyle = '#2d6b4b'; cx.fillRect(FX + 60, TOP - 28, HW, 8); cx.fillRect(FX - 168, TOP + 2, 112, 8);
+    var g = cx.createLinearGradient(FX - 52, 0, FX + 52, 0);
+    g.addColorStop(0, 'rgba(255,255,255,.25)'); g.addColorStop(.5, 'rgba(255,255,255,.6)'); g.addColorStop(1, 'rgba(255,255,255,.25)');
+    cx.globalAlpha = .6; cx.fillStyle = S.col; cx.fillRect(FX - 52, TOP, 104, PY - TOP);
+    cx.globalAlpha = 1; cx.fillStyle = g; cx.fillRect(FX - 52, TOP, 104, PY - TOP);
+    cx.strokeStyle = 'rgba(255,255,255,.8)'; cx.lineWidth = 2; cx.lineCap = 'round';
+    streaks.forEach(function (s) {
+      s.y += s.v * d; if (s.y > PY) { s.y = TOP; s.x = FX - 50 + Math.random() * 100; }
+      cx.beginPath(); cx.moveTo(s.x, s.y); cx.lineTo(s.x, s.y + s.l); cx.stroke();
+    });
+    for (var i = 0; i < 3 && d > 0; i++) spl2.push({ x: FX + (Math.random() - .5) * 110, y: PY, vx: (Math.random() - .5) * 140, vy: -(120 + Math.random() * 200), life: 1 });
+    cx.fillStyle = '#fff';
+    spl2 = spl2.filter(function (p) {
+      p.x += p.vx * d; p.y += p.vy * d; p.vy += 520 * d; p.life -= d * 1.1;
+      if (p.life <= 0) return false;
+      cx.globalAlpha = p.life * .8; cx.beginPath(); cx.arc(p.x, p.y, 2.4, 0, 6.3); cx.fill(); return true;
+    });
+    for (var m = 0; m < 6; m++) {
+      cx.globalAlpha = .12 + .05 * Math.sin(tt * 1.5 + m);
+      cx.beginPath(); cx.arc(FX - 110 + m * 44, PY - 10 - 10 * Math.sin(tt + m), 40 + 8 * Math.sin(tt * 2 + m), 0, 6.3); cx.fill();
+    }
+    cx.globalAlpha = 1;
   }
 
   /* STASIUN 1 */
@@ -354,12 +440,12 @@ footer{padding:40px 0 60px;color:var(--mut);font-size:14px;text-align:center}
   }
   r2.oninput = u2; r3.oninput = u2; u2();
 
-  /* KUIS GENERIK */
+  /* KUIS */
   function quiz(box, qs, onScore, title) {
     var i = 0, score = 0;
     function show() {
       var q = qs[i];
-      box.innerHTML = '<div class="qk">' + (title || 'Kuis') + '</div><div class="qh"><span>Soal ' + (i + 1) + ' / ' + qs.length + '</span><span>Skor: ' + score + ' / ' + qs.length + '</span></div><h3 class="qt"></h3><div class="opts"></div><div class="qf"></div>';
+      box.innerHTML = '<div class="qk">' + title + '</div><div class="qh"><span>Soal ' + (i + 1) + ' / ' + qs.length + '</span><span>Skor: ' + score + ' / ' + qs.length + '</span></div><h3 class="qt"></h3><div class="opts"></div><div class="qf"></div>';
       box.querySelector('.qt').textContent = q.q;
       var o = box.querySelector('.opts'), idx = q.o.map(function (_, k) { return k; }).sort(function () { return Math.random() - 0.5; }), btns = [], right = null;
       idx.forEach(function (orig) {
@@ -381,12 +467,125 @@ footer{padding:40px 0 60px;color:var(--mut);font-size:14px;text-align:center}
     }
     function end() {
       var t = score === qs.length ? 'Sempurna! Kamu menguasai materi ini.' : (score >= qs.length - 1 ? 'Bagus! Pemahamanmu sudah kuat.' : 'Coba lagi, baca ulang penjelasan dan utak-atik simulasinya.');
-      box.innerHTML = '<div class="qk">' + (title || 'Kuis') + '</div><h3 class="qt">Skor akhir: ' + score + ' / ' + qs.length + '</h3><p class="why">' + t + '</p><button class="btn">Ulangi kuis</button>';
+      box.innerHTML = '<div class="qk">' + title + '</div><h3 class="qt">Skor akhir: ' + score + ' / ' + qs.length + '</h3><p class="why">' + t + '</p><button class="btn">Ulangi kuis</button>';
       box.querySelector('button').onclick = function () { i = 0; score = 0; show(); };
     }
     show();
   }
   function setQ(k) { return function (sc) { S.q[k] = Math.max(S.q[k], sc); res(); }; }
+
+  /* PUZZLE FOTO TOKOH (Wikimedia Commons, cadangan: ilustrasi) */
+  var FP = 'https://commons.wikimedia.org/wiki/Special:FilePath/';
+  function U(n) { return FP + encodeURIComponent(n) + '?width=900'; }
+  var PEOPLE = [
+    { n: 'Leonardo da Vinci', y: '1452–1519', k: 'Mengamati bahwa aliran sungai yang menyempit menjadi lebih cepat, gagasan awal prinsip kontinuitas.', u: U('Leonardo da Vinci - presumed self-portrait - WGA12798.jpg'), cy: 0.05, bg: '#7fb8c9', coat: '#7a3b2e', skin: '#e8b98f', hair: '#c9c3b5', brow: '#8a8478', st: 'long', beard: 'full', hat: 'beret', hatc: '#2c3e6b', col: '#efe6d2' },
+    { n: 'Daniel Bernoulli', y: '1700–1782', k: 'Lewat buku Hydrodynamica (1738), ia menghubungkan kecepatan dan tekanan fluida.', u: U('Porträt des Daniel Bernoulli - edit1.jpg'), cy: 0.04, bg: '#b9a9d9', coat: '#2f4f8f', skin: '#f0c9a4', hair: '#f4f4f4', brow: '#8a8a8a', st: 'wig', beard: 'none', hat: 'none', col: '#ffffff' },
+    { n: 'Evangelista Torricelli', y: '1608–1647', k: 'Merumuskan kecepatan semburan v = √(2gh) dan menemukan barometer raksa.', u: U('Evangelista Torricelli.jpg'), cy: 0.06, bg: '#d9b38a', coat: '#242424', skin: '#e6b48a', hair: '#3a2a20', brow: '#3a2a20', st: 'short', beard: 'stache', hat: 'cap', hatc: '#111111', col: '#ffffff' },
+    { n: 'George Gabriel Stokes', y: '1819–1903', k: 'Menurunkan hukum hambatan bola dalam fluida kental, F = 6πηrv.', u: U('George Gabriel Stokes.jpg'), cy: 0.05, bg: '#9cc7a6', coat: '#3d3d46', skin: '#efc6a0', hair: '#8d8d8d', brow: '#777777', st: 'bald', beard: 'side', hat: 'none', col: '#ffffff' },
+    { n: 'Blaise Pascal', y: '1623–1662', k: 'Merumuskan hukum Pascal: tekanan pada fluida tertutup diteruskan ke segala arah sama besar.', u: U('Blaise Pascal Versailles.JPG'), cy: 0.05, bg: '#e0a0a0', coat: '#1f1f2b', skin: '#f0cfae', hair: '#5a3a22', brow: '#4a3220', st: 'long', beard: 'none', hat: 'none', col: '#ffffff' }
+  ];
+  function portrait(p) {
+    var s = '<rect width="300" height="300" fill="' + p.bg + '"/><circle cx="240" cy="52" r="24" fill="#fff" opacity=".35"/>';
+    s += '<path d="M0 262 Q40 248 80 262 T160 262 T240 262 T320 262 V300 H0Z" fill="#fff" opacity=".3"/>';
+    if (p.st === 'long') s += '<path d="M96 120 Q92 60 150 56 Q208 60 204 120 L216 232 Q150 252 84 232Z" fill="' + p.hair + '"/>';
+    if (p.st === 'wig') {
+      s += '<path d="M92 120 Q84 50 150 46 Q216 50 208 120 Q226 170 214 228 Q190 214 196 170 L104 170 Q110 214 86 228 Q74 170 92 120Z" fill="' + p.hair + '"/>';
+      s += '<circle cx="92" cy="212" r="15" fill="' + p.hair + '" stroke="#d9d9d9" stroke-width="2"/><circle cx="208" cy="212" r="15" fill="' + p.hair + '" stroke="#d9d9d9" stroke-width="2"/>';
+    }
+    s += '<path d="M20 300 Q30 220 110 208 L190 208 Q270 220 280 300Z" fill="' + p.coat + '"/>';
+    s += '<rect x="132" y="176" width="36" height="40" fill="' + p.skin + '"/><rect x="132" y="196" width="36" height="12" fill="rgba(0,0,0,.12)"/>';
+    s += '<path d="M112 208 L150 252 L188 208 Z" fill="' + p.col + '"/><path d="M150 252 L150 300" stroke="rgba(0,0,0,.2)" stroke-width="2"/>';
+    s += '<circle cx="102" cy="146" r="9" fill="' + p.skin + '"/><circle cx="198" cy="146" r="9" fill="' + p.skin + '"/>';
+    s += '<ellipse cx="150" cy="136" rx="48" ry="58" fill="' + p.skin + '"/>';
+    if (p.st === 'long') s += '<path d="M100 122 Q104 70 150 68 Q196 70 200 122 Q176 92 150 96 Q124 92 100 122Z" fill="' + p.hair + '"/>';
+    if (p.st === 'wig') s += '<path d="M98 116 Q100 66 150 62 Q200 66 202 116 Q180 88 150 90 Q120 88 98 116Z" fill="' + p.hair + '"/><circle cx="104" cy="112" r="11" fill="' + p.hair + '"/><circle cx="196" cy="112" r="11" fill="' + p.hair + '"/>';
+    if (p.st === 'short') s += '<path d="M100 114 Q106 74 150 72 Q194 74 200 114 Q178 98 150 100 Q122 98 100 114Z" fill="' + p.hair + '"/>';
+    if (p.st === 'bald') s += '<ellipse cx="102" cy="124" rx="7" ry="20" fill="' + p.hair + '"/><ellipse cx="198" cy="124" rx="7" ry="20" fill="' + p.hair + '"/><path d="M128 84 Q150 76 172 84" fill="none" stroke="rgba(255,255,255,.5)" stroke-width="5" stroke-linecap="round"/>';
+    s += '<circle cx="130" cy="136" r="6.5" fill="#fff"/><circle cx="170" cy="136" r="6.5" fill="#fff"/><circle cx="131" cy="137" r="3.4" fill="#222"/><circle cx="171" cy="137" r="3.4" fill="#222"/>';
+    s += '<path d="M116 122 L143 119 M157 119 L184 122" stroke="' + p.brow + '" stroke-width="5" stroke-linecap="round" fill="none"/>';
+    s += '<path d="M150 140 Q141 162 150 166 Q158 168 161 163" fill="none" stroke="rgba(0,0,0,.35)" stroke-width="3" stroke-linecap="round"/>';
+    if (p.beard === 'full') s += '<path d="M102 150 Q104 224 150 236 Q196 224 198 150 Q188 192 150 194 Q112 192 102 150Z" fill="' + p.hair + '"/>';
+    if (p.beard === 'side') s += '<path d="M101 118 Q96 172 112 190 Q114 150 114 118Z" fill="' + p.hair + '"/><path d="M199 118 Q204 172 188 190 Q186 150 186 118Z" fill="' + p.hair + '"/>';
+    if (p.beard === 'stache') s += '<path d="M122 172 Q150 158 178 172 Q150 180 122 172Z" fill="' + p.hair + '"/>';
+    s += '<path d="M138 184 Q150 192 162 184" fill="none" stroke="#8a4b4b" stroke-width="3.5" stroke-linecap="round"/>';
+    if (p.hat === 'beret') s += '<ellipse cx="156" cy="80" rx="66" ry="20" fill="' + p.hatc + '"/><path d="M92 82 Q150 24 216 70 Q160 94 92 82Z" fill="' + p.hatc + '"/>';
+    if (p.hat === 'cap') s += '<path d="M97 102 Q98 46 150 44 Q202 46 203 102 Q150 86 97 102Z" fill="' + p.hatc + '"/><circle cx="150" cy="42" r="6" fill="' + p.hatc + '"/>';
+    return s;
+  }
+
+  /* muat foto dulu; kalau gagal / offline, pakai ilustrasi cadangan */
+  function puzzle(box, pi, title) {
+    box.innerHTML = '<div class="qk">' + title + '</div><p class="why">Memuat foto tokoh…</p>';
+    var im = new Image(), fin = false;
+    function go(ok) { if (fin) return; fin = true; build(box, pi, title, ok ? im : null); }
+    im.onload = function () { go(im.naturalWidth > 10); };
+    im.onerror = function () { go(false); };
+    setTimeout(function () { go(false); }, 9000);
+    im.src = PEOPLE[pi].u;
+  }
+  function build(box, pi, title, img) {
+    var P = PEOPLE[pi], art = portrait(P), pos = [], sel = -1, done = false, i, sx = 0, sy = 0, sw = 0;
+    if (img) { sw = Math.min(img.naturalWidth, img.naturalHeight); sx = (img.naturalWidth - sw) / 2; sy = (img.naturalHeight - sw) * P.cy; }
+    for (i = 0; i < 9; i++) pos.push(i);
+    (function sh() {
+      do {
+        for (i = 8; i > 0; i--) { var j = Math.floor(Math.random() * (i + 1)), t = pos[i]; pos[i] = pos[j]; pos[j] = t; }
+      } while (pos.some(function (v, k) { return v === k; }));
+    })();
+    box.innerHTML = '<div class="qk">' + title + '</div><div class="pzl"><div class="board"></div><div><p class="why" style="margin-top:0">Ketuk dua kepingan untuk menukar posisinya. Susun sampai menjadi foto utuh dan temukan siapa tokohnya. Kepingan yang benar akan terkunci hijau.</p><div class="msg pk">Kepingan benar: 0 / 9</div><div class="row"><button class="btn peek">Intip gambar</button></div><div class="thumb" hidden></div><p class="credit">' + (img ? 'Sumber foto: Wikimedia Commons.' : 'Foto tidak dapat dimuat, memakai ilustrasi cadangan.') + '</p></div></div>';
+    var bd = box.querySelector('.board'), pk = box.querySelector('.pk'), th = box.querySelector('.thumb'), pb = box.querySelector('.peek');
+    if (img) {
+      var tc = document.createElement('canvas'); tc.width = tc.height = 300;
+      tc.getContext('2d').drawImage(img, sx, sy, sw, sw, 0, 0, 300, 300); th.appendChild(tc);
+    } else th.innerHTML = '<svg viewBox="0 0 300 300" aria-hidden="true">' + art + '</svg>';
+    pb.onclick = function () { th.hidden = !th.hidden; pb.textContent = th.hidden ? 'Intip gambar' : 'Sembunyikan gambar'; };
+    function tile(pc) {
+      var r = Math.floor(pc / 3), c = pc % 3;
+      if (img) {
+        var cn = document.createElement('canvas'); cn.width = cn.height = 240;
+        cn.getContext('2d').drawImage(img, sx + c * sw / 3, sy + r * sw / 3, sw / 3, sw / 3, 0, 0, 240, 240);
+        return cn;
+      }
+      var d = document.createElement('div'); d.style.cssText = 'width:100%;height:100%';
+      d.innerHTML = '<svg viewBox="' + (c * 100) + ' ' + (r * 100) + ' 100 100" aria-hidden="true">' + art + '</svg>';
+      return d;
+    }
+    function draw() {
+      bd.innerHTML = '';
+      pos.forEach(function (pc, s) {
+        var b = document.createElement('button');
+        b.className = 'tl' + (pc === s ? ' lk' : '') + (s === sel ? ' sel' : '');
+        b.dataset.s = s; b.setAttribute('aria-label', 'Kepingan posisi ' + (s + 1));
+        b.appendChild(tile(pc)); bd.appendChild(b);
+      });
+    }
+    bd.onclick = function (e) {
+      var t = e.target.closest('.tl'); if (!t || done) return;
+      var s = +t.dataset.s; if (pos[s] === s) return;
+      if (sel < 0) sel = s;
+      else if (sel === s) sel = -1;
+      else { var x = pos[sel]; pos[sel] = pos[s]; pos[s] = x; sel = -1; check(); }
+      draw();
+    };
+    function check() {
+      var c = pos.filter(function (v, k) { return v === k; }).length;
+      pk.textContent = 'Kepingan benar: ' + c + ' / 9';
+      if (c === 9) {
+        done = true; bd.classList.add('ok');
+        pk.className = 'msg pk good'; pk.innerHTML = '<b></b> <span></span><br><span></span>';
+        var sp2 = pk.querySelectorAll('b,span');
+        sp2[0].textContent = P.n; sp2[1].textContent = '(' + P.y + ')'; sp2[2].textContent = P.k;
+        th.hidden = true; pb.style.display = 'none';
+        S.pz++; res();
+      }
+    }
+    draw();
+  }
+  puzzle($('#pz1'), 0, 'Puzzle 1 · Siapa tokoh di balik gagasan kontinuitas?');
+  puzzle($('#pz2'), 1, 'Puzzle 2 · Siapa tokoh hukum Bernoulli?');
+  puzzle($('#pz3'), 2, 'Puzzle 3 · Siapa tokoh teorema semburan air?');
+  puzzle($('#pz4'), 3, 'Puzzle 4 · Siapa tokoh hukum viskositas Stokes?');
+  puzzle($('#pz5'), 4, 'Puzzle 5 · Siapa tokoh hukum tekanan fluida?');
 
   quiz($('#qz1'), [
     { q: 'Persamaan kontinuitas untuk fluida tak termampatkan dituliskan…', o: ['A₁v₁ = A₂v₂', 'A₁ + v₁ = A₂ + v₂', 'A₁/v₁ = A₂v₂', 'P₁v₁ = P₂v₂'], a: 0, e: 'Debit (A × v) bernilai sama di setiap penampang pipa.' },
@@ -438,7 +637,7 @@ footer{padding:40px 0 60px;color:var(--mut);font-size:14px;text-align:center}
   quiz($('#qz3'), [
     { q: 'Kecepatan semburan air dari lubang pada tangki yang kedalamannya h dirumuskan…', o: ['v = √(2gh)', 'v = 2gh', 'v = gh²', 'v = h/g'], a: 0, e: 'Itulah teorema Torricelli: v = √(2gh).' },
     { q: 'Kedalaman lubang dijadikan 4 kali semula. Kecepatan semburan menjadi…', o: ['2 kali', '4 kali', '16 kali', '½ kali'], a: 0, e: 'Karena v sebanding dengan √h, kedalaman 4× membuat kecepatan √4 = 2×.' },
-    { q: 'Agar semburan jatuh paling jauh, lubang sebaiknya dibuat…', o: ['Di tengah-tengah tinggi air', 'Sedekat mungkin dengan dasar', 'Sedekat mungkin dengan permukaan air', 'Tepat di dasar tangki'], a: 0, e: 'Jarak x = 2√(h·y) maksimum saat h = y, yaitu di tengah. Lubang terlalu rendah atau tinggi mengurangi jangkauan.' }
+    { q: 'Agar semburan jatuh paling jauh, lubang sebaiknya dibuat…', o: ['Di tengah-tengah tinggi air', 'Sedekat mungkin dengan dasar', 'Sedekat mungkin dengan permukaan air', 'Tepat di dasar tangki'], a: 0, e: 'Jarak x = 2√(h·y) maksimum saat h = y, yaitu di tengah.' }
   ], setQ(3), 'Kuis Stasiun 3 · Torricelli');
 
   /* STASIUN 4 */
@@ -446,7 +645,7 @@ footer{padding:40px 0 60px;color:var(--mut);font-size:14px;text-align:center}
   var s4 = { rank: [], run: false, done: false, t: 0, tt: [], balls: [], btns: [] };
   FL.forEach(function (fl, i) {
     var d = document.createElement('div'); d.className = 'tcard';
-    d.innerHTML = '<svg viewBox="0 0 160 290" class="scene" role="img" aria-label="Wadah berisi ' + fl.n + '"><rect x="30" y="16" width="100" height="258" rx="16" class="tube"/><rect x="33" y="19" width="94" height="252" rx="13" fill-opacity=".6" ' + (fl.c ? 'style="fill:' + fl.c + '"' : 'class="fl"') + '/><circle cx="80" cy="46" r="12" class="ball"/></svg><b>' + fl.n + '</b><button class="btn sm">Pilih urutan</button>';
+    d.innerHTML = '<svg viewBox="0 0 160 290" class="scene" role="img" aria-label="Wadah berisi ' + fl.n + '"><rect x="30" y="16" width="100" height="258" rx="16" class="tube"/><rect x="33" y="19" width="94" height="252" rx="13" fill-opacity=".6" ' + (fl.c ? 'style="fill:' + fl.c + '"' : 'class="fl"') + '/><circle cx="80" cy="46" r="12" class="ball"/></svg><b>' + fl.n + '</b><button class="btn sm2">Pilih urutan</button>';
     $('#tubes').appendChild(d);
     var ball = d.querySelector('.ball'), btn = d.querySelector('button');
     s4.balls.push(ball); s4.btns.push(btn);
@@ -522,16 +721,17 @@ footer{padding:40px 0 60px;color:var(--mut);font-size:14px;text-align:center}
   /* HASIL */
   function res() {
     var q = S.q[1] + S.q[3] + S.q[4] + S.q[5];
-    var pts = (S.k ? 1 : 0) + S.b + (S.tr >= 0.97 ? 1 : 0) + (S.v || 0) + S.m + q;
+    var pts = (S.k ? 1 : 0) + S.b + (S.tr >= 0.97 ? 1 : 0) + (S.v || 0) + S.m + q + S.pz;
     $('#rk').textContent = S.k ? 'Selesai' : 'Belum';
     $('#rb').textContent = S.b + ' / 5';
     $('#rt').textContent = Math.round(S.tr * 100) + '%';
     $('#rv').textContent = S.v === null ? 'Belum' : S.v + ' / 3';
     $('#rm').textContent = S.m + ' / 5';
     $('#rq').textContent = q + ' / 12';
-    $('#pts').textContent = pts + ' / 27 poin';
-    $('#rbar').style.width = (pts / 27 * 100) + '%';
-    $('#pred').textContent = pts >= 23 ? 'Master Fluida' : pts >= 16 ? 'Insinyur Muda' : pts >= 8 ? 'Penjelajah Air' : pts > 0 ? 'Pemula' : 'Belum mulai';
+    $('#rp').textContent = S.pz + ' / 5';
+    $('#pts').textContent = pts + ' / 32 poin';
+    $('#rbar').style.width = (pts / 32 * 100) + '%';
+    $('#pred').textContent = pts >= 27 ? 'Master Fluida' : pts >= 19 ? 'Insinyur Muda' : pts >= 9 ? 'Penjelajah Air' : pts > 0 ? 'Pemula' : 'Belum mulai';
   }
   res();
 
@@ -543,10 +743,16 @@ footer{padding:40px 0 60px;color:var(--mut);font-size:14px;text-align:center}
   }
   addEventListener('scroll', onS, { passive: true }); onS();
 
+  if ('IntersectionObserver' in window) {
+    var io = new IntersectionObserver(function (es) { es.forEach(function (e) { if (e.isIntersecting) { e.target.classList.add('in'); io.unobserve(e.target); } }); }, { threshold: 0.06 });
+    $$('.lab,.quiz').forEach(function (x) { x.classList.add('rv'); io.observe(x); });
+  }
+
   var last = performance.now(), off = 0;
   function loop(now) {
     var dt = Math.min(0.05, (now - last) / 1000); last = now;
     var d = dt * S.speed;
+    drawHero(d);
     stepP(p1, 140, 130, 130 * s1.f, 1.5, d);
     s1.ang = (s1.ang + (1.5 / s1.f) * 70 * d) % 360;
     $('#turb').setAttribute('transform', 'rotate(' + s1.ang + ')');

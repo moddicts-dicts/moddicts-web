@@ -320,7 +320,7 @@ button:focus-visible,a:focus-visible,input:focus-visible{outline:2px solid var(-
    <div style="text-align:center;margin-bottom:22px">
     <div class="cn" style="font-size:24px;color:var(--gold2)">锦鲤花灯 · 留影</div>
     <h2 style="font-size:clamp(28px,4.2vw,44px);font-style:italic;font-weight:500;line-height:1.15">Fish Lantern Photo</h2>
-    <p style="color:#d8ccb2;max-width:36em;margin:4px auto 0">Choose a single fish lantern or a hanging 3-pose scroll, write or draw your own mark, and send it rising into the night sky.</p>
+    <p style="color:#d8ccb2;max-width:36em;margin:4px auto 0">Choose, Photo, Write, and Draw!!</p>
    </div>
    <div class="booth-grid">
     <!-- Left Column: Distinct Viewfinders -->
@@ -371,20 +371,60 @@ button:focus-visible,a:focus-visible,input:focus-visible{outline:2px solid var(-
        </svg>
       </div>
 
-      <!-- 3-POSE HANGING SCROLL VIEWFINDER -->
-      <div id="stripViewWrap" style="display:none;position:relative;width:100%;max-width:370px;margin:0 auto;padding:10px 14px 16px;border-radius:3px;box-shadow:0 18px 40px #000b">
-       <div id="stripHeader" style="text-align:center;padding-bottom:8px;margin-bottom:10px">
-        <span class="cn" id="stripHeaderTitle" style="font-size:20px">朱砂锦鲤 · 三联花灯卷</span>
+      <!-- 3-POSE KOI-SHAPED HANGING SCROLL VIEWFINDER -->
+      <div id="stripViewWrap" style="display:none;position:relative;width:100%;max-width:410px;margin:0 auto">
+       <div style="display:flex;flex-direction:column;align-items:center">
+        <div style="width:72px;height:22px;background:linear-gradient(to top right,transparent 47%,#c79a4a 48% 52%,transparent 53%) left/50% 100% no-repeat,linear-gradient(to top left,transparent 47%,#c79a4a 48% 52%,transparent 53%) right/50% 100% no-repeat"></div>
+        <div style="position:relative;width:92%;height:11px;border-radius:6px;background:linear-gradient(#8a5a2c,#3b1d10);border:1px solid #e8c27a88;box-shadow:0 4px 10px #000a">
+         <span style="position:absolute;left:-7px;top:-3px;width:15px;height:15px;border-radius:50%;background:radial-gradient(circle at 35% 30%,#d6efe3,#5f9885 60%,#2d5547)"></span>
+         <span style="position:absolute;right:-7px;top:-3px;width:15px;height:15px;border-radius:50%;background:radial-gradient(circle at 35% 30%,#d6efe3,#5f9885 60%,#2d5547)"></span>
+        </div>
        </div>
-       <div id="stripSlotsBox" style="display:flex;flex-direction:column;gap:10px"></div>
-       <div id="stripFooter" style="display:flex;align-items:center;justify-content:space-between;margin-top:12px;padding-top:8px">
-        <span id="stripFooterLabel" style="font-size:14px;opacity:.8">3-Pose Koi Lantern Scroll</span>
-        <span class="cn" id="stripSealBadge" style="width:28px;height:28px;display:grid;place-items:center;background:#a6291f;color:#efe3c4;border-radius:2px;font-size:18px">福</span>
+       <div style="position:relative;padding:0 26px">
+        <svg viewBox="0 0 400 760" preserveAspectRatio="none" style="position:absolute;inset:0;width:100%;height:100%;pointer-events:none;overflow:visible;filter:drop-shadow(0 16px 34px rgba(0,0,0,.75))" aria-hidden="true">
+         <defs>
+          <linearGradient id="sFishBodyGrad" x1="0" y1="0" x2="0" y2="1"><stop id="sGrad0" offset="0%" stop-color="#f5b35d"/><stop id="sGrad1" offset="28%" stop-color="#d64527"/><stop id="sGrad2" offset="88%" stop-color="#7d1512"/><stop id="sGrad3" offset="100%" stop-color="#1c0b0b"/></linearGradient>
+         </defs>
+         <path id="sPecL" d="M38 118 Q-12 165 6 250 Q26 225 36 185 Z" fill="#ea6c3a" stroke="#f6d58e" stroke-width="2"/>
+         <path id="sPecR" d="M362 118 Q412 165 394 250 Q374 225 364 185 Z" fill="#ea6c3a" stroke="#f6d58e" stroke-width="2"/>
+         <path id="sPelL" d="M42 492 Q2 530 16 598 Q36 575 48 545 Z" fill="#ea6c3a" stroke="#f6d58e" stroke-width="1.8"/>
+         <path id="sPelR" d="M358 492 Q398 530 384 598 Q364 575 352 545 Z" fill="#ea6c3a" stroke="#f6d58e" stroke-width="1.8"/>
+         <path id="sBodyPath" d="M200 4 C312 6,366 56,366 156 L360 640 Q356 728 292 754 L108 754 Q44 728 40 640 L34 156 C34 56,88 6,200 4 Z" fill="url(#sFishBodyGrad)" stroke="#f6d58e" stroke-width="2.8"/>
+         <path id="sRibTop" d="M54 92 Q200 72 346 92" fill="none" stroke="#f6d58e" stroke-opacity=".45" stroke-width="1.5"/>
+         <path id="sRibLow" d="M56 712 Q200 728 344 712" fill="none" stroke="#f6d58e" stroke-opacity=".45" stroke-width="1.5"/>
+         <circle cx="94" cy="46" r="8.5" fill="#fff6da"/><circle cx="92" cy="46" r="4" fill="#180b09"/>
+         <circle cx="306" cy="46" r="8.5" fill="#fff6da"/><circle cx="308" cy="46" r="4" fill="#180b09"/>
+         <path id="sWhisker" d="M74 30 Q30 10 14 34 M326 30 Q370 10 386 34" fill="none" stroke="#f6d58e" stroke-width="2" stroke-linecap="round"/>
+        </svg>
+        <div style="position:relative;z-index:2;padding:22px 24px 20px">
+         <div style="text-align:center;margin-bottom:12px">
+          <span class="cn" id="stripHeaderTitle" style="font-size:21px;color:#fff6de">朱砂锦鲤 · 三联鱼卷</span>
+          <div id="stripSubTitle" style="font-size:12px;letter-spacing:.1em;text-transform:uppercase;color:#f6d58e">Fish-Shaped 3-Pose Scroll</div>
+         </div>
+         <div id="stripSlotsBox" style="display:flex;flex-direction:column;gap:10px"></div>
+        </div>
+       </div>
+       <div style="display:flex;flex-direction:column;align-items:center;margin-top:-2px">
+        <div style="position:relative;width:66%;height:11px;border-radius:6px;background:linear-gradient(#8a5a2c,#3b1d10);border:1px solid #e8c27a88;box-shadow:0 4px 10px #000a">
+         <span style="position:absolute;left:-7px;top:-3px;width:15px;height:15px;border-radius:50%;background:radial-gradient(circle at 35% 30%,#d6efe3,#5f9885 60%,#2d5547)"></span>
+         <span style="position:absolute;right:-7px;top:-3px;width:15px;height:15px;border-radius:50%;background:radial-gradient(circle at 35% 30%,#d6efe3,#5f9885 60%,#2d5547)"></span>
+        </div>
+        <svg viewBox="0 0 240 112" style="width:210px;height:auto;overflow:visible;margin-top:-2px" aria-hidden="true">
+         <g class="fish-tail-sway" style="transform-origin:120px 0px">
+          <path id="sTailFin" d="M66 2 Q16 58 46 98 Q96 54 120 34 Q144 54 194 98 Q224 58 174 2 Z" fill="#ea6c3a" stroke="#f6d58e" stroke-width="2"/>
+          <path id="sTailLines" d="M84 12 L56 78 M120 12 L120 34 M156 12 L184 78" stroke="#f6d58e" stroke-opacity=".45" stroke-width="1.4"/>
+         </g>
+         <g class="fish-tassel">
+          <line x1="120" y1="34" x2="120" y2="62" stroke="#e8c27a" stroke-width="2"/>
+          <rect x="104" y="62" width="32" height="32" rx="3" fill="#a6291f" stroke="#e8c27a" stroke-width="1.4"/>
+          <text id="stripSealBadge" x="120" y="86" text-anchor="middle" fill="#efe3c4" font-size="21" font-family="Ma Shan Zheng, serif">福</text>
+         </g>
+        </svg>
        </div>
       </div>
 
-      <div id="bCountdown" class="cn" style="display:none;position:absolute;inset:0;place-items:center;font-size:96px;color:#fff6da;text-shadow:0 0 40px #f2c277,0 6px 24px #000;pointer-events:none"></div>
-      <div id="bFlash" style="display:none;position:absolute;inset:0;background:radial-gradient(circle,#fff8dc,#ffd08088);pointer-events:none"></div>
+      <div id="bCountdown" class="cn" style="display:none;position:absolute;inset:0;place-items:center;font-size:96px;color:#fff6da;text-shadow:0 0 40px #f2c277,0 6px 24px #000;pointer-events:none;z-index:5"></div>
+      <div id="bFlash" style="display:none;position:absolute;inset:0;background:radial-gradient(circle,#fff8dc,#ffd08088);pointer-events:none;z-index:5"></div>
       <div id="boothMarkPreview" style="display:none;margin:10px auto 0;max-width:320px;border-radius:2px;text-align:center"></div>
      </div>
 
@@ -551,8 +591,8 @@ track.insertAdjacentHTML("beforeend",`<button class="fish-booth-hang" id="fishGa
   </svg>
  </span>
  <span class="fish-plate">
-  <span class="fish-plate-kicker">Interactive · 鲤鱼留影</span>
-  <b>Fish Lantern Photo</b>
+  <span class="fish-plate-kicker">· 鲤鱼留影</span>
+  <b>Fish Lantern Studio</b>
   <small>Snap a keepsake &amp; release a glowing fish lantern</small>
  </span>
  <span class="fish-enter-cta">Enter Lantern Studio →</span>
@@ -876,7 +916,7 @@ function purr(){
  s.start(t);lf.start(t);lf.stop(t+1.7);
 }
 
-/* ===== Fish Lantern Photo Logic (Single Lantern vs 3-Pose Scroll) ===== */
+/* ===== Fish Lantern Photo Logic (Single Lantern vs Fish-Shaped 3-Pose Scroll) ===== */
 const booth=$("#fishBooth"),bVid=$("#boothVid"),bImg=$("#boothPreviewImg"),bFall=$("#boothFallback"),bFile=$("#boothFile");
 const bState={open:false,themeId:"cinnabar",filterId:"candle",mode:"single",mirror:true,seal:"福",markMode:"write",noteText:"",ink:INKS[0].v,drawing:null,cam:"loading",photos:[],busy:false,sent:[],uploadSlot:null};
 let camStream=null,cdTimer=null,drawingNow=false,lastPt=null;
@@ -955,7 +995,8 @@ $("#boothClose").onclick=closeFishBooth;
 
 function buildStripSlot(idx,th,flt){
  const photo=bState.photos[idx],activeIdx=Math.min(bState.photos.length,2),isLive=!photo&&idx===activeIdx;
- const border=isLive?"2px solid var(--gold2)":`1px solid ${th.cardAccent}66`;
+ const border=isLive?"2px solid #fff3c4":`1.5px solid ${th.rib}cc`;
+ const glow=isLive?"0 0 16px rgba(255,226,150,.55)":"inset 0 0 12px rgba(0,0,0,.6)";
  let inner="";
  if(photo){
   inner=`<img src="${photo}" alt="Pose ${idx+1}" style="width:100%;height:100%;object-fit:cover;display:block">`;
@@ -964,7 +1005,7 @@ function buildStripSlot(idx,th,flt){
  }else{
   inner=`<div style="width:100%;height:100%;display:flex;align-items:center;justify-content:center;flex-direction:column;color:#dccfb4;font-size:14px"><span class="cn" style="font-size:22px;color:${th.cardAccent}">${["一","二","三"][idx]}</span><span>${isLive?`Pose ${idx+1} · Ready`:`Pose ${idx+1} · Waiting`}</span></div>`;
  }
- return `<div class="strip-slot" data-slot="${idx}" title="${photo?`Click to replace Pose ${idx+1}`:`Pose ${idx+1}`}" style="position:relative;aspect-ratio:16/10;border-radius:4px;overflow:hidden;background:#0d0917;border:${border};cursor:pointer">${inner}<svg viewBox="0 0 320 200" preserveAspectRatio="none" style="position:absolute;inset:0;width:100%;height:100%;pointer-events:none" aria-hidden="true"><path d="M12 100 C32 18, 250 16, 286 100 C250 184, 32 182, 12 100 Z" fill="none" stroke="${th.rib}" stroke-opacity=".65" stroke-width="3"/><path d="M286 100 L312 68 L302 100 L312 132 Z" fill="${th.fin}" fill-opacity=".7"/></svg><span class="cn" style="position:absolute;left:8px;top:6px;font-size:15px;color:#fff4d4;text-shadow:0 1px 4px #000">${["壹","贰","叁"][idx]}</span></div>`;
+ return `<div class="strip-slot" data-slot="${idx}" title="${photo?`Click to replace Pose ${idx+1}`:`Pose ${idx+1}`}" style="position:relative;aspect-ratio:16/10;border-radius:18px;overflow:hidden;background:#0d0917;border:${border};box-shadow:${glow};cursor:pointer">${inner}<span class="cn" style="position:absolute;left:8px;top:6px;padding:1px 6px;background:rgba(166,41,31,.85);border:1px solid #e8c27a;border-radius:2px;font-size:14px;color:#fff4d4;line-height:1.2">${["壹","贰","叁"][idx]}</span></div>`;
 }
 
 function renderBoothUI(){
@@ -1000,12 +1041,20 @@ function renderBoothUI(){
   }
  }else{
   $("#singleViewWrap").style.display="none";
-  const sw=$("#stripViewWrap");
-  sw.style.display="block";sw.style.background=th.cardBg;sw.style.border=`2px solid ${th.cardAccent}`;
-  $("#stripHeader").style.borderBottom=`1px solid ${th.cardAccent}55`;
-  $("#stripHeaderTitle").textContent=`${th.cn} · 三联花灯卷`;$("#stripHeaderTitle").style.color=th.cardAccent;
-  $("#stripFooter").style.borderTop=`1px solid ${th.cardAccent}44`;
-  $("#stripFooterLabel").style.color=th.text;
+  $("#stripViewWrap").style.display="block";
+  $("#sGrad0").setAttribute("stop-color",th.top);
+  $("#sGrad1").setAttribute("stop-color",th.mid);
+  $("#sGrad2").setAttribute("stop-color",th.low);
+  $("#sGrad3").setAttribute("stop-color",th.cardBg);
+  [$("#sPecL"),$("#sPecR"),$("#sPelL"),$("#sPelR"),$("#sTailFin")].forEach(el=>{el.setAttribute("fill",th.fin);el.setAttribute("stroke",th.rib)});
+  $("#sBodyPath").setAttribute("stroke",th.rib);
+  $("#sRibTop").setAttribute("stroke",th.rib);$("#sRibLow").setAttribute("stroke",th.rib);
+  $("#sWhisker").setAttribute("stroke",th.rib);$("#sTailLines").setAttribute("stroke",th.rib);
+  const hdr=$("#stripHeaderTitle");
+  hdr.textContent=`${th.cn} · 三联鱼卷`;
+  hdr.style.color=bState.themeId==="sumi"?"#1f1612":"#fff6de";
+  hdr.style.textShadow=bState.themeId==="sumi"?"none":"0 2px 8px #0008";
+  $("#stripSubTitle").style.color=bState.themeId==="sumi"?"#5a3a22":"#f6d58e";
   $("#stripSealBadge").textContent=bState.seal;
   $("#stripSlotsBox").innerHTML=[0,1,2].map(idx=>buildStripSlot(idx,th,flt)).join("");
   $("#stripSlotsBox").querySelectorAll(".strip-slot").forEach(el=>{
@@ -1183,22 +1232,61 @@ async function downloadKeepsake(){
  x.strokeStyle=th.cardAccent;x.lineWidth=3;x.strokeRect(28,28,c.width-56,c.height-56);x.lineWidth=1;x.strokeRect(38,38,c.width-76,c.height-76);
 
  if(isStrip){
-  x.fillStyle=th.text;x.textAlign="center";x.font='38px "Ma Shan Zheng",serif';x.fillText(`${th.cn} · 鲤鱼留影`,c.width/2,92);
-  x.font='italic 22px "Cormorant Garamond",Georgia,serif';x.fillStyle=th.cardAccent;x.fillText("The House of Creations · Fish Lantern Photo",c.width/2,126);
-  const fw=540,fh=340,sx=(c.width-fw)/2;let cy=158;
-  imgs.slice(0,3).forEach(im=>{
-   x.fillStyle="#09060b";x.fillRect(sx-8,cy-8,fw+16,fh+16);x.strokeStyle=th.cardAccent;x.lineWidth=2;x.strokeRect(sx-8,cy-8,fw+16,fh+16);
-   x.save();x.beginPath();x.rect(sx,cy,fw,fh);x.clip();
-   const ar=im.naturalWidth/im.naturalHeight;let dw=fw,dh=dw/ar;if(dh<fh){dh=fh;dw=dh*ar}
-   x.drawImage(im,sx+(fw-dw)/2,cy+(fh-dh)/2,dw,dh);x.restore();cy+=fh+30;
+  x.strokeStyle="#e8c27a";x.lineWidth=3;x.beginPath();x.moveTo(c.width/2,40);x.lineTo(c.width/2-90,82);x.moveTo(c.width/2,40);x.lineTo(c.width/2+90,82);x.stroke();
+  x.fillStyle="#e8c27a";x.beginPath();x.arc(c.width/2,40,6,0,7);x.fill();
+
+  x.fillStyle=th.fin;x.strokeStyle=th.rib;x.lineWidth=2.5;
+  [[106,260,36,320,56,445,86,410,102,365],[614,260,684,320,664,445,634,410,618,365],
+   [104,860,44,910,64,1005,92,975,110,935],[616,860,676,910,656,1005,628,975,610,935]].forEach(p=>{
+   x.beginPath();x.moveTo(p[0],p[1]);x.quadraticCurveTo(p[2],p[3],p[4],p[5]);x.quadraticCurveTo(p[6],p[7],p[8],p[9]);x.closePath();x.fill();x.stroke();
   });
+
+  const bg=x.createLinearGradient(0,105,0,1265);
+  bg.addColorStop(0,th.top);bg.addColorStop(.24,th.mid);bg.addColorStop(.85,th.low);bg.addColorStop(1,th.cardBg);
+  x.fillStyle=bg;x.strokeStyle=th.rib;x.lineWidth=3.5;
+  x.beginPath();x.moveTo(360,104);x.bezierCurveTo(540,106,622,188,622,340);x.lineTo(616,1060);x.quadraticCurveTo(612,1210,510,1255);x.lineTo(210,1255);x.quadraticCurveTo(108,1210,104,1060);x.lineTo(98,340);x.bezierCurveTo(98,188,180,106,360,104);x.closePath();x.fill();x.stroke();
+
+  x.fillStyle="#5a2e16";x.fillRect(102,76,516,16);x.strokeStyle="#e8c27a";x.lineWidth=1.5;x.strokeRect(102,76,516,16);
+  [96,624].forEach(jx=>{x.fillStyle="#5f9885";x.beginPath();x.arc(jx,84,12,0,7);x.fill();x.strokeStyle="#d6efe3";x.stroke()});
+
+  [224,496].forEach((ex,i)=>{
+   x.fillStyle="#fff6da";x.beginPath();x.arc(ex,164,14,0,7);x.fill();
+   x.fillStyle="#180b09";x.beginPath();x.arc(ex+(i===0?-2:2),164,7,0,7);x.fill();
+   x.fillStyle="#fff";x.beginPath();x.arc(ex-2,160,2.5,0,7);x.fill();
+  });
+  x.strokeStyle=th.rib;x.lineWidth=2.5;x.lineCap="round";
+  x.beginPath();x.moveTo(188,142);x.quadraticCurveTo(118,114,96,150);x.moveTo(532,142);x.quadraticCurveTo(602,114,624,150);x.stroke();
+
+  x.fillStyle=bState.themeId==="sumi"?"#1f1612":"#fff6de";x.textAlign="center";x.font='34px "Ma Shan Zheng",serif';x.fillText(`${th.cn} · 三联鱼卷`,c.width/2,168);
+  x.font='italic 19px "Cormorant Garamond",Georgia,serif';x.fillStyle=bState.themeId==="sumi"?"#5a3a22":"#f6d58e";x.fillText("Fish Lantern Photo · 3-Pose Scroll",c.width/2,196);
+
+  const fw=456,fh=290,sx=(c.width-fw)/2;let cy=224;
+  imgs.slice(0,3).forEach((im,idx)=>{
+   x.fillStyle="#0c0812";x.beginPath();rRect(x,sx-6,cy-6,fw+12,fh+12,22);x.fill();x.strokeStyle=th.rib;x.lineWidth=2.5;x.stroke();
+   x.save();x.beginPath();rRect(x,sx,cy,fw,fh,18);x.clip();
+   const ar=im.naturalWidth/im.naturalHeight;let dw=fw,dh=dw/ar;if(dh<fh){dh=fh;dw=dh*ar}
+   x.drawImage(im,sx+(fw-dw)/2,cy+(fh-dh)/2,dw,dh);x.restore();
+   x.fillStyle="rgba(166,41,31,.88)";x.fillRect(sx+12,cy+12,34,34);x.strokeStyle="#e8c27a";x.lineWidth=1.2;x.strokeRect(sx+12,cy+12,34,34);
+   x.fillStyle="#efe3c4";x.font='22px "Ma Shan Zheng",serif';x.textAlign="center";x.fillText(["壹","贰","叁"][idx],sx+29,cy+37);
+   cy+=fh+26;
+  });
+
   if(dImg){
-   x.fillStyle="rgba(239,227,196,.94)";x.fillRect(150,c.height-165,420,108);x.strokeStyle=th.cardAccent;x.lineWidth=1.5;x.strokeRect(150,c.height-165,420,108);
-   x.drawImage(dImg,158,c.height-161,404,100);
+   x.fillStyle="rgba(239,227,196,.95)";x.fillRect(170,1152,380,86);x.strokeStyle=th.rib;x.lineWidth=1.5;x.strokeRect(170,1152,380,86);
+   x.drawImage(dImg,178,1156,364,78);
   }else if(txt){
-   x.fillStyle=th.text;x.font='italic 28px "Cormorant Garamond",Georgia,serif';x.textAlign="center";x.fillText(txt,c.width/2,c.height-96);
+   x.fillStyle=bState.themeId==="sumi"?"#1f1612":"#fff6de";x.font='italic 28px "Cormorant Garamond",Georgia,serif';x.textAlign="center";x.fillText(txt,c.width/2,1205);
   }
-  x.fillStyle="#a6291f";x.fillRect(c.width-116,c.height-122,52,52);x.fillStyle="#efe3c4";x.font='34px "Ma Shan Zheng",serif';x.textAlign="center";x.fillText(bState.seal||"福",c.width-90,c.height-84);
+
+  x.fillStyle="#5a2e16";x.fillRect(160,1252,400,16);x.strokeStyle="#e8c27a";x.lineWidth=1.5;x.strokeRect(160,1252,400,16);
+  [154,566].forEach(jx=>{x.fillStyle="#5f9885";x.beginPath();x.arc(jx,1260,12,0,7);x.fill();x.strokeStyle="#d6efe3";x.stroke()});
+
+  x.fillStyle=th.fin;x.strokeStyle=th.rib;x.lineWidth=2.5;
+  x.beginPath();x.moveTo(270,1268);x.quadraticCurveTo(170,1385,225,1455);x.quadraticCurveTo(320,1370,360,1338);x.quadraticCurveTo(400,1370,495,1455);x.quadraticCurveTo(550,1385,450,1268);x.closePath();x.fill();x.stroke();
+
+  x.strokeStyle="#e8c27a";x.lineWidth=2;x.beginPath();x.moveTo(360,1338);x.lineTo(360,1386);x.stroke();
+  x.fillStyle="#a6291f";x.fillRect(334,1386,52,52);x.strokeStyle="#e8c27a";x.strokeRect(334,1386,52,52);
+  x.fillStyle="#efe3c4";x.font='34px "Ma Shan Zheng",serif';x.textAlign="center";x.fillText(bState.seal||"福",360,1424);
  }else{
   drawFishLantern(x,{x:c.width/2,y:c.height/2-42,phase:.4,scale:6.1,dir:1,themeId:bState.themeId,seal:"",img:imgs[0]});
   x.textAlign="left";x.fillStyle=th.cardAccent;x.font='32px "Ma Shan Zheng",serif';x.fillText(`${th.cn} · 鲤鱼灯`,64,92);

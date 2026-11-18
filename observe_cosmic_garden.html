@@ -1,0 +1,415 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Observe — See the shape of the noise</title>
+    
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- Iconify CDN -->
+    <script src="https://code.iconify.design/iconify-icon/1.0.7/iconify-icon.min.js"></script>
+    
+    <!-- Google Fonts: Instrument Serif & Cinzel / Orbitron for Whimsical Space Vibe -->
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Cinzel:wght@400;600&display=swap');
+
+        :root {
+            --bg: #000000;
+            --fg: #ffffff;
+        }
+
+        .font-serif-instrument {
+            font-family: 'Instrument Serif', serif;
+        }
+
+        .font-whimsical {
+            font-family: 'Cinzel', serif;
+            letter-spacing: 0.05em;
+        }
+
+        /* LIQUID GLASS CSS */
+        .liquid-glass {
+            background: rgba(10, 10, 20, 0.25);
+            background-blend-mode: luminosity;
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: none;
+            box-shadow: inset 0 1px 2px rgba(255, 255, 255, 0.15), 0 8px 32px 0 rgba(0, 0, 0, 0.37);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .liquid-glass::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            border-radius: inherit;
+            padding: 1.4px;
+            background: linear-gradient(
+                180deg,
+                rgba(216, 180, 254, 0.6) 0%,
+                rgba(147, 51, 234, 0.2) 20%,
+                rgba(255, 255, 255, 0) 40%,
+                rgba(255, 255, 255, 0) 60%,
+                rgba(147, 51, 234, 0.2) 80%,
+                rgba(216, 180, 254, 0.6) 100%
+            );
+            -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+            -webkit-mask-composite: xor;
+            mask-composite: exclude;
+            pointer-events: none;
+        }
+
+        .liquid-glass-circle {
+            background-blend-mode: luminosity;
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: none;
+            box-shadow: inset 0 1px 2px rgba(255, 255, 255, 0.15), 0 8px 32px 0 rgba(0, 0, 0, 0.37);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .liquid-glass-circle::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            border-radius: inherit;
+            padding: 1.4px;
+            background: linear-gradient(
+                180deg,
+                rgba(216, 180, 254, 0.6) 0%,
+                rgba(216, 180, 254, 0.3) 30%,
+                rgba(147, 51, 234, 0.2) 50%,
+                rgba(216, 180, 254, 0.3) 70%,
+                rgba(216, 180, 254, 0.6) 100%
+            );
+            -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+            -webkit-mask-composite: xor;
+            mask-composite: exclude;
+            pointer-events: none;
+        }
+
+        /* Custom Animations for Petals */
+        @keyframes floatPetal {
+            0% {
+                transform: translateY(-20px) translateX(0px) rotate(0deg);
+                opacity: 0;
+            }
+            20% {
+                opacity: 0.8;
+            }
+            80% {
+                opacity: 0.8;
+            }
+            100% {
+                transform: translateY(105vh) translateX(100px) rotate(360deg);
+                opacity: 0;
+            }
+        }
+
+        .petal {
+            position: absolute;
+            background: linear-gradient(135deg, rgba(238, 208, 255, 0.8), rgba(168, 85, 247, 0.4));
+            border-radius: 50% 0 50% 50%;
+            pointer-events: none;
+            animation: floatPetal linear infinite;
+        }
+    </style>
+</head>
+<body class="bg-black text-white min-h-screen selection:bg-purple-500 selection:text-white overflow-hidden">
+
+    <div class="bg-black text-white min-h-screen selection:bg-purple-500 selection:text-white overflow-hidden">
+        <section class="min-h-screen relative overflow-hidden flex flex-col">
+
+            <!-- ANIMATED COSMIC GARDEN CANVAS BACKGROUND -->
+            <canvas id="cosmic-canvas" class="absolute inset-0 w-full h-full pointer-events-none z-0"></canvas>
+
+            <!-- FLYING PETALS CONTAINER -->
+            <div id="petals-container" class="absolute inset-0 pointer-events-none z-0 overflow-hidden"></div>
+
+            <!-- NAVBAR -->
+            <nav class="relative z-20 px-6 py-6">
+                <div class="liquid-glass rounded-full max-w-5xl mx-auto pl-6 pr-1.5 py-1.5 flex items-center justify-between">
+                    
+                    <!-- Left Group -->
+                    <div class="flex items-center gap-2">
+                        <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" class="w-6 h-6 text-purple-300">
+                            <path d="M4.21 16.5 A9 9 0 0 1 16.5 4.21" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+                            <path d="M16.5 4.21 A9 9 0 0 1 19.79 16.5" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-dasharray="2.4 2.3"/>
+                            <path d="M19.79 16.5 A9 9 0 0 1 4.21 16.5" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-dasharray="0.01 4.7"/>
+                            <circle cx="12" cy="12" r="2.5" fill="currentColor"/>
+                        </svg>
+                        <span class="font-whimsical font-semibold text-lg tracking-wider text-purple-100">Observe</span>
+                        
+                        <div class="hidden md:flex gap-8 ml-8 font-whimsical text-xs tracking-widest">
+                            <a href="#" class="text-white/80 hover:text-white transition-colors">PRODUCT</a>
+                            <a href="#" class="text-white/80 hover:text-white transition-colors">PRICING</a>
+                            <a href="#" class="text-white/80 hover:text-white transition-colors">CONTACT US</a>
+                        </div>
+                    </div>
+
+                    <!-- Right Group -->
+                    <div class="flex items-center gap-4 font-whimsical text-xs">
+                        <button class="text-white/90 hover:text-white font-medium px-3 py-2 transition-colors">SIGN UP</button>
+                        <button class="bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-500 hover:to-indigo-500 text-white rounded-full px-5 py-2 font-medium tracking-wider whitespace-nowrap shadow-lg shadow-purple-900/40 transition-all duration-300 hover:scale-105">JOIN WAITLIST</button>
+                    </div>
+
+                </div>
+            </nav>
+
+            <!-- HERO CONTENT -->
+            <div class="relative z-10 flex-1 flex flex-col items-center justify-center px-6 py-12 text-center -translate-y-[20%]">
+                
+                <!-- Headline -->
+                <h1 class="text-6xl md:text-7xl lg:text-8xl font-serif-instrument tracking-tight whitespace-nowrap mb-4 text-purple-50"
+                    style="text-shadow: 0 0 72px rgba(147, 51, 234, 0.45), 0 4px 28px rgba(0, 0, 0, 0.6);">
+                    See the shape of the <em class="italic text-purple-200">noise</em>
+                </h1>
+
+                <!-- Subline -->
+                <p class="font-whimsical text-purple-200/80 text-xs md:text-sm tracking-widest max-w-2xl md:whitespace-nowrap mb-10"
+                   style="text-shadow: 0 0 30px rgba(0, 0, 0, 0.8), 0 1px 10px rgba(0, 0, 0, 0.5);">
+                    Every event from your product — rendered as one picture you can actually read.
+                </p>
+
+                <!-- Email Capture -->
+                <div class="max-w-xl w-full">
+                    <div class="liquid-glass rounded-full pl-6 pr-1.5 py-1.5 flex items-center gap-3">
+                        <input type="email" placeholder="Enter your email"
+                               class="bg-transparent border-none outline-none flex-1 text-white placeholder:text-purple-300/60 font-whimsical text-xs tracking-wider">
+                        <button class="bg-white hover:bg-purple-100 rounded-full px-6 py-3 text-black font-whimsical text-xs font-semibold tracking-wider whitespace-nowrap shadow-lg hover:scale-105 transition-transform duration-300">Join Waitlist</button>
+                    </div>
+                </div>
+
+            </div>
+
+            <!-- SOCIAL ROW -->
+            <div class="relative z-10 flex justify-center gap-4 pb-12">
+                <button class="liquid-glass-circle w-14 h-14 flex items-center justify-center rounded-full text-white/80 hover:text-white hover:bg-white/10 transition-all">
+                    <iconify-icon icon="lucide:instagram" class="text-xl"></iconify-icon>
+                </button>
+                <button class="liquid-glass-circle w-14 h-14 flex items-center justify-center rounded-full text-white/80 hover:text-white hover:bg-white/10 transition-all">
+                    <iconify-icon icon="lucide:twitter" class="text-xl"></iconify-icon>
+                </button>
+                <button class="liquid-glass-circle w-14 h-14 flex items-center justify-center rounded-full text-white/80 hover:text-white hover:bg-white/10 transition-all">
+                    <iconify-icon icon="lucide:globe" class="text-xl"></iconify-icon>
+                </button>
+            </div>
+
+        </section>
+    </div>
+
+    <!-- JAVASCRIPT FOR COSMIC GARDEN ANIMATION, STARS, GALAXY, & PETALS -->
+    <script>
+        // Setup Flying Petals dynamically
+        const petalsContainer = document.getElementById('petals-container');
+        const petalCount = 25;
+        for (let i = 0; i < petalCount; i++) {
+            const petal = document.createElement('div');
+            petal.className = 'petal';
+            const size = Math.random() * 10 + 6;
+            petal.style.width = `${size}px`;
+            petal.style.height = `${size * 1.5}px`;
+            petal.style.left = `${Math.random() * 100}vw`;
+            petal.style.top = `${-20 - Math.random() * 50}px`;
+            petal.style.animationDuration = `${Math.random() * 8 + 6}s`;
+            petal.style.animationDelay = `${Math.random() * 5}s`;
+            petalsContainer.appendChild(petal);
+        }
+
+        // Canvas Cosmic Garden & Galaxy Animation
+        const canvas = document.getElementById('cosmic-canvas');
+        const ctx = canvas.getContext('2d');
+
+        let width, height;
+        function resizeCanvas() {
+            width = canvas.width = window.innerWidth;
+            height = canvas.height = window.innerHeight;
+        }
+        window.addEventListener('resize', resizeCanvas);
+        resizeCanvas();
+
+        // Stars array
+        const stars = [];
+        const starCount = 200;
+        for (let i = 0; i < starCount; i++) {
+            stars.push({
+                x: Math.random() * width,
+                y: Math.random() * height,
+                radius: Math.random() * 1.5 + 0.5,
+                alpha: Math.random(),
+                twinkleSpeed: Math.random() * 0.02 + 0.005
+            });
+        }
+
+        // Shooting stars array
+        const shootingStars = [];
+        function createShootingStar() {
+            if (Math.random() < 0.03 && shootingStars.length < 3) {
+                shootingStars.push({
+                    x: Math.random() * width * 0.8,
+                    y: Math.random() * (height * 0.4),
+                    length: Math.random() * 80 + 40,
+                    speed: Math.random() * 12 + 8,
+                    angle: Math.PI / 4 + (Math.random() * 0.2 - 0.1),
+                    opacity: 1
+                });
+            }
+        }
+
+        let galaxyAngle = 0;
+
+        function animateCosmicScene() {
+            ctx.clearRect(0, 0, width, height);
+
+            // 1. Background Space Gradient
+            const bgGradient = ctx.createLinearGradient(0, 0, 0, height);
+            bgGradient.addColorStop(0, '#030008');
+            bgGradient.addColorStop(0.5, '#090314');
+            bgGradient.addColorStop(1, '#130526');
+            ctx.fillStyle = bgGradient;
+            ctx.fillRect(0, 0, width, height);
+
+            // 2. Twinkling Stars
+            ctx.save();
+            for (let star of stars) {
+                star.alpha += star.twinkleSpeed;
+                if (star.alpha > 1 || star.alpha < 0.2) {
+                    star.twinkleSpeed = -star.twinkleSpeed;
+                }
+                ctx.fillStyle = `rgba(255, 255, 255, ${Math.abs(star.alpha)})`;
+                ctx.beginPath();
+                ctx.arc(star.x, star.y, star.radius, 0, Math.PI * 2);
+                ctx.fill();
+            }
+            ctx.restore();
+
+            // 3. Twirling Galaxy in Background Sky
+            ctx.save();
+            const galaxyX = width * 0.65;
+            const galaxyY = height * 0.35;
+            const galaxyRadius = Math.min(width, height) * 0.45;
+
+            ctx.translate(galaxyX, galaxyY);
+            ctx.rotate(galaxyAngle);
+            galaxyAngle += 0.0015; // Smooth rotation
+
+            // Draw spiral arms and glowing core
+            const galaxyGrad = ctx.createRadialGradient(0, 0, 5, 0, 0, galaxyRadius);
+            galaxyGrad.addColorStop(0, 'rgba(255, 240, 255, 0.8)');
+            galaxyGrad.addColorStop(0.2, 'rgba(216, 130, 255, 0.4)');
+            galaxyGrad.addColorStop(0.5, 'rgba(99, 102, 241, 0.15)');
+            galaxyGrad.addColorStop(1, 'rgba(0, 0, 0, 0)');
+
+            ctx.fillStyle = galaxyGrad;
+            ctx.beginPath();
+            ctx.arc(0, 0, galaxyRadius, 0, Math.PI * 2);
+            ctx.fill();
+
+            // Spiral arm speckles
+            for (let i = 0; i < 300; i++) {
+                let angle = i * 0.1;
+                let r = i * (galaxyRadius / 300);
+                let x = r * Math.cos(angle);
+                let y = r * Math.sin(angle) * 0.5; // Elliptical tilt
+                
+                ctx.fillStyle = i % 2 === 0 ? 'rgba(220, 180, 255, 0.6)' : 'rgba(147, 197, 253, 0.6)';
+                ctx.beginPath();
+                ctx.arc(x, y, Math.random() * 1.5 + 0.5, 0, Math.PI * 2);
+                ctx.fill();
+            }
+            ctx.restore();
+
+            // 4. Shooting Stars
+            createShootingStar();
+            ctx.save();
+            for (let i = shootingStars.length - 1; i >= 0; i--) {
+                let ss = shootingStars[i];
+                let tailX = ss.x - Math.cos(ss.angle) * ss.length;
+                let tailY = ss.y - Math.sin(ss.angle) * ss.length;
+
+                const shootingGrad = ctx.createLinearGradient(ss.x, ss.y, tailX, tailY);
+                shootingGrad.addColorStop(0, `rgba(255, 255, 255, ${ss.opacity})`);
+                shootingGrad.addColorStop(1, 'rgba(255, 255, 255, 0)');
+
+                ctx.strokeStyle = shootingGrad;
+                ctx.lineWidth = 2;
+                ctx.beginPath();
+                ctx.moveTo(ss.x, ss.y);
+                ctx.lineTo(tailX, tailY);
+                ctx.stroke();
+
+                ss.x += Math.cos(ss.angle) * ss.speed;
+                ss.y += Math.sin(ss.angle) * ss.speed;
+                ss.opacity -= 0.02;
+
+                if (ss.opacity <= 0) {
+                    shootingStars.splice(i, 1);
+                }
+            }
+            ctx.restore();
+
+            // 5. Walking Man Silhouette & Glowing Cosmic Garden Foreground
+            ctx.save();
+            // Horizon glow
+            const horizonGrad = ctx.createLinearGradient(0, height * 0.7, 0, height);
+            horizonGrad.addColorStop(0, 'rgba(76, 29, 149, 0)');
+            horizonGrad.addColorStop(1, 'rgba(76, 29, 149, 0.4)');
+            ctx.fillStyle = horizonGrad;
+            ctx.fillRect(0, height * 0.7, width, height * 0.3);
+
+            // Glowing Flowers in Foreground
+            const time = Date.now() * 0.003;
+            for (let i = 0; i < width; i += 25) {
+                let flowerHeight = 40 + Math.sin(i + time) * 15;
+                let bloomColor = i % 50 === 0 ? 'rgba(216, 180, 254, 0.8)' : 'rgba(129, 140, 248, 0.8)';
+                
+                // Stem
+                ctx.strokeStyle = 'rgba(30, 41, 59, 0.9)';
+                ctx.lineWidth = 3;
+                ctx.beginPath();
+                ctx.moveTo(i, height);
+                ctx.quadraticCurveTo(i + 5, height - flowerHeight * 0.5, i, height - flowerHeight);
+                ctx.stroke();
+
+                // Glowing Bloom
+                ctx.fillStyle = bloomColor;
+                ctx.beginPath();
+                ctx.arc(i, height - flowerHeight, 5 + Math.sin(i * 0.5 + time) * 2, 0, Math.PI * 2);
+                ctx.fill();
+            }
+
+            // Walking Man Silhouette (Center-Left)
+            const manX = width * 0.35 + Math.sin(time * 0.5) * 10;
+            const manY = height * 0.65;
+            
+            ctx.fillStyle = '#05020a';
+            // Head
+            ctx.beginPath();
+            ctx.arc(manX, manY - 50, 7, 0, Math.PI * 2);
+            ctx.fill();
+            // Body (Coat)
+            ctx.fillRect(manX - 10, manY - 40, 20, 35);
+            // Legs (Walking stride animation)
+            const legOffset = Math.sin(time * 2) * 12;
+            ctx.strokeStyle = '#05020a';
+            ctx.lineWidth = 4;
+            ctx.beginPath();
+            ctx.moveTo(manX - 4, manY - 5);
+            ctx.lineTo(manX - 8 + legOffset, manY + 25);
+            ctx.moveTo(manX + 4, manY - 5);
+            ctx.lineTo(manX + 8 - legOffset, manY + 25);
+            ctx.stroke();
+
+            ctx.restore();
+
+            requestAnimationFrame(animateCosmicScene);
+        }
+
+        requestAnimationFrame(animateCosmicScene);
+    </script>
+</body>
+</html>

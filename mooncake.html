@@ -1,0 +1,1364 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>中秋节 · Mooncake Festival</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Ma+Shan+Zheng&family=Noto+Sans+SC:wght@400;500;700;900&family=Quicksand:wght@400;600;700&display=swap" rel="stylesheet">
+
+<style>
+:root{
+  --red:#c93635;--darkred:#7d2732;--rose:#df6677;--pink:#ee9aa1;
+  --peach:#f2aa8e;--cream:#fff3d8;--paper:#fffaf0;--gold:#e7b446;
+  --yellow:#ffd966;--green:#789c61;--purple:#5b4563;--night:#181936;
+  --ink:#55323b;--shadow:0 18px 45px rgba(80,32,43,.2);
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{
+  margin:0;font-family:"Quicksand","Noto Sans SC",sans-serif;color:var(--ink);
+  background:#f4b39a;overflow-x:hidden;
+}
+button,input,select{font:inherit}
+button{cursor:pointer}
+.hidden{display:none!important}
+
+/* ============ floating decoration ============ */
+.float{position:fixed;z-index:30;pointer-events:none;animation:float 5s ease-in-out infinite}
+.flower{font-size:28px}.f1{left:2%;top:18%}.f2{right:3%;top:31%;animation-delay:1s}
+.f3{left:5%;bottom:14%;animation-delay:2s}.f4{right:6%;bottom:18%;animation-delay:.5s}
+@keyframes float{50%{transform:translateY(-18px) rotate(8deg)}}
+
+/* ============ navigation ============ */
+.topbar{
+  position:fixed;top:0;left:0;right:0;z-index:100;height:62px;
+  display:flex;align-items:center;justify-content:center;gap:5px;
+  background:rgba(255,243,216,.94);backdrop-filter:blur(12px);
+  border-bottom:2px solid rgba(125,39,50,.12)
+}
+.topbar button{
+  border:0;background:transparent;color:var(--darkred);padding:9px 14px;border-radius:20px;
+  font-weight:800;transition:.2s
+}
+.topbar button:hover,.topbar button.active{background:var(--red);color:white}
+.coin-pill{
+  position:absolute;right:18px;background:#ffe796;border:2px solid var(--gold);
+  border-radius:20px;padding:7px 12px;font-weight:900
+}
+
+/* Every section is a separate "room" */
+.room{
+  display:none;
+  min-height:calc(100vh - 62px);position:relative;overflow:hidden;padding:105px 5vw 65px;
+  isolation:isolate;
+}
+.room.active-room{display:block}.home.active-room{display:grid}
+.room-inner{width:min(1120px,100%);margin:auto;position:relative;z-index:3}
+/* Each room is an independent screen: only the selected section exists visually. */
+.room:not(.active-room){display:none!important}
+.room.active-room{min-height:calc(100vh - 62px)}
+.home.active-room{min-height:calc(100vh - 62px)}
+@media(max-width:760px){
+  .topbar{height:auto;min-height:58px;justify-content:flex-start;overflow-x:auto;overflow-y:hidden;padding:7px 88px 7px 8px;white-space:nowrap;scrollbar-width:none}
+  .topbar::-webkit-scrollbar{display:none}
+  .topbar button{flex:0 0 auto;padding:8px 11px;font-size:12px}
+  .coin-pill{right:8px;z-index:2}
+  .room.active-room{min-height:calc(100vh - 58px);padding-top:82px}
+  .home.active-room{min-height:calc(100vh - 58px)}
+}
+
+.title{text-align:center;max-width:800px;margin:0 auto 28px}
+.title .kicker{font-size:12px;letter-spacing:3px;text-transform:uppercase;font-weight:900}
+.title h2{font:400 clamp(43px,6vw,70px) "Ma Shan Zheng","Noto Sans SC";margin:4px 0}
+.title p{line-height:1.7;margin:0}
+
+/* ============ HOME ONLY ============ */
+.home{
+  background:
+    radial-gradient(circle at 20% 25%,#ffe88a 0 2px,transparent 3px),
+    radial-gradient(circle at 80% 18%,#ffe88a 0 3px,transparent 4px),
+    linear-gradient(180deg,#a73c50,#d55d6a 48%,#efa38c);
+  color:#fff5dd;display:grid;place-items:center;text-align:center;
+}
+.home:after{
+  content:"";position:absolute;left:-5%;right:-5%;bottom:-60px;height:220px;
+  background:linear-gradient(145deg,transparent 49%,#713447 50% 100%);
+  opacity:.45;z-index:1
+}
+.home-inner{position:relative;z-index:3}
+.home-moon{
+  width:165px;height:165px;margin:0 auto 22px;border-radius:50%;display:grid;place-items:center;
+  background:radial-gradient(circle at 35% 30%,#fff8ce,#ffd96d 65%,#edac3a);
+  box-shadow:0 0 80px rgba(255,221,109,.45);font-size:72px;animation:moon 4s ease-in-out infinite
+}
+@keyframes moon{50%{transform:translateY(-12px)}}
+.home h1{font:400 clamp(65px,11vw,125px)/.85 "Ma Shan Zheng";margin:0;text-shadow:5px 7px rgba(93,32,48,.25)}
+.home h3{font:400 38px "Ma Shan Zheng";margin:17px 0 7px}
+.home p{max-width:680px;margin:0 auto;line-height:1.8;font-size:17px}
+.home-actions{display:flex;justify-content:center;gap:12px;flex-wrap:wrap;margin-top:25px}
+
+/* ============ shared buttons ============ */
+.btn{
+  border:0;border-radius:999px;padding:12px 20px;font-weight:900;
+  box-shadow:0 6px 0 rgba(91,35,45,.18);transition:.18s
+}
+.btn:hover{transform:translateY(-3px)}
+.red{background:var(--red);color:#fff4dc}.gold{background:var(--yellow);color:#683b2e}
+.white{background:#fff5e1;color:var(--darkred)}
+
+/* ============ QUOTES ONLY ============ */
+.quotes{background:linear-gradient(180deg,#fff0dc,#f4b09b)}
+.quote-layout{display:grid;grid-template-columns:290px 1fr;gap:28px;align-items:center}
+.quote-info,.tarot-stage{
+  background:rgba(255,250,240,.82);border:2px solid #fff;border-radius:28px;
+  box-shadow:var(--shadow);padding:24px
+}
+.quote-info h3{font:400 38px "Ma Shan Zheng";color:var(--red);margin:0}
+.quote-info p{line-height:1.7}
+.chips{display:flex;flex-wrap:wrap;gap:7px}.chip{
+  background:#ffe0da;border:1px solid #efb5ae;padding:7px 10px;border-radius:99px;font-size:12px;font-weight:800
+}
+.tarot-stage{min-height:570px;display:grid;place-items:center}
+.card{
+  width:310px;height:470px;perspective:1100px;cursor:pointer
+}
+.card-inner{width:100%;height:100%;position:relative;transform-style:preserve-3d;transition:.75s}
+.card.flipped .card-inner{transform:rotateY(180deg)}
+.face{
+  position:absolute;inset:0;backface-visibility:hidden;border-radius:25px;border:7px double var(--gold);
+  box-shadow:0 20px 45px rgba(81,31,43,.25);padding:22px
+}
+.front{
+  background:
+    radial-gradient(circle at 20% 25%,#f7b1ae 0 2px,transparent 3px),
+    radial-gradient(circle at 80% 75%,#f7b1ae 0 2px,transparent 3px),
+    linear-gradient(145deg,#9e2b3f,#d45162);
+  color:#fff1d0;display:grid;place-items:center;text-align:center
+}
+.front .big{font-size:88px}.front h3{font:400 45px "Ma Shan Zheng";margin:0}
+.front small{letter-spacing:2px}
+.back{
+  transform:rotateY(180deg);background:linear-gradient(145deg,#fff8e2,#ffd9cb);
+  display:flex;flex-direction:column;justify-content:center;text-align:center
+}
+.hanzi{font:400 47px "Ma Shan Zheng","Noto Sans SC";color:var(--red);line-height:1.2}
+.pinyin{font-style:italic;color:#93636c;margin:10px 0}
+.meaning{font-size:19px;font-weight:900}.explain{font-size:13px;line-height:1.55;margin-top:10px}
+
+/* ============ QUIZ ONLY ============ */
+.quiz{background:linear-gradient(180deg,#fff7e4,#ffd8cc)}
+.quiz-box{
+  width:min(780px,100%);margin:auto;background:#fffaf0;border:3px solid #f0c0ae;
+  border-radius:30px;box-shadow:var(--shadow);padding:28px
+}
+.quiz-top{display:flex;justify-content:space-between;align-items:center;gap:10px}
+.quiz-progress{height:10px;background:#efd7ce;border-radius:99px;overflow:hidden;margin:16px 0}
+.quiz-progress span{display:block;height:100%;width:0;background:linear-gradient(90deg,var(--red),var(--pink),var(--yellow));transition:.4s}
+.q-number{text-align:center;color:#9d6670;font-weight:900}
+.q-hanzi{text-align:center;font:400 67px "Ma Shan Zheng";color:var(--red);margin:6px}
+.q-pinyin{text-align:center;color:#99636d;font-style:italic}
+.question-text{text-align:center;font-weight:900;margin:13px 0}
+.options{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.option{
+  border:2px solid #eab8aa;background:#fff1df;border-radius:17px;padding:15px;
+  color:#643b43;font-weight:800;text-align:left;transition:.15s
+}
+.option:hover{transform:translateY(-2px);background:#ffe2d6}
+.option.correct{background:#dceebc;border-color:#75a259}
+.option.wrong{background:#ffd0ce;border-color:#d45c5b}
+.option:disabled{cursor:default}
+.quiz-message{text-align:center;min-height:30px;font-weight:900;margin:15px 0}
+.quiz-bottom{display:flex;justify-content:space-between;align-items:center}
+
+/* ============ KITCHEN ONLY ============ */
+.kitchen{
+  background:
+    linear-gradient(180deg,#efb08c 0 12%,#f8d2b0 12% 15%,#fff0d4 15% 100%);
+}
+.kitchen-room{
+  width:min(1160px,100%);margin:auto;display:grid;grid-template-columns:245px minmax(0,1fr);gap:20px
+}
+.kitchen-side,.cook-box{
+  background:#fffaf0;border:3px solid #e8b9a5;border-radius:28px;box-shadow:var(--shadow)
+}
+.kitchen-side{padding:18px}
+.kitchen-side h3{font:400 33px "Ma Shan Zheng";color:var(--darkred);margin:0 0 10px}
+.ingredient{
+  display:flex;gap:10px;align-items:center;padding:10px;margin:8px 0;
+  border:2px solid #efd0bd;background:#fff5e4;border-radius:14px;cursor:grab;
+  user-select:none;transition:.15s
+}
+.ingredient:hover{transform:translateX(3px);border-color:var(--pink)}
+.ingredient.dragging{opacity:.45;transform:scale(.95)}
+.ingredient.used{opacity:.3;filter:grayscale(1);cursor:not-allowed}
+.ingredient b{font-size:14px}.ingredient small{color:#96646c}
+.cook-box{height:650px;position:relative;overflow:hidden;background:#e9a078}
+.cook-scene{
+  position:absolute;inset:0;
+  background:
+    linear-gradient(90deg,transparent 47%,rgba(132,70,65,.25) 48% 52%,transparent 53%),
+    linear-gradient(180deg,#9ecb8c 0 16%,#eeb283 16% 20%,#fff0d4 20% 100%);
+}
+.cook-window{
+  position:absolute;top:0;left:0;right:0;height:130px;
+  background:linear-gradient(#91c67f,#d5df9c);border-bottom:11px solid #bc6c55
+}
+.cook-window:after{content:"🌿   ☁️   🌿   ☁️   🌿";position:absolute;inset:30px;text-align:center;font-size:30px}
+.counter{
+  position:absolute;left:7%;right:7%;bottom:9%;height:75px;border-radius:20px;
+  background:#d88a67;box-shadow:0 11px #b96557
+}
+.cook-hint{
+  position:absolute;right:16px;top:16px;z-index:20;width:225px;
+  background:#fff3ba;border:3px solid #dca64c;border-radius:18px;padding:12px;
+  box-shadow:0 9px 20px rgba(90,44,39,.2);font-size:12px
+}
+.cook-hint strong{color:var(--red);display:block;margin-bottom:3px}
+.cook-instruction{
+  position:absolute;left:50%;top:155px;transform:translateX(-50%);z-index:15;
+  width:55%;text-align:center;background:rgba(255,250,240,.92);padding:11px 15px;border-radius:17px;
+  font-weight:900;border:2px solid #efd0b8
+}
+.cook-counter{
+  position:absolute;bottom:22%;left:50%;transform:translateX(-50%);z-index:10;
+  font-weight:900;background:#fff4db;border-radius:99px;padding:7px 13px
+}
+.bowl{
+  position:absolute;z-index:5;left:50%;top:51%;transform:translate(-50%,-50%);
+  width:290px;height:155px;border-radius:0 0 150px 150px;
+  background:linear-gradient(#fff7e9 0 15%,#d43b40 16% 100%);border:7px solid #fff3dd;
+  box-shadow:0 18px 25px rgba(77,33,41,.25)
+}
+.bowl:before{
+  content:"";position:absolute;left:17px;right:17px;top:-17px;height:65px;border-radius:50%;
+  background:#6d5261;border:7px solid #fff3dd
+}
+.dough{
+  position:absolute;z-index:8;left:50%;top:46%;transform:translate(-50%,-50%);
+  width:130px;height:70px;border-radius:50%;background:#f2bd8d;display:grid;place-items:center;
+  box-shadow:inset 0 -8px rgba(147,78,56,.15);transition:.3s
+}
+.dough span{font-size:45px}
+.tool{position:absolute;z-index:12;left:50%;top:50%;transform:translate(-50%,-50%);font-size:70px}
+.cook-actions{
+  position:absolute;z-index:25;left:50%;bottom:14px;transform:translateX(-50%);
+  display:flex;gap:8px;flex-wrap:wrap;justify-content:center;width:90%
+}
+.drop-target{
+  position:absolute;z-index:18;left:50%;top:45%;transform:translate(-50%,-50%);
+  width:260px;height:145px;border:4px dashed rgba(255,244,214,.9);border-radius:50%;
+  display:grid;place-items:center;color:#fff8df;text-shadow:0 2px #7c3d42;font-weight:900;
+  background:rgba(124,60,66,.18);transition:.2s
+}
+.drop-target.over{background:rgba(255,218,115,.35);transform:translate(-50%,-50%) scale(1.05)}
+.mixing-bits{position:absolute;z-index:10;inset:0;pointer-events:none}
+.bit{position:absolute;font-size:28px;animation:spinbit 1s linear infinite}
+@keyframes spinbit{to{transform:rotate(360deg) translateX(20px) rotate(-360deg)}}
+.knead-dough{position:absolute;z-index:10;left:50%;top:49%;transform:translate(-50%,-50%);font-size:95px}
+.rolling-pin{
+  position:absolute;z-index:15;left:50%;top:49%;transform:translate(-50%,-50%);
+  font-size:80px;transition:.2s
+}
+.mold{
+  position:absolute;z-index:15;left:50%;top:49%;transform:translate(-50%,-50%);
+  font-size:105px
+}
+.oven{
+  position:absolute;z-index:10;left:50%;top:48%;transform:translate(-50%,-50%);
+  width:270px;height:190px;border-radius:22px;background:#b7383d;border:8px solid #7d2732;
+  box-shadow:inset 0 0 0 8px #e48c70
+}
+.oven:after{content:"🔥";position:absolute;inset:0;display:grid;place-items:center;font-size:75px}
+.oven-light{position:absolute;z-index:14;left:50%;top:50%;transform:translate(-50%,-50%);font-size:60px;opacity:0}
+.cook-finish{position:absolute;z-index:30;inset:0;background:rgba(255,245,220,.92);display:grid;place-items:center;text-align:center}
+.finish-content p{font-size:18px;line-height:1.35;margin:7px auto;max-width:92%;}
+.finish-content .finish-title{
+  font-size:clamp(21px,4vw,31px);
+  line-height:1.2;
+  white-space:normal;
+  margin:8px auto 2px;
+  color:#8c2939;
+  font-weight:900;
+}
+@media(max-width:520px){.finish-content p{font-size:16px}.finish-content .finish-title{font-size:20px}}
+/* Keep the post-baking button compact and inside the finish card */
+.finish-content .btn{display:block;width:min(235px,86%);max-width:100%;margin:12px auto 0;padding:10px 12px;font-size:clamp(11px,2.5vw,14px);line-height:1.15;white-space:normal;box-sizing:border-box}
+/* Mixing timing game */
+.mixing-track{position:absolute;z-index:22;left:50%;top:58%;transform:translate(-50%,-50%);width:min(360px,78%);height:34px;background:rgba(255,246,226,.88);border:3px solid #b97962;border-radius:999px;box-shadow:0 6px 14px rgba(75,35,43,.22),inset 0 2px 5px rgba(100,45,50,.12)}
+.mixing-gold{position:absolute;left:40%;top:2px;width:20%;height:24px;border-radius:999px;background:#f5c84b;box-shadow:0 0 0 3px rgba(255,232,130,.75),0 0 15px rgba(245,200,75,.65)}
+.mixing-marker{position:absolute;left:0;top:3px;width:27px;height:22px;border-radius:50%;background:#8c2939;border:3px solid #fff0d8;box-shadow:0 3px 7px rgba(58,25,36,.35);transform:translateX(-50%)}
+.mixing-marker.perfect{background:#4e8b55;box-shadow:0 0 15px rgba(255,220,100,.95)}
+.mixing-status{position:absolute;z-index:23;left:50%;top:67%;transform:translateX(-50%);font-weight:900;font-size:13px;color:#7b3441;background:rgba(255,247,226,.9);padding:5px 12px;border-radius:999px;white-space:nowrap}
+@media(max-width:520px){.mixing-track{height:30px;width:78%}.mixing-gold{height:20px}.mixing-marker{height:18px;width:23px}.mixing-status{font-size:11px;top:68%}}
+
+.finish-content{font-size:100px}.finish-content h3{font:400 50px "Ma Shan Zheng";color:var(--red);margin:0}
+
+/* ============ CLAW ONLY ============ */
+.claw-room{
+  background:linear-gradient(180deg,#db6870,#8e3e57 60%,#4a3150);
+  color:#fff2db
+}
+.arcade{
+  width:min(1050px,100%);margin:auto;display:grid;grid-template-columns:1fr 275px;gap:22px
+}
+.machine{
+  background:linear-gradient(90deg,#9e2d3d,#e34d51,#9e2d3d);padding:17px;
+  border:9px solid #762737;border-radius:32px;box-shadow:0 25px 55px rgba(38,19,38,.3)
+}
+.machine-screen{
+  height:500px;border-radius:20px;border:7px solid #ffd9bb;overflow:hidden;position:relative;
+  background:
+    radial-gradient(circle at 15% 22%,#ffe990 0 3px,transparent 4px),
+    radial-gradient(circle at 85% 28%,#ffe990 0 3px,transparent 4px),
+    linear-gradient(180deg,#4e4263,#76546b)
+}
+.machine-screen:before{
+  content:"";position:absolute;left:0;right:0;bottom:0;height:85px;
+  background:linear-gradient(#9d655b,#6b414b)
+}
+.prize-ball{
+  position:absolute;z-index:4;width:62px;height:62px;border-radius:50%;
+  display:grid;place-items:center;font-size:29px;
+  background:radial-gradient(circle at 30% 25%,#fff2d1,#f0a06e 40%,#bd4650 100%);
+  border:4px solid #ffe1b9;box-shadow:0 9px 12px rgba(30,18,36,.3);
+  transition:transform .2s
+}
+.prize-ball.bounce{animation:ballbounce 1.2s ease-in-out infinite}
+@keyframes ballbounce{
+  0%,100%{transform:translateY(0)}50%{transform:translateY(-17px)}
+}
+.claw{
+  position:absolute;z-index:12;top:0;left:50%;transform:translateX(-50%);
+  width:60px;text-align:center;transition:left .12s ease
+}
+.claw-rope{height:135px;width:5px;background:#f4dbc1;margin:auto}
+.claw-hand{font-size:44px;line-height:.5;filter:drop-shadow(0 5px 3px #37243a)}
+.claw.grabbing{animation:grab .8s ease}
+@keyframes grab{50%{transform:translate(-50%,12px) scale(1.05)}}
+.claw-controls{display:flex;justify-content:center;gap:8px;margin-top:14px}
+.key{width:47px;height:44px;border:0;border-radius:11px;background:#fff0d8;color:#8c303a;font-weight:900;box-shadow:0 4px #b06057}
+.key:active{transform:translateY(3px);box-shadow:none}
+.arcade-panel{background:#fff5df;color:var(--ink);border-radius:25px;padding:20px;box-shadow:var(--shadow)}
+.arcade-panel h3{font:400 31px "Ma Shan Zheng";color:var(--darkred);margin:0 0 10px}
+.prizes{display:grid;gap:8px}.prize-row{display:flex;justify-content:space-between;background:#ffe2d8;border-radius:12px;padding:9px}
+.inventory{display:flex;gap:6px;flex-wrap:wrap;font-size:28px}
+
+/* ============ DECOR ONLY ============ */
+.decor{background:linear-gradient(180deg,#fff0dc,#f2ae91)}
+.decor-layout{display:grid;grid-template-columns:255px 1fr;gap:20px}
+.decor-panel,.cake-table{background:#fff9ec;border:3px solid #edc1ac;border-radius:28px;box-shadow:var(--shadow)}
+.decor-panel{padding:20px}.decor-panel h3{font:400 33px "Ma Shan Zheng";color:var(--darkred);margin:0}
+.decor-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:14px}
+.decor-btn{border:2px solid #e9b8a9;background:#fff0dd;border-radius:13px;padding:12px;font-size:27px}
+.cake-table{height:600px;position:relative;overflow:hidden;background:linear-gradient(145deg,#e9a47d,#f3c49c)}
+.cake-plate{position:absolute;left:50%;top:62%;transform:translate(-50%,-50%);width:390px;height:105px;background:#fff3d8;border-radius:50%;box-shadow:0 13px #d39a7d}
+.cake{position:absolute;left:50%;top:48%;transform:translate(-50%,-50%);width:260px;height:145px;border-radius:50%;
+  background:radial-gradient(circle,#7f4c39 0 3px,transparent 4px),linear-gradient(#df9a5a,#b86f3f);
+  background-size:28px 24px,auto;border:8px solid #995c3f
+}
+.cake-word{position:absolute;left:50%;top:47%;transform:translate(-50%,-50%);z-index:5;font:400 34px "Ma Shan Zheng";color:#ffe5a0}
+.decor-item{position:absolute;z-index:8;font-size:46px;cursor:grab;user-select:none}
+.decor-tip{font-size:12px;line-height:1.5;color:#80505a}
+
+/* ============ GARDEN ONLY ============ */
+.garden{
+  min-height:100vh;color:#fff2d4;
+  background:
+    radial-gradient(circle at 15% 25%,#ffd85e 0 2px,transparent 3px),
+    radial-gradient(circle at 75% 18%,#ffe993 0 2px,transparent 3px),
+    radial-gradient(circle at 38% 47%,#ffd85e 0 3px,transparent 4px),
+    radial-gradient(circle at 88% 62%,#ffe993 0 2px,transparent 3px),
+    linear-gradient(180deg,#151a3b,#2d234b 55%,#5a3049);
+  background-size:170px 150px,210px 170px,180px 160px,230px 190px,auto;
+}
+.garden:before{
+  content:"";position:absolute;inset:auto 0 0;height:38%;
+  background:
+    radial-gradient(ellipse at 10% 100%,#191a32 0 29%,transparent 30%),
+    radial-gradient(ellipse at 55% 100%,#201a36 0 36%,transparent 37%),
+    radial-gradient(ellipse at 100% 100%,#17172f 0 30%,transparent 31%);
+}
+.moon-large{
+  position:absolute;right:11%;top:115px;width:125px;height:125px;border-radius:50%;
+  background:#ffe89b;box-shadow:0 0 65px rgba(255,219,108,.4);z-index:1
+}
+.old-house{
+  position:absolute;z-index:2;bottom:25%;left:5%;width:190px;height:120px;background:#46253a;
+  border:5px solid #8b4b55;border-radius:10px
+}
+.old-house:before{
+  content:"";position:absolute;left:-25px;top:-58px;border-left:120px solid transparent;
+  border-right:120px solid transparent;border-bottom:70px solid #7c3442
+}
+.old-house:after{content:"🏮  🏮";position:absolute;left:35px;top:40px;font-size:30px}
+.garden-title{position:relative;z-index:5}
+.lantern-cables{position:absolute;top:85px;left:0;right:0;display:flex;justify-content:space-around;z-index:4}
+.hanging-lantern{
+  width:45px;height:64px;background:#cf3b47;border:3px solid #e5b74e;border-radius:45%;
+  box-shadow:0 0 25px rgba(255,205,86,.5);animation:sway 3s ease-in-out infinite
+}
+.hanging-lantern:after{content:"";position:absolute;width:3px;height:28px;background:#e5b74e;top:61px;left:50%}
+@keyframes sway{50%{transform:rotate(5deg) translateY(4px)}}
+.flower-bed{position:absolute;z-index:3;bottom:15%;right:7%;font-size:30px;letter-spacing:8px}
+.lantern-maker{
+  position:relative;z-index:6;width:min(780px,100%);margin:65px auto 0;
+  padding:25px;border:2px solid rgba(255,221,154,.45);border-radius:30px;
+  background:rgba(255,240,208,.09);backdrop-filter:blur(7px);text-align:center
+}
+.lantern-preview{
+  width:140px;height:180px;margin:0 auto 24px;display:grid;place-items:center;
+  border:7px solid #e9bd55;border-radius:47% 47% 40% 40%;
+  box-shadow:0 0 45px rgba(255,204,78,.55);font:400 45px "Ma Shan Zheng";color:#ffe7a0;position:relative
+}
+.lantern-preview:before,.lantern-preview:after{
+  content:"";position:absolute;left:50%;transform:translateX(-50%);width:165px;height:7px;background:#e9bd55
+}
+.lantern-preview:before{top:-13px}.lantern-preview:after{bottom:-13px}
+.lantern-form{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.field{background:rgba(255,244,216,.1);border:1px solid rgba(255,232,181,.35);border-radius:15px;padding:11px;text-align:left}
+.field label{display:block;font-size:12px;font-weight:900;margin-bottom:7px}
+.field select,.field input{width:100%;border:0;border-radius:9px;padding:10px;background:#fff2d8;color:#5c3540}
+.wish{margin-top:12px}
+.cutscene{
+  position:fixed;inset:0;z-index:200;background:linear-gradient(#11152f,#38244c);
+  display:none;place-items:end center;overflow:hidden
+}
+.cutscene.show{display:grid}
+.cutscene-sky{
+  position:absolute;inset:0;
+  background:
+    radial-gradient(circle at 18% 20%,#ffe892 0 2px,transparent 3px),
+    radial-gradient(circle at 80% 25%,#ffe892 0 2px,transparent 3px),
+    radial-gradient(circle at 42% 12%,#ffe892 0 3px,transparent 4px)
+}
+.cinematic-lantern{position:absolute;bottom:17%;left:50%;width:90px;height:120px;border-radius:45%;border:5px solid #edc65c;display:grid;place-items:center;font:400 32px "Ma Shan Zheng";color:#ffe99d;box-shadow:0 0 60px #ffcf5e;animation:launchUp 5s 1.5s ease-in forwards}
+@keyframes launchUp{to{bottom:110%;transform:scale(.5)}}
+.hanfu-girl{position:absolute;bottom:-10px;left:50%;transform:translateX(-50%);width:210px;height:330px}
+.girl-hair{position:absolute;left:66px;top:0;width:80px;height:115px;background:#241b2c;border-radius:50% 50% 35% 35%}
+.girl-face{position:absolute;left:76px;top:35px;width:60px;height:75px;background:#f5c0a7;border-radius:48%}
+.girl-hair:after{content:"🌸";position:absolute;right:-10px;top:18px;font-size:30px}
+.girl-body{position:absolute;left:20px;top:105px;width:170px;height:220px;background:linear-gradient(90deg,#a73552,#e06a78,#a73552);clip-path:polygon(32% 0,68% 0,100% 100%,0 100%)}
+.girl-sleeve{position:absolute;top:120px;width:70px;height:135px;background:#d95e71;border-radius:50%;transform:rotate(22deg)}
+.girl-sleeve.left{left:0}.girl-sleeve.right{right:0;transform:rotate(-22deg)}
+.girl-hand{position:absolute;left:92px;top:155px;font-size:35px;z-index:4}
+.cutscene-caption{
+  position:absolute;left:50%;top:10%;transform:translateX(-50%);width:min(700px,90%);
+  text-align:center;color:#fff1ce;z-index:5
+}
+.cutscene-caption h2{font:400 52px "Ma Shan Zheng";margin:0}
+.cutscene-caption p{font-size:16px}
+.cutscene-close{position:absolute;right:25px;top:20px;z-index:8}
+
+/* ============ EVENTS ONLY ============ */
+.events{
+  background:
+    radial-gradient(circle at 8% 22%,rgba(255,233,145,.85) 0 2px,transparent 3px),
+    radial-gradient(circle at 88% 18%,rgba(255,233,145,.8) 0 2px,transparent 3px),
+    radial-gradient(circle at 18% 78%,rgba(255,233,145,.75) 0 2px,transparent 3px),
+    linear-gradient(180deg,#9e2f49 0%,#bd455d 42%,#e98e7f 100%);
+  color:#fff4dc;
+}
+.events:before{
+  content:"";position:absolute;inset:0;pointer-events:none;opacity:.55;
+  background:
+    radial-gradient(circle at 74% 7%,#fff0a7 0 1px,transparent 2px),
+    radial-gradient(circle at 36% 18%,#fff0a7 0 1px,transparent 2px),
+    radial-gradient(circle at 62% 30%,#fff0a7 0 1px,transparent 2px),
+    radial-gradient(circle at 92% 55%,#fff0a7 0 1px,transparent 2px);
+}
+.events-hero{
+  position:relative;overflow:hidden;border:2px solid rgba(255,238,193,.75);
+  border-radius:30px;padding:30px 30px 24px;margin-bottom:20px;
+  background:linear-gradient(135deg,rgba(143,37,61,.88),rgba(177,53,76,.72));
+  box-shadow:0 22px 55px rgba(67,22,37,.3);
+}
+.events-hero:after{
+  content:"";position:absolute;width:145px;height:145px;border-radius:50%;right:28px;top:-55px;
+  background:radial-gradient(circle at 45% 45%,#fff0ad 0 42%,#f6c75b 43% 47%,transparent 48%);
+  opacity:.9;
+}
+.events-badge{display:inline-block;background:#ffd86d;color:#6d2733;border-radius:999px;padding:8px 13px;font-size:11px;font-weight:900;letter-spacing:1.5px}
+.events-hero h1{position:relative;z-index:2;font:400 clamp(42px,6vw,70px)/1.05 "Ma Shan Zheng";margin:12px 0 5px;color:#fff1c9}
+.events-hero p{position:relative;z-index:2;max-width:720px;line-height:1.7;margin:0;font-size:14px}
+.events-grid{display:grid;grid-template-columns:1.35fr .85fr;gap:18px;align-items:stretch}
+.event-list,.coming-card{background:#fff8ec;color:var(--ink);border-radius:28px;padding:20px;box-shadow:var(--shadow);border:2px solid rgba(255,255,255,.85)}
+.event-list h2,.coming-card h2{font:400 36px "Ma Shan Zheng";color:#8c2939;margin:0 0 13px}
+.event-row{display:grid;grid-template-columns:1fr auto;gap:12px;align-items:center;background:#ffe5dc;border:1px solid #efb7ac;border-left:6px solid #ca3541;border-radius:16px;padding:12px 13px;margin:9px 0;transition:.18s}
+.event-row:hover{transform:translateX(4px);background:#ffddd2}
+.event-row strong{display:block;color:#742d3a;font-size:15px}.event-row small{display:block;color:#a06b72;margin-top:3px;line-height:1.35}
+.event-soon{background:#ffd975;color:#6c3d29;border-radius:999px;padding:6px 10px;font-size:10px;font-weight:900;white-space:nowrap}
+.coming-card{position:relative;overflow:hidden;text-align:center;background:linear-gradient(145deg,#fff8ed,#ffe8da)}
+.coming-card:after{content:"秋";position:absolute;right:-10px;top:0;font:400 150px "Ma Shan Zheng";color:rgba(190,68,76,.08);pointer-events:none}
+.lock-orb{width:82px;height:82px;border-radius:50%;display:grid;place-items:center;margin:5px auto 15px;background:#d94858;border:6px solid #ffd86d;box-shadow:0 10px 25px rgba(122,39,50,.22);font-size:38px;position:relative;z-index:2}
+.coming-card h3{position:relative;z-index:2;color:#b53242;font:700 22px "Noto Sans SC";margin:0 0 8px}.coming-card p{position:relative;z-index:2;font-size:12px;line-height:1.65;color:#98666c}
+.event-tags{position:relative;z-index:2;display:grid;grid-template-columns:repeat(3,1fr);gap:7px;margin:15px 0}.event-tag{border:1px solid #e8b9a9;border-radius:12px;padding:10px 5px;font-size:11px;font-weight:900;background:#fff5e6}.event-quote{position:relative;z-index:2;background:#704352;color:#ffeccf;border-radius:15px;padding:15px;font-size:12px;line-height:1.5}
+@media(max-width:850px){.events-grid{grid-template-columns:1fr}.events-hero:after{right:-35px}.event-list{order:1}.coming-card{order:2}}
+@media(max-width:560px){.events-hero{padding:24px 18px}.events-hero h1{font-size:43px}.event-row{grid-template-columns:1fr}.event-soon{justify-self:start}.event-tags{grid-template-columns:1fr 1fr 1fr}.event-list,.coming-card{padding:16px}}
+
+/* ============ toast/footer ============ */
+.toast{
+  position:fixed;right:18px;bottom:18px;z-index:300;background:#fff5df;color:#663943;
+  padding:13px 17px;border-radius:16px;border:2px solid #e3b16a;box-shadow:var(--shadow);
+  transform:translateY(130px);transition:.3s;font-weight:800
+}
+.toast.show{transform:translateY(0)}
+footer{background:#762737;color:#ffe9cf;text-align:center;padding:28px 15px}
+footer .hanzi{font:400 32px "Ma Shan Zheng"}
+
+
+/* ============ FESTIVAL UPGRADE ============ */
+.topbar:before{content:"";position:absolute;inset:auto 0 -5px;height:3px;background:repeating-linear-gradient(90deg,#e7b446 0 18px,transparent 18px 30px);opacity:.8}
+.topbar button{white-space:nowrap}
+.claw-room{background:
+ radial-gradient(circle at 10% 20%,rgba(255,220,120,.5) 0 2px,transparent 3px),
+ radial-gradient(circle at 90% 14%,rgba(255,220,120,.55) 0 2px,transparent 3px),
+ radial-gradient(circle at 72% 65%,rgba(255,220,120,.35) 0 3px,transparent 4px),
+ linear-gradient(135deg,#8b3049,#3d284e 72%,#171a36)}
+.claw-room:before,.claw-room:after{content:"";position:absolute;pointer-events:none;border:1px solid rgba(255,218,125,.25);border-radius:50%}
+.claw-room:before{width:420px;height:420px;left:-190px;top:150px}.claw-room:after{width:600px;height:600px;right:-280px;bottom:-220px}
+.machine{position:relative;padding:22px;border-width:10px;background:linear-gradient(100deg,#722536,#c83b4b 28%,#ed6b62 50%,#c83b4b 72%,#722536)}
+.machine:before{content:"抓娃娃 · PRIZE CATCHER";display:block;text-align:center;color:#ffe8ad;font-weight:900;letter-spacing:2px;font-size:15px;margin:-7px 0 10px}
+.machine:after{content:"✦  🏮  ✦  🥮  ✦  🏮  ✦";display:block;text-align:center;color:#ffd76a;font-size:18px;position:absolute;top:8px;left:0;right:0}
+.machine-screen{height:520px;background:
+ radial-gradient(circle at 14% 12%,#ffe58d 0 2px,transparent 3px),
+ radial-gradient(circle at 84% 20%,#ffe58d 0 3px,transparent 4px),
+ radial-gradient(circle at 53% 9%,#ffe58d 0 2px,transparent 3px),
+ linear-gradient(180deg,#292b55,#554061 55%,#9b5d58)}
+.machine-screen:after{content:"";position:absolute;left:0;right:0;bottom:0;height:100px;background:linear-gradient(145deg,#7b4a4c,#4b3044);border-top:4px solid rgba(255,215,135,.35)}
+.claw{width:76px;z-index:12;transition:left .12s ease}
+.claw-rope{height:145px;width:6px;background:linear-gradient(90deg,#f7d9bf,#fff2d1,#bd806d);box-shadow:0 0 6px rgba(255,231,184,.35)}
+.claw-head{height:20px;width:64px;margin:auto;background:#e8bb6b;border:3px solid #7d3a45;border-radius:10px;position:relative}
+.claw-head span{position:absolute;width:7px;height:7px;background:#fff3c5;border-radius:50%;top:4px}.claw-head span:nth-child(1){left:12px}.claw-head span:nth-child(2){left:28px}.claw-head span:nth-child(3){right:10px}
+.claw-neck{height:13px;width:34px;margin:auto;background:#b67b63;border-left:3px solid #6d3543;border-right:3px solid #6d3543}
+.claw-hand{height:48px;position:relative;width:70px;margin:auto;filter:drop-shadow(0 7px 4px #21182e)}
+.claw-hand i{position:absolute;top:0;width:14px;height:42px;border:4px solid #f2c56e;border-top:0;border-radius:0 0 18px 18px;transform-origin:top center;background:linear-gradient(90deg,#9d4d54,#e7b66b)}
+.claw-hand i:nth-child(1){left:5px;transform:rotate(24deg)}.claw-hand i:nth-child(2){left:28px}.claw-hand i:nth-child(3){right:5px;transform:rotate(-24deg)}
+.claw.grabbing .claw-hand i:nth-child(1){transform:rotate(7deg)}.claw.grabbing .claw-hand i:nth-child(3){transform:rotate(-7deg)}
+.prize-ball{box-shadow:0 0 0 3px rgba(255,225,185,.18),0 9px 16px rgba(25,14,34,.45)}
+.claw-controls{gap:10px;flex-wrap:wrap}.key{position:relative}.key small{display:block;font-size:7px;margin-top:-2px}
+.arcade-panel{border:3px solid #e8b55e;background:linear-gradient(#fff8e8,#ffe8d2)}
+.inventory{min-height:54px;padding:9px;border:2px dashed #ddb26a;border-radius:14px;background:#fff9ed}
+.inventory:empty:after{content:"Belum ada hadiah — play the claw!";font-size:11px;color:#a67572}
+
+.decor{background:
+ radial-gradient(circle at 8% 20%,rgba(218,91,84,.12) 0 3px,transparent 4px),
+ radial-gradient(circle at 90% 70%,rgba(231,180,70,.18) 0 3px,transparent 4px),
+ linear-gradient(180deg,#fff0dc,#efad91)}
+.decor-layout{align-items:start}
+.decor-panel{background:linear-gradient(145deg,#fffaf0,#ffe8d7);border-color:#d99a76}
+.decor-btn{position:relative;min-height:74px;transition:.18s;overflow:hidden}.decor-btn em{display:block;font-size:8px;font-style:normal;color:#a67b77;letter-spacing:1px}.decor-btn.locked{filter:grayscale(1);opacity:.45;cursor:not-allowed}.decor-btn:not(.locked):hover{transform:translateY(-3px);box-shadow:0 7px 0 rgba(130,66,55,.12)}
+.decor-unlock{margin:10px 0;padding:9px;border-radius:12px;background:#ffe2b9;border:1px solid #e1b15f;text-align:center;font-weight:900;font-size:12px}
+.cake-table{height:600px;background:
+ radial-gradient(circle at 50% 40%,rgba(255,237,181,.4) 0 3px,transparent 4px),
+ linear-gradient(145deg,#d98267,#f3c49c 50%,#d8876d);border-color:#d49a65}
+.cake-table:before{content:"";position:absolute;inset:18px;border:2px dashed rgba(255,238,195,.45);border-radius:22px;pointer-events:none}
+.cake-plate{width:430px;height:125px;background:radial-gradient(ellipse,#fffaf0 0 65%,#e5c28f 66% 72%,#fff3d8 73%);box-shadow:0 16px 0 #bd805f,0 25px 30px rgba(75,35,38,.2)}
+.cake{width:275px;height:155px;box-shadow:inset 0 -12px rgba(116,68,51,.18),0 13px 18px rgba(82,40,38,.2)}
+.decor-item{touch-action:none;text-shadow:0 3px 3px rgba(80,30,35,.18);filter:drop-shadow(0 4px 3px rgba(80,30,35,.18))}
+.decor-item.selected{outline:2px dashed #e7b446;outline-offset:5px}
+.serve-scene{position:fixed;inset:0;z-index:500;display:none;overflow:hidden;background:#171933}
+.serve-scene.show{display:block}
+.serve-sky{position:absolute;inset:0;background:
+ radial-gradient(circle at 15% 16%,#fff0a6 0 2px,transparent 3px),
+ radial-gradient(circle at 30% 25%,#ffe890 0 2px,transparent 3px),
+ radial-gradient(circle at 74% 14%,#fff0a6 0 3px,transparent 4px),
+ radial-gradient(circle at 88% 35%,#ffe890 0 2px,transparent 3px),
+ linear-gradient(180deg,#171b40,#3e2c55 62%,#9b574f)}
+.serve-moon{position:absolute;right:11%;top:9%;width:150px;height:150px;border-radius:50%;background:#ffe99a;box-shadow:0 0 80px rgba(255,226,129,.55)}
+.serve-lantern{position:absolute;font-size:52px;animation:sway 3s ease-in-out infinite}.serve-lantern.l1{left:8%;top:11%}.serve-lantern.l2{left:47%;top:5%;animation-delay:.7s}.serve-lantern.l3{right:5%;top:27%;animation-delay:1.3s}
+.family-table{position:absolute;left:50%;bottom:0;transform:translateX(-50%);width:min(900px,95%);height:46%;background:linear-gradient(#bd704f,#82443f);border-radius:50% 50% 0 0;border-top:12px solid #e5ae6a;box-shadow:0 -20px 40px rgba(25,15,30,.3)}
+.table-cloth{position:absolute;left:4%;right:4%;top:17%;height:15%;border-radius:50%;background:#fff0d4;border:4px solid #d7a15b}
+.served-cake{position:absolute;left:50%;top:4%;transform:translate(-50%,-50%);font-size:88px;filter:drop-shadow(0 12px 5px rgba(40,20,25,.35));animation:cakePop .8s ease-out}
+@keyframes cakePop{from{transform:translate(-50%,10px) scale(.4);opacity:0}to{transform:translate(-50%,-50%) scale(1);opacity:1}}
+.family-person{position:absolute;bottom:10%;width:150px;height:230px}.person-a{left:5%}.person-b{left:27%}.person-c{right:27%}.person-d{right:5%}
+.pf-head{position:absolute;left:50%;top:0;transform:translateX(-50%);width:72px;height:82px;border-radius:48%;background:#efb38f;z-index:3}.pf-hair{position:absolute;left:50%;top:-8px;transform:translateX(-50%);width:82px;height:65px;border-radius:50% 50% 35% 35%;background:#2a1c2a;z-index:4}.pf-body{position:absolute;left:20px;top:70px;width:110px;height:155px;background:linear-gradient(90deg,#9b304b,#e05f67,#9b304b);clip-path:polygon(25% 0,75% 0,100% 100%,0 100%);z-index:2}.pf-arm{position:absolute;left:92px;top:105px;width:65px;height:22px;background:#efb38f;border-radius:20px;transform:rotate(24deg);z-index:5;transform-origin:left center}
+.person-b .pf-body{background:linear-gradient(90deg,#58728a,#9eb4bc,#58728a)}.person-c .pf-body{background:linear-gradient(90deg,#b57a38,#e1a55b,#b57a38)}.person-d .pf-body{background:linear-gradient(90deg,#6f526f,#b887a0,#6f526f)}
+.serve-caption{position:absolute;left:50%;top:8%;transform:translateX(-50%);width:min(700px,90%);text-align:center;color:#fff2d1;z-index:10;text-shadow:0 3px 10px #17132a}.serve-caption h2{font:400 clamp(44px,7vw,75px) "Ma Shan Zheng";margin:2px 0}.serve-caption p{font-size:16px;line-height:1.6}.serve-kicker{letter-spacing:3px;font-size:11px;font-weight:900;color:#ffd66f}
+
+/* ============ responsive ============ */
+@media(max-width:900px){
+  .room{padding-left:3vw;padding-right:3vw}.arcade-panel{order:2}.machine{order:1}
+  .family-person{transform:scale(.78);transform-origin:bottom center}.family-person.person-a{left:-1%}.family-person.person-d{right:-1%}
+
+  .topbar{justify-content:flex-start;overflow-x:auto;padding-left:8px}.coin-pill{display:none}
+  .quote-layout,.kitchen-room,.arcade,.decor-layout{grid-template-columns:1fr}
+  .kitchen-side{display:none}
+  .cook-box{height:650px}
+}
+@media(max-width:620px){
+  .topbar{height:58px}.topbar button{padding:8px 11px;font-size:11px}.room{padding-top:80px}
+  .machine{padding:13px;border-width:7px}.machine-screen{height:430px}.claw-rope{height:110px}.claw-controls{gap:6px}.key{width:43px;height:42px}
+  .cake-table{height:520px}.cake-plate{width:300px}.cake{width:220px}.decor-grid{gap:6px}.decor-btn{min-height:66px;padding:8px}
+  .family-person{transform:scale(.58)}.family-person.person-a{left:-13%}.family-person.person-b{left:13%}.family-person.person-c{right:13%}.family-person.person-d{right:-13%}
+  .serve-caption{top:7%}.serve-caption p{font-size:13px}.serve-moon{width:95px;height:95px}
+
+  .room{padding:90px 15px 45px}
+  .options,.lantern-form{grid-template-columns:1fr}
+  .cook-hint{width:175px;font-size:11px}
+  .cook-instruction{width:65%;top:150px}
+  .bowl{width:230px}.drop-target{width:220px}
+  .machine-screen{height:430px}
+  .home-moon{width:125px;height:125px;font-size:55px}
+}
+
+
+/* Claw controls: simple directional controls only */
+.claw-controls{grid-template-columns:repeat(3,minmax(58px,78px));justify-content:center;gap:10px}
+.claw-controls .key{min-width:0}
+.claw-controls .arrow-key{font-size:26px}
+.claw-controls .grab-key{font-size:20px}
+@media(max-width:620px){
+  .claw-controls{grid-template-columns:repeat(3,64px);gap:8px}
+  .claw-controls .key{height:58px}
+}
+
+</style>
+</head>
+
+<body>
+
+<div class="float flower f1">🌸</div>
+<div class="float flower f2">✿</div>
+<div class="float flower f3">🌺</div>
+<div class="float flower f4">🌸</div>
+
+<nav class="topbar">
+  <button class="active" data-room="home" onclick="go('home')">首页 · Home</button>
+  <button data-room="quotes" onclick="go('quotes')">月签 · Quotes</button>
+  <button data-room="quiz" onclick="go('quiz')">中文 · Quiz</button>
+  <button data-room="kitchen" onclick="go('kitchen')">厨房 · Kitchen</button>
+  <button data-room="claw" onclick="go('claw')">抓娃娃 · Claw</button>
+  <button data-room="decor" onclick="go('decor')">装饰 · Decor</button>
+  <button data-room="garden" onclick="go('garden')">花灯 · Garden</button>
+  <button data-room="events" onclick="go('events')">节日 · Events</button>
+  <div class="coin-pill">🪙 <span id="globalCoins">0</span></div>
+</nav>
+
+<!-- ==================== HOME: ONLY INTRO ==================== -->
+<section class="room home" id="home">
+  <div class="home-inner">
+    <div class="home-moon">🥮</div>
+    <div style="letter-spacing:4px;font-size:12px;font-weight:900">MID-AUTUMN FESTIVAL · 中秋节</div>
+    <h1>Mooncake<br>Festival</h1>
+    <h3>月圆 · 人团圆</h3>
+    <p>
+      Sebuah festival interaktif untuk belajar Mandarin, membuat mooncake,
+      bermain claw machine, mendekorasi, dan menerbangkan lantern.
+    </p>
+    <div class="home-actions">
+      <button class="btn gold" onclick="go('quotes')">抽一张签 · Draw a Quote</button>
+      <button class="btn white" onclick="go('kitchen')">去厨房 · Kitchen</button>
+    </div>
+  </div>
+</section>
+
+<!-- ==================== QUOTES: ONLY QUOTES ==================== -->
+<section class="room quotes" id="quotes">
+  <div class="room-inner">
+    <div class="title">
+      <div class="kicker" style="color:#c34a5b">Mandarin Fortune Cards</div>
+      <h2 style="color:#8c2939">月签 · Moon Quotes</h2>
+      <p>Klik kartu untuk membaliknya. Belajar Hanzi + pinyin + arti Indonesia seperti tarot card.</p>
+    </div>
+    <div class="quote-layout">
+      <div class="quote-info">
+        <h3>今晚的签 ✨</h3>
+        <p>Ini bukan ramalan sungguhan—kartu ini adalah cara fun untuk belajar quote dan kosakata Mandarin.</p>
+        <div class="chips">
+          <span class="chip">希望 · xīwàng</span>
+          <span class="chip">更 · gèng</span>
+          <span class="chip">比 · bǐ</span>
+          <span class="chip">给 · gěi</span>
+          <span class="chip">一起 · yìqǐ</span>
+          <span class="chip">喜欢 · xǐhuan</span>
+          <span class="chip">团圆 · tuányuán</span>
+          <span class="chip">祝福 · zhùfú</span>
+        </div>
+        <br>
+        <button class="btn red" onclick="drawQuote()">换一张 · Draw Another</button>
+      </div>
+      <div class="tarot-stage">
+        <div class="card" id="quoteCard" onclick="this.classList.toggle('flipped')">
+          <div class="card-inner">
+            <div class="face front">
+              <div class="big">☾</div>
+              <h3>月之签</h3>
+              <small>CLICK TO REVEAL</small>
+              <div>✿ 中秋 ✿</div>
+            </div>
+            <div class="face back">
+              <div class="hanzi" id="quoteHanzi">但愿人长久</div>
+              <div class="pinyin" id="quotePinyin">dàn yuàn rén cháng jiǔ</div>
+              <div class="meaning" id="quoteMeaning">Semoga orang yang kita sayangi selalu sehat dan bersama.</div>
+              <div class="explain" id="quoteExplain">Ungkapan harapan baik yang sangat cocok dengan tema kebersamaan saat 中秋节.</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ==================== QUIZ: ONLY QUIZ ==================== -->
+<section class="room quiz" id="quiz">
+  <div class="room-inner">
+    <div class="title">
+      <div class="kicker" style="color:#c34a5b">Earn Coins</div>
+      <h2 style="color:#8c2939">中文挑战 · Mandarin Quiz</h2>
+      <p>Jawab pilihan ganda. Setiap jawaban benar memberi 3 🪙 coins untuk bermain claw machine.</p>
+    </div>
+
+    <div class="quiz-box">
+      <div class="quiz-top">
+        <b>中文挑战</b>
+        <div class="coin-pill" style="position:static">🪙 <span id="quizCoins">0</span></div>
+      </div>
+      <div class="quiz-progress"><span id="quizProgress"></span></div>
+      <div class="q-number" id="qNumber">Question 1 / 8</div>
+      <div class="q-hanzi" id="qHanzi">希望</div>
+      <div class="q-pinyin" id="qPinyin">xīwàng</div>
+      <div class="question-text">Apa arti Hanzi ini dalam bahasa Indonesia?</div>
+
+      <!-- MULTIPLE CHOICE IS HERE -->
+      <div class="options" id="options"></div>
+
+      <div class="quiz-message" id="quizMessage"></div>
+      <div class="quiz-bottom">
+        <b id="quizScore">Score: 0</b>
+        <button class="btn gold" id="nextBtn" disabled onclick="nextQuiz()">下一题 · Next</button>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ==================== KITCHEN: ONLY COOKING ==================== -->
+<section class="room kitchen" id="kitchen">
+  <div class="room-inner">
+    <div class="title">
+      <div class="kicker" style="color:#a73b47">Cooking Game</div>
+      <h2 style="color:#8c2939">厨房 · Mooncake Kitchen</h2>
+      <p>Semua tahap terjadi di <b>box yang sama</b>. Drag, timing, tombol, dan mini challenge akan berubah setiap tahap.</p>
+    </div>
+
+    <div class="kitchen-room">
+      <aside class="kitchen-side">
+        <h3>食材</h3>
+        <p style="font-size:12px">Drag keenam bahan ke bowl untuk memulai.</p>
+        <div class="ingredient" draggable="true" data-ing="flour"><span>🌾</span><b>面粉<br><small>miànfěn · tepung</small></b></div>
+        <div class="ingredient" draggable="true" data-ing="sugar"><span>🍚</span><b>糖<br><small>táng · gula</small></b></div>
+        <div class="ingredient" draggable="true" data-ing="oil"><span>🫙</span><b>油<br><small>yóu · minyak</small></b></div>
+        <div class="ingredient" draggable="true" data-ing="egg"><span>🥚</span><b>鸡蛋<br><small>jīdàn · telur</small></b></div>
+        <div class="ingredient" draggable="true" data-ing="lotus"><span>🟤</span><b>莲蓉<br><small>liánróng · lotus paste</small></b></div>
+        <div class="ingredient" draggable="true" data-ing="salt"><span>🧂</span><b>盐<br><small>yán · garam</small></b></div>
+      </aside>
+
+      <div class="cook-box" id="cookBox">
+        <div class="cook-scene"></div>
+        <div class="cook-window"></div>
+
+        <!-- HINT IS ALWAYS TOP RIGHT -->
+        <div class="cook-hint" id="cookHint">
+          <strong>💡 小提示 · Hint</strong>
+          Drag semua 6 bahan yang diperlukan ke bowl.
+        </div>
+
+        <div class="cook-instruction" id="cookInstruction">
+          Drag ingredients dari panel kiri ke bowl.
+        </div>
+
+        <div class="bowl" id="ingredientTarget"></div>
+        <div class="drop-target" id="dropTarget">DROP INGREDIENTS HERE<br>放这里</div>
+        <div class="counter"></div>
+        <div class="cook-counter" id="cookCounter">0 / 5 ingredients</div>
+
+        <div class="cook-actions" id="cookActions"></div>
+        <div id="cookVisual"></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ==================== CLAW: ONLY CLAW ==================== -->
+<section class="room claw-room" id="claw">
+  <div class="room-inner">
+    <div class="title">
+      <div class="kicker" style="color:#ffd970">Mandarin Coins → Prize</div>
+      <h2>抓娃娃机 · Claw Machine</h2>
+      <p>Gerakkan <b>claw di dalam mesin</b> dengan tombol ← →. Setelah posisi tepat di atas bola, tekan ↓ / GRAB untuk mengambilnya.</p>
+    </div>
+
+    <div class="arcade">
+      <div class="machine">
+        <div class="machine-screen" id="machineScreen">
+          <div class="claw" id="clawRig">
+            <div style="font-size:38px">🧲</div>
+            <div class="claw-rope"></div>
+            <div class="claw-head"><span></span><span></span><span></span></div>
+            <div class="claw-neck"></div>
+            <div class="claw-hand"><i></i><i></i><i></i></div>
+          </div>
+        </div>
+        <div class="claw-controls">
+          <button class="key arrow-key" aria-label="Move claw left" onclick="moveClaw(-1)">←</button>
+          <button class="key grab-key" aria-label="Grab prize" onclick="dropClaw()">↓<small>GRAB</small></button>
+          <button class="key arrow-key" aria-label="Move claw right" onclick="moveClaw(1)">→</button>
+        </div>
+      </div>
+
+      <aside class="arcade-panel">
+        <div class="coin-pill" style="position:static;display:inline-block">🪙 <span id="clawCoins">0</span></div>
+        <h3>奖品 · Prizes</h3>
+        <div class="prizes">
+          <div class="prize-row">🌸 Sakura <b>花</b></div>
+          <div class="prize-row">🍓 Strawberry <b>草莓</b></div>
+          <div class="prize-row">⭐ Star <b>星星</b></div>
+          <div class="prize-row">🌙 Moon <b>月亮</b></div>
+          <div class="prize-row">🦋 Butterfly <b>蝴蝶</b></div>
+          <div class="prize-row">🍡 Dango <b>团子</b></div>
+        </div>
+        <h3 style="margin-top:20px">我的装饰</h3>
+        <div class="inventory" id="inventory">Belum ada hadiah · No prizes yet</div>
+        <p style="font-size:12px">2 coins = 1 play. Hadiah yang tertangkap bisa dipakai di Decor.</p>
+      </aside>
+    </div>
+  </div>
+</section>
+
+<!-- ==================== DECOR: ONLY DECOR ==================== -->
+<section class="room decor" id="decor">
+  <div class="room-inner">
+    <div class="title">
+      <div class="kicker" style="color:#a73b47">Cake Plating</div>
+      <h2 style="color:#8c2939">月饼装饰 · Mooncake Decor</h2>
+      <p>Pilih dekorasi lalu drag hasilnya untuk membuat plating mooncake versimu.</p>
+    </div>
+
+    <div class="decor-layout">
+      <aside class="decor-panel">
+        <h3>装饰 · Decor</h3>
+        <div class="decor-grid">
+          <button class="decor-btn locked" data-decor="🌸" onclick="addDecor('🌸')" disabled><span>🌸</span><em>LOCKED</em></button>
+          <button class="decor-btn locked" data-decor="⭐" onclick="addDecor('⭐')" disabled><span>⭐</span><em>LOCKED</em></button>
+          <button class="decor-btn locked" data-decor="🌙" onclick="addDecor('🌙')" disabled><span>🌙</span><em>LOCKED</em></button>
+          <button class="decor-btn locked" data-decor="🦋" onclick="addDecor('🦋')" disabled><span>🦋</span><em>LOCKED</em></button>
+          <button class="decor-btn locked" data-decor="🍓" onclick="addDecor('🍓')" disabled><span>🍓</span><em>LOCKED</em></button>
+          <button class="decor-btn locked" data-decor="🍡" onclick="addDecor('🍡')" disabled><span>🍡</span><em>LOCKED</em></button>
+        </div>
+        <p class="decor-tip">🔒 Hanya hadiah yang sudah ditangkap di Claw Machine yang terbuka. Klik dekor → muncul di mooncake, lalu drag/touch untuk memindahkan. Double-click untuk menghapus.</p>
+        <div class="decor-unlock" id="decorUnlock">0 / 6 unlocked</div>
+        <button class="btn red" style="width:100%" onclick="clearDecor()">清空 · Clear</button>
+        <button class="btn gold" style="width:100%;margin-top:9px" onclick="serveMooncake()">上桌 · SERVE MOONCAKE 🥮</button>
+      </aside>
+      <div class="cake-table" id="cakeTable">
+        <div class="cake-plate"></div>
+        <div class="cake"></div>
+        <div class="cake-word">团圆</div>
+        <div style="position:absolute;top:20px;left:25px;font-weight:900">中秋快乐 ✦ Happy Mid-Autumn</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ==================== GARDEN: ONLY LANTERN ==================== -->
+<section class="room garden" id="garden">
+  <div class="moon-large"></div>
+  <div class="old-house"></div>
+  <div class="lantern-cables">
+    <div class="hanging-lantern"></div><div class="hanging-lantern" style="animation-delay:.5s"></div>
+    <div class="hanging-lantern" style="animation-delay:1s"></div><div class="hanging-lantern" style="animation-delay:1.5s"></div>
+    <div class="hanging-lantern" style="animation-delay:2s"></div>
+  </div>
+  <div class="flower-bed">🌸 🌺 🌿 🌸 🌿 🌺 🌸</div>
+
+  <div class="room-inner garden-title">
+    <div class="title">
+      <div class="kicker" style="color:#ffd970">Old China · 夜花园</div>
+      <h2>花灯夜游 · Lantern Night</h2>
+      <p>Desain lantern-mu sendiri, pilih warna dan tulisan Mandarin, lalu lihat cutscene saat seorang gadis berhanfu menerbangkannya.</p>
+    </div>
+
+    <div class="lantern-maker">
+      <div class="lantern-preview" id="lanternPreview">月</div>
+
+      <div class="lantern-form">
+        <div class="field">
+          <label>颜色 · Change Color</label>
+          <select id="lanternColor" onchange="updateLantern()">
+            <option value="#cf3b47">朱红 · Vermilion Red</option>
+            <option value="#df6378">桃红 · Peach Pink</option>
+            <option value="#b84462">玫红 · Rose</option>
+            <option value="#73435c">紫红 · Plum</option>
+            <option value="#d79b31">金色 · Gold</option>
+          </select>
+        </div>
+        <div class="field">
+          <label>文字 · Change Writing</label>
+          <select id="lanternText" onchange="updateLantern()">
+            <option value="月">月 · moon</option>
+            <option value="福">福 · blessing</option>
+            <option value="喜">喜 · joy</option>
+            <option value="爱">爱 · love</option>
+            <option value="团">团 · reunion</option>
+            <option value="兔">兔 · rabbit</option>
+            <option value="愿">愿 · wish</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="field wish">
+        <label>愿望 · Your Wish</label>
+        <input id="wishText" maxlength="35" placeholder="Tulis harapanmu di sini...">
+      </div>
+
+      <button class="btn gold" style="margin-top:15px" onclick="launchLantern()">
+        放飞花灯 · Launch into the Sky 🏮
+      </button>
+      <p style="font-size:13px;color:#f5dfc9">愿望随花灯升上夜空。<br><i>Semoga harapanmu terbang bersama lantern.</i></p>
+    </div>
+  </div>
+</section>
+
+<!-- ==================== EVENTS: ONLY FESTIVAL LINE-UP ==================== -->
+<section class="room events" id="events">
+  <div class="room-inner">
+    <div class="events-hero">
+      <span class="events-badge">中秋节特别活动 · MID-AUTUMN SPECIAL</span>
+      <h1>中秋节目 · Rangkaian Acara</h1>
+      <p>一轮明月，一场团圆。<br>Lima kegiatan utama untuk merayakan Mid-Autumn Festival bersama.</p>
+    </div>
+
+    <div class="events-grid">
+      <div class="event-list">
+        <h2>节目单 · Event Line-up</h2>
+        <div class="event-row"><div><strong>🏮 开场 · Opening</strong><small>Pembukaan festival dengan suasana meriah, lantern, dan nuansa Mid-Autumn.</small></div><span class="event-soon">EVENT</span></div>
+        <div class="event-row"><div><strong>🎎 传统表演 · Traditional Performance</strong><small>Pertunjukan tradisional dengan musik, gerakan, dan nuansa budaya Tionghoa.</small></div><span class="event-soon">EVENT</span></div>
+        <div class="event-row"><div><strong>📖 故事会 · Story Telling</strong><small>Sesi bercerita tentang kisah, legenda, dan makna di balik Mid-Autumn Festival.</small></div><span class="event-soon">EVENT</span></div>
+        <div class="event-row"><div><strong>🥮 月饼工坊 · Mooncake Workshop</strong><small>Workshop membuat dan menghias mooncake bersama.</small></div><span class="event-soon">EVENT</span></div>
+        <div class="event-row"><div><strong>🌕 团圆时刻 · Reunion Moment</strong><small>Momen berkumpul, berbagi mooncake, dan merayakan kebersamaan bersama teman-teman dan guru.</small></div><span class="event-soon">EVENT</span></div>
+      </div>
+
+      <aside class="coming-card">
+        <h2>月圆 · Together Under the Moon</h2>
+        <div class="lock-orb">🏮</div>
+        <h3>一场特别的团圆</h3>
+        <p>Festival bukan hanya tentang bulan purnama, tetapi juga tentang berbagi cerita, makanan, dan waktu bersama teman-teman serta guru.</p>
+        <div class="event-tags"><div class="event-tag">中秋<br><small>FESTIVAL</small></div><div class="event-tag">🥮<br><small>MOONCAKE</small></div><div class="event-tag">👥<br><small>TOGETHER</small></div></div>
+        <div class="event-quote">“月圆人团圆”<br><small>When the moon is full, we gather together.</small></div>
+      </aside>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="hanzi">中秋快乐 · 月圆人团圆</div>
+  <p>Happy Mid-Autumn Festival · 月饼 · 花灯 · 团圆 🌸🥮🏮</p>
+</footer>
+
+<!-- Lantern launch cutscene -->
+<div class="cutscene" id="cutscene">
+  <div class="cutscene-sky"></div>
+  <button class="btn white cutscene-close" onclick="closeCutscene()">跳过 · Skip</button>
+  <div class="cutscene-caption">
+    <h2>放飞花灯 · Release the Lantern</h2>
+    <p id="cutsceneWish">愿你的愿望成真 ✨</p>
+  </div>
+
+  <div class="hanfu-girl">
+    <div class="girl-hair"></div>
+    <div class="girl-face"></div>
+    <div class="girl-body"></div>
+    <div class="girl-sleeve left"></div>
+    <div class="girl-sleeve right"></div>
+    <div class="girl-hand">🤲</div>
+  </div>
+
+  <div class="cinematic-lantern" id="cinematicLantern">月</div>
+</div>
+
+<!-- Mooncake serving cutscene -->
+<div class="serve-scene" id="serveScene">
+  <div class="serve-sky"></div>
+  <div class="serve-moon"></div>
+  <div class="serve-lantern l1">🏮</div><div class="serve-lantern l2">🏮</div><div class="serve-lantern l3">🏮</div>
+  <div class="family-table">
+    <div class="table-cloth"></div>
+    <div class="served-cake" id="servedCake">🥮</div>
+    <div class="family-person person-a"><div class="pf-head"></div><div class="pf-hair"></div><div class="pf-body"></div><div class="pf-arm"></div></div>
+    <div class="family-person person-b"><div class="pf-head"></div><div class="pf-hair"></div><div class="pf-body"></div><div class="pf-arm"></div></div>
+    <div class="family-person person-c"><div class="pf-head"></div><div class="pf-hair"></div><div class="pf-body"></div><div class="pf-arm"></div></div>
+    <div class="family-person person-d"><div class="pf-head"></div><div class="pf-hair"></div><div class="pf-body"></div><div class="pf-arm"></div></div>
+  </div>
+  <div class="serve-caption">
+    <div class="serve-kicker">中秋团圆 · MID-AUTUMN REUNION</div>
+    <h2>月圆 · 人团圆</h2>
+    <p id="serveMessage">The mooncake has been served. Tonight, the whole family shares the moment together.</p>
+    <button class="btn gold" onclick="closeServeScene()">继续 · Continue</button>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+/* =========================================================
+   MOONCAKE FESTIVAL GAME
+   ========================================================= */
+
+function go(id){
+  document.querySelectorAll(".room").forEach(r=>r.classList.remove("active-room"));
+  const room=document.getElementById(id);
+  if(room) room.classList.add("active-room");
+  document.querySelectorAll(".topbar button[data-room]").forEach(b=>b.classList.toggle("active",b.dataset.room===id));
+  window.scrollTo({top:0,behavior:"instant"});
+}
+
+/* ---------------- QUOTES ---------------- */
+const quotes=[
+ {h:"但愿人长久",p:"dàn yuàn rén cháng jiǔ",m:"Semoga orang yang kita sayangi selalu sehat dan bersama.",e:"Ungkapan harapan baik yang cocok dengan tema kebersamaan saat 中秋节."},
+ {h:"月圆人团圆",p:"yuè yuán rén tuán yuán",m:"Bulan purnama, orang-orang berkumpul kembali.",e:"Melambangkan keluarga, kebersamaan, dan reuni saat festival."},
+ {h:"有志者事竟成",p:"yǒu zhì zhě shì jìng chéng",m:"Orang yang punya tekad akan berhasil.",e:"Pepatah tentang kemauan dan ketekunan untuk mencapai tujuan."},
+ {h:"一步一个脚印",p:"yí bù yí ge jiǎo yìn",m:"Melangkah setahap demi setahap.",e:"Kemajuan kecil yang konsisten tetap berarti."},
+ {h:"希望",p:"xīwàng",m:"Harapan; berharap.",e:"Dipakai untuk menyatakan sesuatu yang kita harapkan terjadi."},
+ {h:"更好",p:"gèng hǎo",m:"Lebih baik.",e:"更 menyatakan tingkat yang lebih tinggi, misalnya 比以前更好."},
+ {h:"一起",p:"yìqǐ",m:"Bersama-sama.",e:"Contoh: 我们一起吃月饼。Kita makan mooncake bersama."},
+ {h:"祝福",p:"zhùfú",m:"Berkah; doa/harapan baik.",e:"Sering digunakan ketika memberikan ucapan baik kepada orang lain."},
+ {h:"家人",p:"jiārén",m:"Keluarga; anggota keluarga.",e:"Kosakata penting karena 中秋节 erat dengan keluarga."}
+];
+let quoteIndex=0;
+function drawQuote(){
+  const c=document.getElementById("quoteCard");c.classList.remove("flipped");
+  quoteIndex=(quoteIndex+1)%quotes.length;
+  const q=quotes[quoteIndex];
+  setTimeout(()=>{
+    quoteHanzi.textContent=q.h;quotePinyin.textContent=q.p;quoteMeaning.textContent=q.m;quoteExplain.textContent=q.e;
+  },220);
+}
+
+/* ---------------- COINS ---------------- */
+let coins=0;
+function updateCoins(){
+  globalCoins.textContent=coins;quizCoins.textContent=coins;clawCoins.textContent=coins;
+}
+function toast(msg){
+  const t=document.getElementById("toast");t.textContent=msg;t.classList.add("show");
+  clearTimeout(window.tt);window.tt=setTimeout(()=>t.classList.remove("show"),2600);
+}
+
+/* ---------------- QUIZ ---------------- */
+const quizData=[
+ {h:"希望",p:"xīwàng",a:"harapan / berharap",o:["harapan / berharap","lebih baik","bersama-sama","keluarga"]},
+ {h:"更",p:"gèng",a:"lebih / semakin",o:["memberi","lebih / semakin","bulan","bahagia"]},
+ {h:"比",p:"bǐ",a:"dibandingkan / daripada",o:["dibandingkan / daripada","memberi","keluarga","makan"]},
+ {h:"给",p:"gěi",a:"memberi / kepada",o:["bersama","memberi / kepada","harapan","bulan purnama"]},
+ {h:"一起",p:"yìqǐ",a:"bersama-sama",o:["bersama-sama","lebih baik","bahagia","keluarga"]},
+ {h:"喜欢",p:"xǐhuan",a:"suka / menyukai",o:["membuat","suka / menyukai","memberi","harapan"]},
+ {h:"家人",p:"jiārén",a:"keluarga",o:["keluarga","bulan","teman","makanan"]},
+ {h:"团圆",p:"tuányuán",a:"berkumpul bersama / reuni",o:["berkumpul bersama / reuni","lebih","berharap","belajar"]}
+];
+let qi=0,score=0,answered=false;
+function renderQuiz(){
+  const q=quizData[qi];qNumber.textContent=`Question ${qi+1} / ${quizData.length}`;
+  qHanzi.textContent=q.h;qPinyin.textContent=q.p;
+  quizProgress.style.width=((qi)/quizData.length*100)+"%";
+  quizScore.textContent="Score: "+score;quizMessage.textContent="";nextBtn.disabled=true;answered=false;
+  options.innerHTML="";
+  [...q.o].sort(()=>Math.random()-.5).forEach(opt=>{
+    const b=document.createElement("button");b.className="option";b.textContent=opt;
+    b.onclick=()=>answerQuiz(b,opt,q.a);options.appendChild(b);
+  });
+}
+function answerQuiz(btn,choice,correct){
+  if(answered)return;answered=true;
+  document.querySelectorAll(".option").forEach(b=>b.disabled=true);
+  if(choice===correct){
+    btn.classList.add("correct");score++;coins+=3;updateCoins();
+    quizMessage.textContent="正确！ +3 coins ✨ Jawaban benar!";
+    toast("正确！ +3 coins 🪙");
+  }else{
+    btn.classList.add("wrong");
+    quizMessage.textContent="差一点～ Jawaban benar: "+correct;
+    document.querySelectorAll(".option").forEach(b=>{if(b.textContent===correct)b.classList.add("correct")});
+  }
+  quizScore.textContent="Score: "+score;nextBtn.disabled=false;
+}
+function nextQuiz(){if(!answered)return;qi=(qi+1)%quizData.length;renderQuiz()}
+
+/* ---------------- KITCHEN: ONE BOX, MULTIPLE GAMEPLAY STAGES ---------------- */
+const needed=["flour","sugar","oil","egg","lotus","salt"];
+let chosen=new Set(),cookStage=1,cookProgress=0,dragItem=null;
+const dropTarget=document.getElementById("dropTarget");
+
+document.querySelectorAll(".ingredient").forEach(el=>{
+  el.addEventListener("dragstart",e=>{
+    if(el.classList.contains("used"))return;
+    dragItem=el.dataset.ing;e.dataTransfer.setData("text/plain",dragItem);el.classList.add("dragging");
+  });
+  el.addEventListener("dragend",()=>el.classList.remove("dragging"));
+});
+dropTarget.addEventListener("dragover",e=>{e.preventDefault();dropTarget.classList.add("over")});
+dropTarget.addEventListener("dragleave",()=>dropTarget.classList.remove("over"));
+dropTarget.addEventListener("drop",e=>{
+  e.preventDefault();dropTarget.classList.remove("over");
+  const ing=e.dataTransfer.getData("text/plain")||dragItem;
+  if(ing)addIngredient(ing);
+});
+document.getElementById("ingredientTarget").addEventListener("dragover",e=>e.preventDefault());
+document.getElementById("ingredientTarget").addEventListener("drop",e=>{
+  e.preventDefault();const ing=e.dataTransfer.getData("text/plain")||dragItem;if(ing)addIngredient(ing);
+});
+
+function addIngredient(ing){
+  if(cookStage!==1||chosen.has(ing))return;
+  if(!needed.includes(ing)){toast("Bahan ini belum dibutuhkan di tahap ini.");return}
+  chosen.add(ing);
+  const el=document.querySelector(`.ingredient[data-ing="${ing}"]`);el.classList.add("used");
+  cookProgress=chosen.size;
+  cookCounter.textContent=`${chosen.size} / ${needed.length} ingredients`;
+  toast("Masuk ke bowl! "+ing+" ✓");
+  if(chosen.size===needed.length)setTimeout(()=>setCookStage(2),450);
+}
+function setCookStage(stage){
+  cookStage=stage;dropTarget.style.display="none";cookVisual.innerHTML="";
+  cookActions.innerHTML="";
+  const hint=document.getElementById("cookHint"),inst=document.getElementById("cookInstruction");
+  cookCounter.textContent="";
+  if(stage===2){
+    inst.textContent="Aduk: tunggu indikator bergerak dari kiri ke kanan, lalu klik ADUK saat indikator masuk ke GOLD LINE!";
+    hint.innerHTML="<strong>💡 搅拌 · Mixing</strong>Indikator akan bolak-balik dari samping ke samping. Klik hanya ketika titik berada di garis GOLD. Kamu butuh 7 hit yang tepat.";
+    cookVisual.innerHTML='<div class="bowl-mix" style="position:absolute;left:50%;top:38%;transform:translate(-50%,-50%);font-size:105px;z-index:10">🥣</div><div class="mixing-bits"></div>';
+    const track=document.createElement("div");track.className="mixing-track";track.innerHTML='<div class="mixing-gold"></div><div class="mixing-marker" id="mixMarker"></div>';cookBox.appendChild(track);
+    const status=document.createElement("div");status.className="mixing-status";status.textContent="0 / 7 PERFECT";cookBox.appendChild(status);
+    let perfect=0,markerX=0,direction=1,running=true,lastFrame=performance.now();
+    const marker=document.getElementById("mixMarker"),goldStart=40,goldEnd=60;
+    function animateMix(now){if(!running)return;const dt=Math.min(32,now-lastFrame);lastFrame=now;markerX+=direction*(dt*0.075);if(markerX>=100){markerX=100;direction=-1}if(markerX<=0){markerX=0;direction=1}marker.style.left=markerX+"%";requestAnimationFrame(animateMix)}
+    requestAnimationFrame(animateMix);
+    const b=document.createElement("button");b.className="btn gold";b.textContent="搅拌 · ADUK";b.setAttribute("aria-label","Klik saat indikator berada di garis gold");
+    b.onclick=()=>{
+      const inside=markerX>=goldStart&&markerX<=goldEnd;
+      if(!inside){toast("Belum tepat! Tunggu titik masuk GOLD LINE 🟡");return}
+      perfect++;marker.classList.add("perfect");status.textContent=`${perfect} / 7 PERFECT`;toast(`Perfect! ${perfect}/7 ⭐`);
+      const bits=cookVisual.querySelector(".mixing-bits");if(bits){const bit=document.createElement("span");bit.className="bit";bit.textContent=perfect%2?"✨":"✦";bit.style.left=(42+Math.random()*16)+"%";bit.style.top=(31+Math.random()*18)+"%";bits.appendChild(bit);setTimeout(()=>bit.remove(),900)}
+      setTimeout(()=>marker.classList.remove("perfect"),180);
+      if(perfect>=7){running=false;track.remove();status.remove();cookVisual.innerHTML='<div class="bowl-mix" style="position:absolute;left:50%;top:42%;transform:translate(-50%,-50%);font-size:120px;z-index:10;animation:spinbit 1.1s ease-out 1">🥣</div><div class="bit" style="left:46%;top:35%">✨</div><div class="bit" style="left:55%;top:43%">✦</div>';toast("Adonan tercampur sempurna! ✨");setTimeout(()=>setCookStage(3),650)}
+    };
+    cookActions.appendChild(b);
+  }else if(stage===3){
+    inst.textContent="Uleni adonan: klik saat lingkaran kecil berada tepat di dalam lingkaran besar.";
+    hint.innerHTML="<strong>💡 揉面 · Knead</strong>Target bergerak. 6 hit tepat untuk membuat dough elastis.";
+    cookVisual.innerHTML='<div class="knead-dough">🟤</div>';
+    let hits=0;
+    const target=document.createElement("button");target.className="btn red";target.textContent="揉面 · KNEAD";
+    target.style.position="absolute";target.style.left="50%";target.style.top="61%";
+    target.style.transform="translateX(-50%)";
+    target.onclick=()=>{
+      hits++;target.style.left=(38+Math.random()*24)+"%";
+      toast(`Knead ${hits}/6 💪`);
+      if(hits>=6)setCookStage(4);
+    };
+    cookActions.appendChild(target);
+  }else if(stage===4){
+    inst.textContent="Roll dough bolak-balik. Jaga bar tetap di area hijau!";
+    hint.innerHTML="<strong>💡 擀面皮 · Roll</strong>Tekan ROLL berulang. Panjang dough bertambah kalau timing bagus.";
+    cookVisual.innerHTML='<div class="rolling-pin" id="pin">🪵</div><div style="position:absolute;z-index:17;left:50%;top:58%;transform:translateX(-50%);width:330px;height:18px;border-radius:99px;background:#e6d0c5"><span id="rollBar" style="display:block;width:15%;height:100%;border-radius:99px;background:#78a65e"></span></div>';
+    let rolls=0;
+    const b=document.createElement("button");b.className="btn gold";b.textContent="擀 · ROLL";
+    b.onclick=()=>{
+      rolls++;pin.style.transform=`translate(-50%,-50%) rotate(${rolls%2?8:-8}deg)`;
+      rollBar.style.width=Math.min(100,15+rolls*15)+"%";toast(`Roll ${rolls}/6 ↔️`);
+      if(rolls>=6)setCookStage(5);
+    };
+    cookActions.appendChild(b);
+  }else if(stage===5){
+    inst.textContent="Sekarang bungkus lotus filling: drag 🟤 ke dough, lalu klik seal!";
+    hint.innerHTML="<strong>💡 包馅 · Fill</strong>Drag filling ke dough. Setelah masuk, tekan SEAL untuk mengunci isian.";
+    cookVisual.innerHTML='<div class="dough" id="fillDough"><span>🥮</span></div>';
+    const fill=document.createElement("div");fill.textContent="🟤";fill.draggable=true;fill.style="position:absolute;z-index:25;left:25%;top:56%;font-size:52px;cursor:grab";
+    fill.addEventListener("dragstart",e=>e.dataTransfer.setData("fill","yes"));
+    cookBox.appendChild(fill);
+    const d=document.getElementById("fillDough");d.addEventListener("dragover",e=>e.preventDefault());
+    d.addEventListener("drop",e=>{
+      e.preventDefault();if(e.dataTransfer.getData("fill")){fill.remove();d.innerHTML="<span>🥮🟤</span>";d.dataset.filled="yes";toast("Filling masuk! Sekarang seal.");}
+    });
+    const b=document.createElement("button");b.className="btn red";b.textContent="封口 · SEAL";
+    b.onclick=()=>{if(d.dataset.filled==="yes")setCookStage(6);else toast("Masukkan filling dulu! 🟤")};
+    cookActions.appendChild(b);
+  }else if(stage===6){
+    inst.textContent="Tekan mold berulang kali mengikuti ritme: TAP → TAP → HOLD!";
+    hint.innerHTML="<strong>💡 压模 · Press</strong>Ikuti pola 3 kali. Setelah 2 TAP, tahan tombol untuk HOLD.";
+    cookVisual.innerHTML='<div class="mold">🥮</div>';
+    let taps=0;
+    const b=document.createElement("button");b.className="btn gold";b.textContent="TAP";
+    b.onclick=()=>{
+      taps++;
+      if(taps<3)toast(taps===2?"Sekarang HOLD!":"TAP lagi!");
+      else{toast("Motif mooncake tercetak jelas! ✨");setCookStage(7)}
+      if(taps===2){b.textContent="HOLD";b.onmousedown=()=>{taps=3;setTimeout(()=>setCookStage(7),450)}}
+    };
+    cookActions.appendChild(b);
+  }else if(stage===7){
+    inst.textContent="Bake dengan timing. Klik BAKE 4 kali; jangan terlalu cepat!";
+    hint.innerHTML="<strong>💡 烘烤 · Bake</strong>Setiap klik memanaskan oven. Tunggu sedikit di antara klik agar tidak overheat.";
+    cookVisual.innerHTML='<div class="oven"></div><div class="oven-light" id="ovenLight">🔥</div>';
+    let heat=0,last=0;
+    const b=document.createElement("button");b.className="btn red";b.textContent="烘烤 · BAKE";
+    b.onclick=()=>{
+      const now=Date.now();
+      if(now-last<450){toast("Too fast! Oven hampir overheat 😵‍💫");return}
+      last=now;heat++;document.getElementById("ovenLight").style.opacity=Math.min(1,heat/4);toast(`Oven heat ${heat}/4 🔥`);
+      if(heat>=4)setTimeout(()=>finishCooking(),500);
+    };
+    cookActions.appendChild(b);
+  }
+}
+function finishCooking(){
+  cookStage=8;cookActions.innerHTML="";
+  cookVisual.innerHTML='<div class="cook-finish"><div class="finish-content">🥮<h3>完成！</h3><p class="finish-title">你的月饼做好了！</p><p>Mooncake-mu selesai!</p><button class="btn gold" onclick="go(\'claw\')">去抓娃娃 · Claw Machine</button></div></div>';
+  cookHint.innerHTML="<strong>🎉 完成 · Finished</strong>Mooncake selesai. Sekarang kumpulkan dekorasi!";
+  cookInstruction.textContent="Mooncake berhasil dibuat!";
+  toast("月饼做好了！ 🥮✨");
+}
+function resetKitchen(){
+  chosen.clear();cookStage=1;
+  document.querySelectorAll(".ingredient").forEach(e=>e.classList.remove("used"));
+  cookVisual.innerHTML="";cookActions.innerHTML="";
+  dropTarget.style.display="grid";cookCounter.textContent=`0 / ${needed.length} ingredients`;
+  cookInstruction.textContent="Drag ingredients dari panel kiri ke bowl.";
+  cookHint.innerHTML="<strong>💡 小提示 · Hint</strong>Drag semua 6 bahan yang diperlukan ke bowl.";
+}
+
+/* ---------------- CLAW MACHINE PHYSICS ---------------- */
+let clawX=50,clawBusy=false;
+const prizeTypes=["🌸","🍓","⭐","🌙","🦋","🍡"];
+let inventory=[];
+
+function spawnBalls(){
+  machineScreen.querySelectorAll(".prize-ball").forEach(x=>x.remove());
+  prizeTypes.forEach((p,i)=>{
+    const b=document.createElement("div");b.className="prize-ball bounce";b.textContent=p;b.dataset.prize=p;
+    b.style.left=(7+Math.random()*82)+"%";b.style.bottom=(7+Math.random()*17)+"%";
+    b.style.animationDelay=(Math.random()*1.5)+"s";
+    machineScreen.appendChild(b);
+  });
+}
+function moveClaw(dir){
+  if(clawBusy)return;
+  clawX=Math.max(7,Math.min(93,clawX+dir*7));
+  clawRig.style.left=clawX+"%";
+}
+function dropClaw(){
+  if(clawBusy)return;
+  if(coins<2){toast("🪙 Butuh 2 coins! Jawab quiz dulu.");go("quiz");return}
+  coins-=2;updateCoins();clawBusy=true;clawRig.classList.add("grabbing");
+  clawRig.style.transition="top .75s ease";clawRig.style.top="325px";
+  setTimeout(()=>{
+    const balls=[...machineScreen.querySelectorAll(".prize-ball")];
+    let nearest=null,best=999;
+    balls.forEach(ball=>{
+      const x=parseFloat(ball.style.left);const d=Math.abs(x-clawX);
+      if(d<best){best=d;nearest=ball}
+    });
+    if(nearest && best<13){
+      const prize=nearest.dataset.prize;
+      nearest.style.transition="all .65s";nearest.style.left=clawX+"%";nearest.style.bottom="42%";nearest.classList.remove("bounce");
+      setTimeout(()=>{
+        nearest.style.transform="translateY(-150px)";nearest.style.opacity="0";
+        inventory.push(prize);renderInventory();toast("抓到了 "+prize+"! 🎉");
+      },250);
+    }else toast("抓空了～ Coba bidik lebih dekat!");
+    setTimeout(()=>{
+      clawRig.style.top="0";clawRig.classList.remove("grabbing");
+      setTimeout(()=>{clawBusy=false;spawnBalls()},800);
+    },1100);
+  },800);
+}
+function renderInventory(){inventoryEl.textContent=inventory.join(" ");refreshDecorUnlocks()}
+document.addEventListener("keydown",e=>{
+  if(!document.getElementById("claw").classList.contains("active-room"))return;
+  if(["INPUT","SELECT","TEXTAREA"].includes(document.activeElement.tagName))return;
+  if(e.key==="ArrowLeft"){e.preventDefault();moveClaw(-1)}
+  if(e.key==="ArrowRight"){e.preventDefault();moveClaw(1)}
+  if(e.key==="ArrowDown"||e.key==="Enter"){e.preventDefault();dropClaw()}
+});
+
+/* ---------------- DECOR ---------------- */
+const decorButtons=[...document.querySelectorAll(".decor-btn")];
+function refreshDecorUnlocks(){
+  const owned=new Set(inventory);
+  let count=0;
+  decorButtons.forEach(btn=>{
+    const key=btn.dataset.decor, unlocked=owned.has(key);
+    btn.disabled=!unlocked;
+    btn.classList.toggle("locked",!unlocked);
+    btn.querySelector("em").textContent=unlocked?"UNLOCKED":"LOCKED";
+    if(unlocked)count++;
+  });
+  const unlock=document.getElementById("decorUnlock");
+  if(unlock)unlock.textContent=`${count} / ${prizeTypes.length} unlocked`;
+}
+function addDecor(symbol){
+  if(!inventory.includes(symbol)){toast("🔒 Hadiah ini belum didapat dari Claw Machine!");return}
+  const item=document.createElement("div");item.className="decor-item";item.textContent=symbol;
+  item.style.left=(38+Math.random()*25)+"%";item.style.top=(35+Math.random()*25)+"%";
+  item.addEventListener("dblclick",()=>item.remove());
+  item.addEventListener("pointerdown",e=>{
+    e.preventDefault();item.setPointerCapture(e.pointerId);item.classList.add("selected");
+    const rect=cakeTable.getBoundingClientRect(), ir=item.getBoundingClientRect();
+    const ox=e.clientX-ir.left,oy=e.clientY-ir.top;
+    const move=ev=>{
+      const x=Math.max(8,Math.min(rect.width-8,ev.clientX-rect.left-ox));
+      const y=Math.max(8,Math.min(rect.height-8,ev.clientY-rect.top-oy));
+      item.style.left=x+"px";item.style.top=y+"px";item.style.transform="translate(-50%,-50%)";
+    };
+    const up=ev=>{item.releasePointerCapture(ev.pointerId);item.classList.remove("selected");item.removeEventListener("pointermove",move);item.removeEventListener("pointerup",up)};
+    item.addEventListener("pointermove",move);item.addEventListener("pointerup",up);
+  });
+  cakeTable.appendChild(item);
+}
+function clearDecor(){document.querySelectorAll(".decor-item").forEach(x=>x.remove())}
+function serveMooncake(){
+  if(!document.querySelector(".decor-item")) toast("Tambahkan minimal satu dekorasi dulu! 🥮");
+  else{
+    document.getElementById("servedCake").textContent="🥮";
+    document.getElementById("serveScene").classList.add("show");
+  }
+}
+function closeServeScene(){document.getElementById("serveScene").classList.remove("show")}
+/* ---------------- LANTERN ---------------- */
+function updateLantern(){
+  lanternPreview.style.background=lanternColor.value;
+  lanternPreview.textContent=lanternText.value;
+}
+function launchLantern(){
+  cinematicLantern.textContent=lanternText.value;
+  cinematicLantern.style.background=lanternColor.value;
+  cinematicLantern.style.animation="none";
+  void cinematicLantern.offsetWidth;
+  cinematicLantern.style.animation="launchUp 5s 1.5s ease-in forwards";
+  const wish=wishText.value.trim();
+  cutsceneWish.textContent=wish?`「${wish}」 · 愿望随花灯飞向月亮 ✨`:"愿你的愿望成真 · Semoga harapanmu terwujud ✨";
+  cutscene.classList.add("show");
+  setTimeout(()=>closeCutscene(),7200);
+}
+function closeCutscene(){cutscene.classList.remove("show")}
+
+/* ---------------- START ---------------- */
+const globalCoins=document.getElementById("globalCoins"),quizCoins=document.getElementById("quizCoins"),
+clawCoins=document.getElementById("clawCoins"),inventoryEl=document.getElementById("inventory"),
+options=document.getElementById("options"),qNumber=document.getElementById("qNumber"),
+qHanzi=document.getElementById("qHanzi"),qPinyin=document.getElementById("qPinyin"),
+quizProgress=document.getElementById("quizProgress"),quizScore=document.getElementById("quizScore"),
+quizMessage=document.getElementById("quizMessage"),nextBtn=document.getElementById("nextBtn"),
+cookActions=document.getElementById("cookActions"),cookVisual=document.getElementById("cookVisual"),
+cookCounter=document.getElementById("cookCounter"),cookHint=document.getElementById("cookHint"),
+cookInstruction=document.getElementById("cookInstruction"),machineScreen=document.getElementById("machineScreen"),
+clawRig=document.getElementById("clawRig"),cakeTable=document.getElementById("cakeTable"),
+lanternPreview=document.getElementById("lanternPreview"),lanternColor=document.getElementById("lanternColor"),
+lanternText=document.getElementById("lanternText"),cutscene=document.getElementById("cutscene"),
+cinematicLantern=document.getElementById("cinematicLantern"),cutsceneWish=document.getElementById("cutsceneWish"),
+wishText=document.getElementById("wishText"),ovenLight=document.getElementById("ovenLight");
+
+updateCoins();renderQuiz();resetKitchen();spawnBalls();renderInventory();refreshDecorUnlocks();updateLantern();go("home");
+</script>
+</body>
+</html>

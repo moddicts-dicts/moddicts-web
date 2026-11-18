@@ -87,17 +87,19 @@ button:focus-visible,a:focus-visible{outline:2px solid var(--gold2);outline-offs
 .stamp{position:absolute;right:14px;bottom:14px;width:30px;height:30px;display:grid;place-items:center;background:var(--lac);color:var(--paper);font-family:"Ma Shan Zheng";font-size:20px;border-radius:2px;transform:rotate(-4deg);opacity:.92}
 .floor{position:relative;z-index:2;text-align:center;padding:70px 0 120px}
 
-/* ===== gallery: covered corridor ===== */
-#gal{overflow-x:auto;overflow-y:hidden;scrollbar-width:none;cursor:grab}
-#gal::-webkit-scrollbar{display:none}
-.gsky{position:fixed;inset:0;background:radial-gradient(ellipse 60% 50% at 80% 18%,#4a2c7a55,transparent),linear-gradient(#070820,#17184a 60%,#4a2a58)}
-.gmoon{position:fixed;right:11vw;top:9vh;width:clamp(70px,11vmin,120px);aspect-ratio:1;border-radius:50%;background:radial-gradient(circle,#fff8e0,#ecd9a2);box-shadow:0 0 90px 24px #f6ecd244}
-.mt{position:fixed;left:0;right:0;bottom:0;background-repeat:repeat-x;background-size:auto 100%;pointer-events:none}
-.mt.a{height:62vh;background-position-x:calc(var(--sx)*-.12px)}.mt.b{height:46vh;background-position-x:calc(var(--sx)*-.3px)}
-.rail{position:fixed;left:0;right:0;bottom:0;height:calc(84px + env(safe-area-inset-bottom));z-index:2;pointer-events:none;background:linear-gradient(var(--lac),var(--lac)) top/100% 9px no-repeat,linear-gradient(#0a0612,#0a0612) bottom/100% 36px no-repeat}
+/* ===== gallery: open corridor with hung paintings ===== */
+#gal{overflow:hidden;background:linear-gradient(#070820,#17184a 60%,#4a2a58)}
+.gsky{position:absolute;inset:0;background:radial-gradient(ellipse 60% 50% at 80% 18%,#4a2c7a55,transparent),linear-gradient(#070820,#17184a 60%,#4a2a58)}
+.gmoon{position:absolute;right:11vw;top:9vh;width:clamp(70px,11vmin,120px);aspect-ratio:1;border-radius:50%;background:radial-gradient(circle,#fff8e0,#ecd9a2);box-shadow:0 0 90px 24px #f6ecd244}
+.mt{position:absolute;left:0;right:0;bottom:0;background-repeat:repeat-x;background-size:auto 100%;pointer-events:none}
+.mt.a{height:62%;background-position-x:calc(var(--sx)*-.12px)}.mt.b{height:46%;background-position-x:calc(var(--sx)*-.3px)}
+.pan{position:absolute;inset:0;z-index:1;overflow-x:auto;overflow-y:hidden;scrollbar-width:none;cursor:grab}
+.pan::-webkit-scrollbar{display:none}
+.rail{position:absolute;left:0;right:0;bottom:0;height:calc(84px + env(safe-area-inset-bottom));z-index:2;pointer-events:none;background:linear-gradient(var(--lac),var(--lac)) top/100% 9px no-repeat,linear-gradient(#0a0612,#0a0612) bottom/100% 36px no-repeat}
 .rail::before{content:"";position:absolute;left:0;right:0;top:9px;height:40px;background:repeating-linear-gradient(90deg,var(--lac2) 0 11px,transparent 11px 62px);background-position-x:calc(var(--sx)*-1px)}
-.track{position:relative;z-index:1;display:flex;align-items:center;gap:clamp(40px,6vw,90px);width:max-content;height:100%;padding:0 18vw 96px 8vw}
-.intro{width:min(300px,70vw);display:flex;gap:20px;align-items:flex-start}
+.track{position:relative;display:flex;align-items:flex-start;gap:clamp(40px,6vw,90px);width:max-content;height:100%;padding:12vh 18vw 96px 8vw}
+.gbeam{position:absolute;left:0;right:0;top:calc(12vh - 7px);height:14px;background:linear-gradient(#b5301f,var(--lac2));box-shadow:0 10px 24px #000a,inset 0 1px 0 #ffffff33}
+.intro{align-self:center;width:min(300px,70vw);display:flex;gap:20px;align-items:flex-start}
 .intro .cn{writing-mode:vertical-rl;font-size:clamp(58px,9vw,92px);line-height:1;color:var(--cream);text-shadow:0 0 40px #f2c27755}
 .intro h2{font-weight:500;font-style:italic;font-size:34px;line-height:1.1}
 .intro p{margin-top:10px;color:#d3c9ea}
@@ -105,18 +107,26 @@ button:focus-visible,a:focus-visible{outline:2px solid var(--gold2);outline-offs
 .lantern{position:absolute;left:-17px;top:0;width:34px;transform-origin:50% 0;animation:swing 6s ease-in-out infinite}
 .lantern::before{content:"";display:block;width:2px;height:var(--h,70px);margin:0 auto;background:var(--gold)}
 .lantern i{display:block;height:46px;border-radius:44%;background:radial-gradient(circle at 50% 45%,#ffe9a8,#f0883a 45%,#b52a1f 85%);border-top:4px solid var(--gold);border-bottom:4px solid var(--gold);box-shadow:0 0 36px 10px #ff9a4a55;animation:flick 3.4s ease-in-out infinite}
-.win{position:relative;display:block;--lit:.2;filter:drop-shadow(0 20px 22px #000a) drop-shadow(0 0 calc(var(--lit)*36px) #f2c777cc);transition:transform .6s cubic-bezier(.3,.7,.2,1);text-align:center}
-.win:hover,.win:focus-visible{transform:translateY(-10px)}
-.shape{display:block;position:relative;aspect-ratio:var(--ar);background:linear-gradient(135deg,#d8b068,#5a3416 45%,#c79a4a);clip-path:var(--cp)}
-.shape .in{position:absolute;inset:11px;clip-path:var(--cp);overflow:hidden;background:#000}
-.shape svg{display:block;width:100%;height:100%;filter:saturate(calc(.5 + var(--lit)))}
-.shape .in::after{content:"";position:absolute;inset:0;background:linear-gradient(120deg,#fff3 0,transparent 35%);pointer-events:none}
-.win b{display:block;margin-top:18px;font-size:25px;font-style:italic;font-weight:500;line-height:1.1}
-.win small{display:block;margin-top:4px;color:#d3c9ea;font-size:17px}
-.win .stamp{right:6%;top:8%;bottom:auto;z-index:3}
+/* paintings */
+.art{position:relative;display:block;--lit:.2;text-align:center;transform-origin:50% 0;animation:swing 9s ease-in-out infinite}
+.art:hover,.art:focus-visible{animation-play-state:paused}
+.art .cord{height:var(--h);width:62%}
+.frame{position:relative;display:block;padding:15px;background:repeating-linear-gradient(92deg,#ffffff0a 0 2px,transparent 2px 7px),linear-gradient(135deg,#5a2a16,#2b1209 50%,#4f2514);
+ box-shadow:0 0 0 1px #000a,inset 0 0 0 2px #e8c27a99,inset 0 0 0 4px #1a0a05,inset 0 0 0 5px #c79a4a66,0 26px 40px #000b,0 0 calc(var(--lit)*60px) calc(var(--lit)*6px) #f2c77755}
+.frame::before{content:"";position:absolute;left:28%;right:28%;top:-13px;height:8px;border-radius:4px;background:linear-gradient(#f0d28c,#8a6320);box-shadow:0 3px 8px #000a;z-index:3}
+.frame::after{content:"";position:absolute;left:4%;right:4%;top:-5px;bottom:-6%;z-index:2;pointer-events:none;background:linear-gradient(#ffe2a066,transparent 80%);clip-path:polygon(30% 0,70% 0,100% 100%,0 100%);opacity:calc(.3 + var(--lit)*.7);mix-blend-mode:screen}
+.mat{display:block;padding:12px;background:linear-gradient(135deg,#f3e8c9,#e0cfa2);box-shadow:inset 0 0 0 1px #0003,inset 0 3px 10px #0006}
+.canvas{display:block;position:relative;aspect-ratio:var(--ar);overflow:hidden;background:#1a1030;box-shadow:0 0 0 1px #0007;filter:brightness(calc(.68 + var(--lit)*.4)) saturate(calc(.7 + var(--lit)*.4))}
+.canvas svg{display:block;width:100%;height:100%;transform:scale(1.06)}
+.canvas::after{content:"";position:absolute;inset:0;pointer-events:none;background:repeating-linear-gradient(0deg,#0000000e 0 1px,transparent 1px 3px),repeating-linear-gradient(90deg,#0000000e 0 1px,transparent 1px 3px),linear-gradient(120deg,#fff3 0,transparent 30%),radial-gradient(ellipse at 50% 45%,transparent 55%,#0007 100%)}
+.canvas .stamp{right:10px;bottom:10px;width:24px;height:24px;font-size:16px;z-index:2}
+.plate{display:inline-block;margin-top:20px;padding:7px 18px 8px;max-width:100%;background:linear-gradient(#f0d28c,#b3862f 50%,#8a6320);color:#2a1408;border-radius:2px;box-shadow:0 4px 12px #000a,inset 0 0 0 1px #fff5}
+.plate b{display:block;font-size:21px;font-style:italic;font-weight:600;line-height:1.15}
+.plate small{display:block;margin-top:2px;font-size:15px;line-height:1.25;color:#4a2e10}
 .nav{position:fixed;right:14px;bottom:calc(98px + env(safe-area-inset-bottom));z-index:50;display:flex;gap:8px;flex-wrap:wrap;justify-content:flex-end}
 .nav button{background:#0b0d2acc;border:1px solid #e8c27a88;color:var(--gold2);padding:7px 18px;border-radius:2px;font-style:italic;backdrop-filter:blur(6px);transition:.25s}
 .nav button:hover{background:#e8c27a22}
+#toast{position:fixed;left:50%;bottom:22px;transform:translateX(-50%);z-index:200;background:#1a0d0a;border:1px solid var(--gold2);padding:10px 18px;max-width:90vw;display:none;border-radius:2px;text-align:center}
 
 /* ===== portal ===== */
 #tp{position:fixed;inset:0;z-index:100;background:var(--night);visibility:hidden;clip-path:circle(0 at 50% 50%)}
@@ -140,6 +150,7 @@ button:focus-visible,a:focus-visible{outline:2px solid var(--gold2);outline-offs
 </style>
 </head>
 <body>
+<svg width="0" height="0" style="position:absolute" aria-hidden="true"><filter id="paint" x="0" y="0" width="100%" height="100%"><feTurbulence type="fractalNoise" baseFrequency=".035" numOctaves="3" seed="3" result="n"/><feDisplacementMap in="SourceGraphic" in2="n" scale="6" xChannelSelector="R" yChannelSelector="G"/></filter></svg>
 <canvas id="fx"></canvas><div id="glow"></div>
 
 <section class="stage on" id="gate">
@@ -191,11 +202,11 @@ button:focus-visible,a:focus-visible{outline:2px solid var(--gold2);outline-offs
 
 <section class="stage" id="gal">
  <div class="gsky"></div><div class="gmoon"></div><div class="mt a" id="mtA"></div><div class="mt b" id="mtB"></div>
- <div class="track" id="track">
-  <div class="intro"><span class="cn">画廊</span><div><h2>The Gallery</h2><p>Scroll sideways or drag to wander the corridor. Each window opens onto something we made.</p></div></div>
- </div>
+ <div class="pan" id="pan"><div class="track" id="track"><div class="gbeam"></div>
+  <div class="intro"><span class="cn">画廊</span><div><h2>The Gallery</h2><p>Scroll sideways or drag to wander the corridor. Every painting opens onto something we made.</p></div></div>
+ </div></div>
  <div class="rail"></div>
- <div class="nav"><button id="wander">Open a random window</button><button id="backCv">Back to the scrolls</button></div>
+ <div class="nav"><button id="wander">Open a random painting</button><button id="backCv">Back to the scrolls</button></div>
 </section>
 
 <div id="tp">
@@ -205,6 +216,7 @@ button:focus-visible,a:focus-visible{outline:2px solid var(--gold2);outline-offs
  <iframe id="fr" title="creation" allow="camera; microphone; autoplay; fullscreen; clipboard-write"></iframe>
 </div>
 
+<div id="toast"></div>
 <script>
 /* File names must match your real files exactly, saved in the same folder as index.html */
 const CVS=[
@@ -221,30 +233,35 @@ const ART=[
   v:'<defs><linearGradient id="u" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#0a0410"/><stop offset=".65" stop-color="#b8431f"/></linearGradient></defs><rect width="200" height="280" fill="url(#u)"/><circle cx="100" cy="120" r="40" fill="#ffd28a"/><path d="M0 280V190h16v-18h14v26h18v-14h22v20h20v-24h18v24h22v-14h20v80Z" fill="#0a0509"/>'},
  {f:"fluida.html",n:"Dynamic Fluids",c:"水",s:"An interactive physics laboratory",
   v:'<rect width="200" height="280" fill="#06384a"/><path d="M0 120C25 98 50 142 75 120S125 98 150 120 185 136 200 120V280H0Z" fill="#0e7f93"/><path d="M0 170C25 148 50 192 75 170S125 148 150 170 185 186 200 170V280H0Z" fill="#7de7f2" fill-opacity=".45"/><circle cx="150" cy="60" r="7" fill="#fff" fill-opacity=".6"/><circle cx="60" cy="90" r="4" fill="#fff" fill-opacity=".5"/>'},
- {f:"observe.html",n:"Observe",c:"星",s:"A pink-galaxy landing page",
+ {f:"observe.html",n:"Observe",c:"星",s:"A Duplicate of A Website",
   v:'<rect width="200" height="280" fill="#16051a"/><ellipse cx="100" cy="110" rx="86" ry="30" fill="#ff7fc0" fill-opacity=".35" transform="rotate(25 100 110)"/><ellipse cx="100" cy="110" rx="56" ry="18" fill="#ffc4e4" fill-opacity=".4" transform="rotate(25 100 110)"/><circle cx="100" cy="110" r="9" fill="#fff0f5"/><g fill="#fff"><circle cx="24" cy="30" r="1.4"/><circle cx="172" cy="44" r="1.8"/><circle cx="40" cy="190" r="1.2"/><circle cx="160" cy="170" r="1.4"/></g><path d="M0 240Q60 222 120 236T200 228V280H0Z" fill="#050106"/>'}
 ];
-/* window shapes: round moon window, hexagon, arch door, octagon, oval */
-const SH=[
- {cp:"circle(50%)",ar:1,w:"clamp(210px,24vw,290px)",mt:0},
- {cp:"polygon(25% 2%,75% 2%,100% 50%,75% 98%,25% 98%,0 50%)",ar:1.12,w:"clamp(230px,27vw,320px)",mt:60},
- {cp:"inset(0 round 999px 999px 6px 6px)",ar:.72,w:"clamp(190px,21vw,250px)",mt:-20},
- {cp:"polygon(30% 0,70% 0,100% 30%,100% 70%,70% 100%,30% 100%,0 70%,0 30%)",ar:1,w:"clamp(210px,24vw,290px)",mt:40},
- {cp:"ellipse(50% 50%)",ar:.72,w:"clamp(190px,21vw,250px)",mt:0}
+/* ================================================================
+   ADD YOUR OWN LINK FRAME HERE  (the last painting in the gallery)
+   1. Replace PASTE-YOUR-LINK-HERE with your full link (it must start with https://)
+   2. Change n (title), s (short description) and c (one Chinese character for the red seal)
+   To add more link frames, copy the whole {...} line and paste it as a new line.
+   ================================================================ */
+const LINKS=[
+ {url:"https://share.gemini.google/4xWAV4ME490z",n:"Parasite",s:"A storyline of Us",c:"门"}
 ];
+const LINK_ART='<rect width="200" height="280" fill="#1c2b2f"/><circle cx="100" cy="116" r="60" fill="none" stroke="#e8c27a" stroke-width="5"/><circle cx="100" cy="116" r="52" fill="#f6ecd2" fill-opacity=".92"/><path d="M0 222Q50 198 100 216T200 206V280H0Z" fill="#0f181b"/><path d="M82 280L97 150H103L118 280Z" fill="#c79a4a" opacity=".6"/><g fill="#fff"><circle cx="30" cy="40" r="1.5"/><circle cx="170" cy="30" r="1.5"/><circle cx="24" cy="90" r="1.2"/></g>';
+const LOOK=[[1,.78,46],[1.15,.9,74],[.9,.7,38],[1.08,.82,92],[.96,.74,56],[1.02,.8,66]];
+const ITEMS=ART.concat(LINKS.map(l=>({...l,link:true,v:LINK_ART})));
 const $=s=>document.querySelector(s);
 let mode="gate",lits=[];
+const pan=$("#pan");
 function show(id){
  document.querySelectorAll(".stage").forEach(s=>s.classList.toggle("on",s.id===id));
  $("#"+id).scrollTop=0;mode=id;
- lits=[...document.querySelectorAll("#"+id+" .scroll,#"+id+" .win")];
+ lits=[...document.querySelectorAll("#"+id+" .scroll,#"+id+" .art")];
 }
 $("#scrolls").innerHTML=CVS.map(c=>`<button class="scroll" aria-label="Open the CV of ${c.n}"><i class="cord"></i><span class="rod"></span><span class="brocade"><span class="paper"><span class="glyph">${c.g}</span><b>${c.n}</b><small>${c.s}</small><em>Unroll the scroll</em><span class="stamp">名</span></span></span><span class="rod"></span></button>`).join("");
 const track=$("#track");
-ART.forEach((a,i)=>{
- const s=SH[i%SH.length];
- track.insertAdjacentHTML("beforeend",`<button class="win" aria-label="Enter ${a.n}" style="--cp:${s.cp};--ar:${s.ar};width:${s.w};margin-top:${s.mt}px"><span class="shape"><span class="in"><svg viewBox="0 0 200 280" preserveAspectRatio="xMidYMid slice" aria-hidden="true">${a.v}</svg></span></span><span class="stamp">${a.c}</span><b>${a.n}</b><small>${a.s}</small></button>`);
- if(i<ART.length-1)track.insertAdjacentHTML("beforeend",`<span class="slot"><span class="lantern" style="--h:${50+(i%3)*28}px;animation-delay:-${i*1.3}s"><i></i></span></span>`);
+ITEMS.forEach((a,i)=>{
+ const [k,ar,h]=LOOK[i%LOOK.length];
+ track.insertAdjacentHTML("beforeend",`<button class="art"${a.link?' data-link="1"':''} aria-label="${a.link?'Visit':'Enter'} ${a.n}" style="--h:${h}px;width:max(170px,calc(min(24vw,36vh)*${k}));animation-delay:-${i*1.7}s"><i class="cord"></i><span class="frame"><span class="mat"><span class="canvas" style="--ar:${ar}"><svg viewBox="0 0 200 280" preserveAspectRatio="xMidYMid slice" style="filter:url(#paint)" aria-hidden="true">${a.v}</svg><span class="stamp">${a.c}</span></span></span></span><span class="plate"><b>${a.n}</b><small>${a.s}</small></span></button>`);
+ if(i<ITEMS.length-1)track.insertAdjacentHTML("beforeend",`<span class="slot"><span class="lantern" style="--h:${50+(i%3)*28}px;animation-delay:-${i*1.3}s"><i></i></span></span>`);
 });
 
 /* parallax mountains for the gallery */
@@ -287,11 +304,20 @@ function bind(sel,list,label){
  }));
 }
 bind(".scroll",CVS,c=>c.n+" · CV");
-bind(".win",ART,a=>a.n);
+function toast(m){const t=$("#toast");t.textContent=m;t.style.display="block";clearTimeout(t._t);t._t=setTimeout(()=>t.style.display="none",5000)}
+function openLink(a){
+ if(!/^https?:\/\//i.test(a.url)){toast("This frame is waiting for its link. Add it to the LINKS list near the top of the script in index.html.");return}
+ window.open(a.url,"_blank","noopener");
+}
+document.querySelectorAll(".art").forEach((b,i)=>b.addEventListener("click",e=>{
+ const a=ITEMS[i];if(a.link){openLink(a);return}
+ const r=b.getBoundingClientRect(),x=e.clientX||r.left+r.width/2,y=e.clientY||r.top+r.height/2;
+ openPortal(a,x,y,a.n);burst(x,y,14);
+}));
 $("#back").onclick=closePortal;
 addEventListener("keydown",e=>{
  if(e.key==="Escape"&&tp.classList.contains("open"))closePortal();
- if(mode==="gal"&&!tp.classList.contains("open")){if(e.key==="ArrowRight")$("#gal").scrollBy({left:340,behavior:"smooth"});if(e.key==="ArrowLeft")$("#gal").scrollBy({left:-340,behavior:"smooth"})}
+ if(mode==="gal"&&!tp.classList.contains("open")){if(e.key==="ArrowRight")pan.scrollBy({left:340,behavior:"smooth"});if(e.key==="ArrowLeft")pan.scrollBy({left:-340,behavior:"smooth"})}
 });
 
 /* ===== navigation ===== */
@@ -301,16 +327,16 @@ $("#enter").onclick=e=>{
 };
 $("#toGallery").onclick=()=>show("gal");
 $("#backCv").onclick=()=>show("cv");
-$("#wander").onclick=()=>{const f=[...document.querySelectorAll(".win")],w=f[Math.floor(Math.random()*f.length)];w.scrollIntoView({inline:"center",block:"nearest",behavior:"smooth"});setTimeout(()=>w.click(),800)};
+$("#wander").onclick=()=>{const f=[...document.querySelectorAll(".art:not([data-link])")],w=f[Math.floor(Math.random()*f.length)];w.scrollIntoView({inline:"center",block:"nearest",behavior:"smooth"});setTimeout(()=>w.click(),800)};
 
 /* gallery panning: wheel, drag, scroll-linked parallax */
 const gal=$("#gal");let drag=null,moved=false;
-gal.addEventListener("wheel",e=>{if(Math.abs(e.deltaY)>Math.abs(e.deltaX)){gal.scrollLeft+=e.deltaY;e.preventDefault()}},{passive:false});
-gal.addEventListener("scroll",()=>gal.style.setProperty("--sx",gal.scrollLeft));
-gal.addEventListener("pointerdown",e=>{if(e.pointerType!=="mouse"||e.button)return;drag={x:e.clientX,s:gal.scrollLeft};moved=false});
-addEventListener("pointermove",e=>{if(!drag)return;const dx=e.clientX-drag.x;if(Math.abs(dx)>6)moved=true;gal.scrollLeft=drag.s-dx});
+pan.addEventListener("wheel",e=>{if(Math.abs(e.deltaY)>Math.abs(e.deltaX)){pan.scrollLeft+=e.deltaY;e.preventDefault()}},{passive:false});
+pan.addEventListener("scroll",()=>gal.style.setProperty("--sx",pan.scrollLeft));
+pan.addEventListener("pointerdown",e=>{if(e.pointerType!=="mouse"||e.button)return;drag={x:e.clientX,s:pan.scrollLeft};moved=false});
+addEventListener("pointermove",e=>{if(!drag)return;const dx=e.clientX-drag.x;if(Math.abs(dx)>6)moved=true;pan.scrollLeft=drag.s-dx});
 addEventListener("pointerup",()=>{drag=null;setTimeout(()=>moved=false)});
-gal.addEventListener("click",e=>{if(moved){e.stopPropagation();e.preventDefault()}},true);
+pan.addEventListener("click",e=>{if(moved){e.stopPropagation();e.preventDefault()}},true);
 
 /* ===== light: cursor lantern and windows that glow as you near them ===== */
 let px=innerWidth/2,py=innerHeight/2;

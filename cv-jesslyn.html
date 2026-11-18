@@ -395,15 +395,16 @@ aside .lg button{border-bottom-color:rgba(255,255,255,.18)}aside .lg button:last
     fr.parentNode.addEventListener('pointerleave', function () { fr.style.setProperty('--ry', '0deg'); fr.style.setProperty('--rx', '0deg'); });
   }
 
-  /* FOTO — gunakan direct image URL agar foto dapat dilihat semua pengunjung. */
-  var PHOTO_URL = "https://www.image2url.com/r2/default/images/1794983995512-475f4958-9958-4b9c-b4d7-a8e61f9728e8.jpeg";
-  var img = $('#photoImg');
-  if (PHOTO_URL && PHOTO_URL !== "https://www.image2url.com/r2/default/images/1794983995512-475f4958-9958-4b9c-b4d7-a8e61f9728e8.jpeg") {
-    img.src = PHOTO_URL;
-    img.style.display = 'block';
-  } else {
-    img.style.display = 'none';
-  }
+/* FOTO — gunakan direct image URL agar foto dapat dilihat semua pengunjung. */
+var PHOTO_URL = "https://www.image2url.com/r2/default/images/1794983995512-475f4958-9958-4b9c-b4d7-a8e61f9728e8.jpeg";
+var img = $('#photoImg');
+if (PHOTO_URL) {
+  img.onerror = function () { img.style.display = 'none'; }; /* kalau gagal load, tampil inisial "JK" */
+  img.src = PHOTO_URL;
+  img.style.display = 'block';
+} else {
+  img.style.display = 'none';
+}
 
   /* UNDUH PDF */
   window.downloadPDF = async function () {

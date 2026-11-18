@@ -1,0 +1,713 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover">
+<title>UNDOEND</title>
+<style>
+:root{--paper:#f0e2c4;--gold:#e4b95f;--red:#c2352f;--cy:#65b8b0;--mut:#a8979e}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{margin:0;width:100%;height:100%;background:#030206;color:var(--paper);font-family:"Courier New",monospace;overflow:hidden}
+body{display:flex;align-items:center;justify-content:center}
+#gameShell{position:relative;width:min(1100px,100vw);height:min(720px,100vh);background:#08070c;border:3px solid #2c2230;box-shadow:0 0 0 4px #100c14,0 20px 70px #000;overflow:hidden}
+#game,#tc{position:absolute;inset:0;width:100%;height:100%;image-rendering:pixelated;touch-action:none}
+.scan{position:absolute;inset:0;pointer-events:none;z-index:40;opacity:.25;background:repeating-linear-gradient(0deg,rgba(255,255,255,.04) 0 1px,transparent 1px 4px)}
+#topbar{position:absolute;top:10px;left:10px;right:10px;display:flex;gap:8px;justify-content:space-between;z-index:3;pointer-events:none}
+.badge{background:#100d17e8;border:2px solid #554660;padding:7px 9px;font-size:12px;color:var(--paper);text-shadow:2px 2px #000;font-family:inherit}
+#topbar .btns{display:flex;gap:6px}
+#topbar button{pointer-events:auto}
+#objective{position:absolute;left:50%;top:58px;transform:translateX(-50%);background:#100d17e8;border:2px solid #695674;padding:6px 12px;font-size:12px;text-align:center;z-index:3;max-width:70%}
+#dialogue{display:none;position:absolute;left:5%;right:5%;bottom:5%;z-index:30;background:#100d17f5;border:3px solid var(--paper);box-shadow:6px 6px #000;padding:14px;max-height:46%;overflow:auto}
+#speaker{font-weight:bold;color:var(--gold);letter-spacing:1px;margin-bottom:6px}
+#text{line-height:1.45;white-space:pre-wrap;font-size:14px}
+#choices{display:flex;flex-wrap:wrap;gap:7px;margin-top:10px}
+button{font:inherit;color:var(--paper);background:#292038;border:2px solid #867395;padding:9px 11px;cursor:pointer;box-shadow:3px 3px #000}
+button:active{transform:translate(1px,1px);box-shadow:1px 1px #000}
+button:disabled{opacity:.4;cursor:not-allowed}
+.primary{border-color:var(--gold);background:#4a2e2e}
+#title,#select,#ending{position:absolute;inset:0;z-index:20;background:#07050a;text-align:center;overflow-y:auto;overflow-x:hidden}
+#title{overflow:hidden}
+.tcnt{position:relative;z-index:2;height:100%;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:44px 20px;gap:12px}
+.tx{font-size:11px;letter-spacing:3px;color:#c9847c;animation:bl 2.4s infinite}
+@keyframes bl{50%{opacity:.35}}
+.glt{position:relative;margin:0;font-size:clamp(46px,10vw,112px);letter-spacing:.12em;color:#f0e2c4;text-shadow:0 0 34px #c2352f99,5px 5px #3a0c12}
+.glt::before,.glt::after{content:attr(data-t);position:absolute;left:0;top:0;width:100%}
+.glt::before{color:#ff3b3b;mix-blend-mode:screen;animation:g1 3.2s infinite}
+.glt::after{color:#37e0d0;mix-blend-mode:screen;animation:g2 2.7s infinite}
+@keyframes g1{0%,90%,100%{transform:translate(0);clip-path:inset(0 0 0 0)}92%{transform:translate(-6px,2px);clip-path:inset(18% 0 55% 0)}96%{transform:translate(4px,-1px);clip-path:inset(62% 0 8% 0)}}
+@keyframes g2{0%,86%,100%{transform:translate(0);clip-path:inset(0 0 0 0)}88%{transform:translate(6px,-2px);clip-path:inset(40% 0 35% 0)}94%{transform:translate(-4px,2px);clip-path:inset(5% 0 80% 0)}}
+.tag{max-width:640px;line-height:1.6;color:#e0c7b8;text-shadow:2px 2px #000;margin:0}
+.loops{font-size:12px;color:var(--gold);letter-spacing:2px;text-shadow:2px 2px #000}
+.loops b{color:var(--red);font-size:16px;margin:0 3px}
+#how{display:none;max-width:580px;background:#0d0a10ee;border:2px solid #6a5460;padding:12px;font-size:12px;line-height:1.55;text-align:left}
+.foot{font-size:10px;color:#8e7a80;letter-spacing:2px;text-shadow:2px 2px #000}
+#select{display:none;flex-direction:column;align-items:center;justify-content:center;padding:26px 16px;background:radial-gradient(circle at 50% 30%,#3a1218,#120a10 55%,#07050a)}
+.sub{max-width:700px;line-height:1.5;color:#c8b7bb}
+.roster{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px;width:min(900px,96vw);margin:14px auto}
+.char{min-height:250px;background:#16101a;border:2px solid #4e3c4a;padding:9px;text-align:center;box-shadow:4px 4px #000}
+.char:hover{border-color:var(--gold)}
+.char canvas{width:90px;height:92px;image-rendering:pixelated}
+.char h3{margin:5px 0;font-size:15px}
+.char small{color:var(--mut);line-height:1.3;display:block}
+.char .tag2{color:var(--gold);font-size:10px;margin-top:5px}
+#mobileControls{display:none;position:absolute;left:12px;right:12px;bottom:12px;z-index:4;pointer-events:none}
+.dpad{display:grid;grid-template-columns:44px 44px 44px;grid-template-rows:44px 44px 44px;gap:3px;float:left}
+.ctrl{pointer-events:auto;width:44px;height:44px;padding:0;background:#17131fdd;border:2px solid #76657f;font-size:18px}
+#actionButtons{float:right;display:flex;gap:7px;align-items:end}
+.action{width:52px;height:52px;border-radius:50%;font-size:11px;padding:0}
+#nextArrow{display:none;position:absolute;z-index:12;right:18px;top:50%;transform:translateY(-50%);width:58px;height:58px;border-radius:50%;background:#19131fe8;border:3px solid var(--gold);color:var(--gold);font-size:25px;animation:pulse 1.1s infinite}
+#nextArrowLabel{position:absolute;right:17px;top:calc(50% + 35px);z-index:12;pointer-events:none;color:var(--gold);font-size:10px;display:none;text-shadow:2px 2px #000}
+@keyframes pulse{50%{transform:translateY(-50%) scale(1.08)}}
+.ov{display:none;position:absolute;inset:0;z-index:35;background:#0a0710ee;align-items:center;justify-content:center;padding:14px}
+.panel{background:#17101c;border:3px solid #806c89;padding:18px;width:min(560px,94vw);max-height:92%;overflow:auto;text-align:center;box-shadow:7px 7px #000}
+.panel h3{margin:0 0 6px;color:var(--gold)}
+.panel p{line-height:1.5;color:#d8c9cc}
+#pzA{margin:12px 0;display:flex;flex-direction:column;align-items:center;gap:10px}
+#pzA input{font:inherit;font-size:20px;text-align:center;letter-spacing:4px;background:#0d0a12;color:var(--paper);border:2px solid #867395;padding:8px;width:260px;text-transform:uppercase}
+#pzM{min-height:20px;color:#ff8d84}
+#pads{display:flex;gap:10px}
+.pad{width:64px;height:64px;color:#111;font-weight:bold;font-size:20px}
+#dots{letter-spacing:4px;color:var(--gold);min-height:20px}
+#cards{display:flex;flex-direction:column;gap:6px;width:100%}
+#pk{white-space:pre-line;color:var(--cy);text-align:left;min-height:20px}
+.jl{text-align:left;border-bottom:1px solid #3c2e44;padding:7px 0;font-size:13px;line-height:1.45}
+.jl b{color:var(--gold)}
+.story{text-align:left;background:#0e0a13;border:1px solid #5a4660;padding:8px 10px;margin-bottom:10px;font-size:13px;line-height:1.5;color:var(--cy)}
+.story b{color:var(--gold)}
+#flash{display:none;position:absolute;inset:0;z-index:50;background:#fff;opacity:0;transition:opacity .9s;pointer-events:none}
+@media(max-width:700px){
+#gameShell{width:100vw;height:100dvh;border:0}
+#objective{top:52px;font-size:10px;max-width:82%}
+#mobileControls{display:block}
+#dialogue{bottom:96px}
+#text{font-size:12px}
+.roster{grid-template-columns:repeat(2,1fr)}
+.char{min-height:230px}
+}
+</style>
+</head>
+<body>
+<div id="gameShell">
+<canvas id="game" width="960" height="640"></canvas>
+<div id="topbar">
+  <div class="badge" id="chapter">UNDOEND</div>
+  <div class="badge" id="clues">CLUES 0/12</div>
+  <div class="btns"><button class="badge" id="jBtn">JOURNAL</button><button class="badge" id="menuBtn">☰</button></div>
+</div>
+<div id="objective"></div>
+<div id="mobileControls">
+  <div class="dpad"><span></span><button class="ctrl" data-key="w">▲</button><span></span><button class="ctrl" data-key="a">◀</button><button class="ctrl" data-key="s">▼</button><button class="ctrl" data-key="d">▶</button></div>
+  <div id="actionButtons"><button class="ctrl action" id="lookBtn">LOOK</button><button class="ctrl action" id="interactBtn">E</button></div>
+</div>
+<div id="nextArrow">➜</div><div id="nextArrowLabel">NEXT AREA</div>
+<div id="dialogue"><div id="speaker"></div><div id="text"></div><div id="choices"></div></div>
+
+<div id="title">
+  <canvas id="tc" width="960" height="640"></canvas>
+  <div class="tcnt">
+    <div class="tx">TRANSMISSION 0003 // SIGNAL DEGRADED // SOURCE: BUNKER 9</div>
+    <h1 class="glt" data-t="UNDOEND">UNDOEND</h1>
+    <p class="tag">Undo the dead. Undo the sun. Undo the worlds.<br>Every undo has a price.</p>
+    <div class="loops">UNDOS TO SURVIVE <b>■</b><b>■</b><b>■</b></div>
+    <div><button class="primary" id="start">BEGIN THE LOOP</button> <button id="howBtn">HOW TO PLAY</button></div>
+    <div id="how">WASD / ARROWS or the D-pad: move<br>E: inspect clues (◆) or talk to people &nbsp; SPACE: look (hint) &nbsp; J: journal<br>Every clue goes into your journal. Puzzles are solved by deduction, so read it.<br>Avoid the dead. In the bunker, talk to your teammates. Collect all 12 clues for the best ending.</div>
+    <div class="foot">MYSTERY · SURVIVAL · SCI-FI</div>
+  </div>
+</div>
+
+<div id="select">
+  <h2 style="margin:3px 0;color:#e4b95f;letter-spacing:3px">WHO REMEMBERS?</h2>
+  <p class="sub">Four witnesses. Four different roads to the same bunker. Each route has different clues and different tools.</p>
+  <div class="roster" id="roster"></div>
+</div>
+
+<div class="ov" id="pausePanel"><div class="panel"><h3>PAUSED</h3><p>The timeline is waiting.</p><button id="resume">RESUME</button> <button id="restart">RESTART</button></div></div>
+<div class="ov" id="journal"><div class="panel"><h3>JOURNAL</h3><div id="jBody"></div><button id="jX">CLOSE</button></div></div>
+<div class="ov" id="puzzle"><div class="panel" id="pzBody"></div></div>
+<div id="ending" style="display:none"></div>
+<div id="flash"></div>
+<div class="scan"></div>
+</div>
+
+<script>
+const $=id=>document.getElementById(id);
+const C=$("game"),ctx=C.getContext("2d"),W=960,H=640;
+const LC=document.createElement("canvas");LC.width=W;LC.height=H;const lx=LC.getContext("2d");
+const keys={};
+let S={state:"title",room:null,sel:null,modal:false,dlg:false,t:0,glow:0};
+let clues=new Set(),clueLog=[],flags={},amb=[],Z=[],shake=0,fails=0,lock=0,talked=new Set(),story=[],death=null;
+let P={x:100,y:450,dir:1,sp:2.7,mv:false,w:0};
+let sr=7;const rn=()=>(sr=sr*16807%2147483647)/2147483647;
+
+/* ---------- DATA ---------- */
+const CH={
+zhenya:{n:"ZHENYA",role:"ART KID",col:"#6a55b0",hair:"#17121f",sc:1,sp:2.6,aw:115,route:"gal",skill:"RECONSTRUCT",pass:"SPACE (look) makes every unsolved clue glow for a few seconds.",d:"Remembers every picture she has ever drawn, including a machine she has never seen."},
+yoru:{n:"YORU",role:"CASHIER",col:"#35506b",hair:"#101421",sc:1,sp:2.8,aw:80,route:"store",skill:"LISTEN",pass:"Quiet steps: the dead notice him from much closer. Can replay the radio pattern.",d:"A survivor who hears what others miss. The four-note tone has followed him since day one."},
+renee:{n:"RENÉE",role:"GENIUS LIL KID",col:"#3d807b",hair:"#6b3e69",sc:.85,sp:2.9,aw:115,route:"lab",skill:"HACK",pass:"Hacker: terminals never lock her out after failed codes.",d:"Engineering prodigy. Believes every pattern is code somebody forgot to hide."},
+rocco:{n:"ROCCO",role:"GANGSTER",col:"#9b3f53",hair:"#1a1118",sc:1,sp:3.1,aw:115,route:"garage",skill:"INSTINCT",pass:"Fastest on foot. Escapes the dead easily.",d:"Reflexes like a held breath. Reads rooms the way other people read faces."},
+lev:{n:"LEV",role:"ARCHITECT",col:"#22242e",hair:"#1a1118",sc:1.05}
+};
+const TH={
+gal:{w:"#241a2a",f:"#2c2330",f2:"#33283a",a:"#d56b79"},
+store:{w:"#1c2a2b",f:"#2a3636",f2:"#313f3f",a:"#e4b95f"},
+lab:{w:"#17242b",f:"#222f36",f2:"#283840",a:"#65b8b0"},
+garage:{w:"#2a2220",f:"#333030",f2:"#3a3636",a:"#d56b79"},
+bunker:{w:"#1b2220",f:"#26302d",f2:"#2c3834",a:"#65b8b0"},
+obs:{w:"#3a1f1d",f:"#4a2a22",f2:"#52302a",a:"#e4b95f"},
+core:{w:"#1c1530",f:"#2b2144",f2:"#33284e",a:"#d56b79"}
+};
+const ROOMS={
+gal:{name:"GALLERY OF THE LAST DAY",th:"gal",stage:1,spawn:[80,450],obj:"Find a way into Bunker 9. Avoid the dead.",ids:["z1","z2","z3"],
+ f:[[110,100,250,46,"paint","z1"],[430,205,110,70,"easel","z2"],[810,100,100,46,"safe","z3"],[150,330,130,40,"bench"],[620,340,160,60,"crate"],[330,430,100,30,"debris"],[720,200,50,70,"statue"]],
+ z:[[[300,420],[700,430],[700,300],[300,300]],[[860,230],[860,440],[540,440]],
+    [[200,240],[600,240]],[[800,470],[420,470],[420,360]],[[560,200],[560,300],[900,300]]]},
+store:{name:"MIDNIGHT MART",th:"store",stage:1,spawn:[80,450],obj:"Find a way into Bunker 9. Avoid the dead.",ids:["y1","y2","y3"],
+ f:[[100,100,200,46,"shelf","y1"],[420,200,170,50,"counter","y2"],[810,100,100,46,"radio","y3"],[170,330,130,50,"shelf"],[620,330,130,50,"shelf"],[380,420,100,36,"debris"]],
+ z:[[[330,440],[720,440],[720,300],[330,300]],[[880,260],[880,450]],
+    [[200,250],[540,250]],[[780,400],[450,330],[780,300]],[[560,200],[900,200]]]},
+lab:{name:"HELIX YOUTH ROBOTICS LAB",th:"lab",stage:1,spawn:[80,450],obj:"Find a way into Bunker 9. Avoid the dead.",ids:["r1","r2","r3"],
+ f:[[110,100,230,46,"board","r1"],[430,200,100,70,"server","r2"],[790,200,110,70,"term","r3"],[150,330,140,40,"bench"],[580,340,150,50,"crate"],[360,430,90,30,"debris"]],
+ z:[[[300,440],[700,440],[700,320],[300,320]],[[620,230],[620,460]],
+    [[200,260],[480,260],[480,400]],[[820,330],[820,470]],[[420,230],[880,230]]]},
+garage:{name:"CHOP-SHOP GARAGE",th:"garage",stage:1,spawn:[80,450],obj:"Find a way into Bunker 9. Avoid the dead.",ids:["c1","c2","c3"],
+ f:[[110,100,200,46,"cal","c1"],[440,100,70,46,"clock","c2"],[790,200,110,80,"locker","c3"],[160,320,170,80,"car"],[560,340,150,60,"crate"],[350,440,90,30,"debris"]],
+ z:[[[300,450],[700,450],[700,250],[480,250]],[[880,420],[600,420]],
+    [[200,240],[560,240]],[[760,300],[760,470],[400,470]],[[300,350],[600,350]]]},
+bunker:{name:"BUNKER 9",th:"bunker",stage:1,spawn:[90,450],obj:"Talk to your teammates, read the records, then undo the dead.",ids:["b1","b2","b3"],
+ f:[[90,100,260,46,"arch","b1"],[620,100,250,46,"schem","b2"],[430,200,140,70,"console","b3"],[150,330,130,60,"bunk"],[700,330,130,60,"bunk"],[420,410,100,40,"crate"]],team:[[300,455],[520,470],[640,455]]},
+obs:{name:"SOLAR OBSERVATORY",th:"obs",stage:2,spawn:[90,450],obj:"The sun is carrying the debt. Trace the signal, then undo the sun.",ids:["o1","o2","o3"],
+ f:[[100,100,240,46,"panel","o1"],[430,200,130,80,"receiver","o2"],[800,100,100,46,"dish","o3"],[150,340,130,50,"table"],[660,340,130,50,"table"]],team:[[300,455],[520,470],[640,455]]},
+core:{name:"THE MACHINE ROOM",th:"core",stage:3,spawn:[90,450],obj:"Two skylines. One machine. Study it, then face Lev.",ids:["k1","k2","k3"],
+ f:[[100,100,250,46,"ledger","k1"],[420,205,130,60,"seat","k2"],[690,180,180,100,"machine","k3"],[150,340,120,50,"table"],[470,400,100,40,"crate"]],team:[[250,460],[400,480],[540,460]]}
+};
+const HS={
+z1:{n:"Three Canvases",s:"@",t:"Your last three paintings hang in a row. RED SUN: 4 flares. PALE CROWS: 7 crows. OPEN DOORS: 2 doors. A tiny L is scratched into every frame.",h:"Count what is painted inside each canvas. The order matters later."},
+z2:{n:"The Sketchbook",s:"@",t:"Your sketchbook lies open on the easel. Pages are numbered in the order you painted: 1 OPEN DOORS, 2 RED SUN, 3 PALE CROWS. On the last page, in handwriting that isn’t yours: “You drew it right the first time. — L”",h:"The sketchbook knows which painting came first."},
+z3:{n:"The Safe",s:"@",t:"The safe swings open. Inside: a keycard stamped BUNKER 9, and a letter. “Test 0 undid one night, Zhenya. Only one night. I will fix the rest. — L” You have never met a man named L. You remember his hands.",h:"The plate says to paint it in order and count what is inside.",p:"zsafe"},
+y1:{n:"The Receipt",s:"@",t:"A receipt in the jammed printer. ITEM CODES: 3 - 1 - 4 - 2. Timestamp 03:12, the minute the sky first went wrong. The register printed it by itself.",h:"Four numbers, printed at the exact moment the world broke."},
+y2:{n:"The Taped Note",s:"@",t:"A note under the counter lamp, in your own handwriting: “1 = C, 2 = E, 3 = G, 4 = B. The register plays what it prints.” You don’t remember writing it.",h:"A legend that turns numbers into notes."},
+y3:{n:"The Radio",s:"@",t:"The radio crackles. Four notes, then a voice: “Bunker 9. Four doors. One tone. Come before the sun learns your name.” The tone is the engine’s reset signal. It rang at 03:12, the moment of Test 0.",h:"Play the receipt back, in the order it printed.",p:"yradio"},
+r1:{n:"Sticky Note",s:"@",t:"A sticky note on a dead monitor: “The passphrase was encrypted by shifting every letter FORWARD by the number of fingers on one hand. Go back to read it. — Dr. Voss”",h:"A cipher key signed by your old mentor. Count the fingers, then shift back."},
+r2:{n:"Server Log",s:"@",t:"UNDOEND: chronal undo engine. “It does not erase a catastrophe, it MOVES the debt. Never run Test 0 again.” Author: Dr. Anika Voss. The final entry was edited after her death by someone else.",h:"The log says what the engine really does."},
+r3:{n:"The Terminal",s:"@",t:"ACCESS GRANTED. A roster of the Helix Youth Program with four names flagged WITNESS: you, a courier, an artist, a cashier. The engine needs witnesses to remember what it edits.",h:"The passphrase on screen is shifted. The sticky note tells you by how much.",p:"rterm"},
+c1:{n:"Wall Calendar",s:"@",t:"A calendar from the day the sky first went wrong. One date is circled in red marker: 14.",h:"One number is circled."},
+c2:{n:"The Dead Clock",s:"@",t:"The wall clock stopped when the power died: exactly 9:00. Scratched under it: THE HOUR IT ALL STOPPED.",h:"A stopped clock gives an hour."},
+c3:{n:"The Locker",s:"@",t:"Inside: your courier ledger. Every delivery to Helix Institute, and one crate you never delivered: SOLAR CORE, signed L. ORLOV. Plus a keycard for Bunker 9.",h:"The note says date first, then the hour.",p:"rlocker"},
+b1:{n:"Intake Log",s:"@",t:"SURVIVOR INTAKE: four names, all admitted in the same minute, all drawn by the same four-note tone. Beneath: WITNESSES. THEY REMEMBER WHAT THE ENGINE EDITED. Everyone was within one block of Helix Institute on the night of Test 0.",h:"The bunker knew you were coming, and why."},
+b2:{n:"Blueprint",s:"@",t:"Blueprint of the UNDO ENGINE, with Dr. Voss’s margin notes: “It moves debt, never erases it. The debt moves to wherever the world is thinnest. First came the biological, then the sky, last the worlds themselves. TEST 0 is the root.”",h:"Voss describes the order in which the disasters follow each other."},
+b3:{n:"The Debt Chain",s:"@",t:"The console accepts the chain. Voss’s last note unlocks: “Undo too many times and the seams between universes tear. Do not let him run it again.” Who is “him”? UNDO #1 is armed and waiting.",h:"Root first. Use the blueprint’s notes.",p:"bchain"},
+o1:{n:"Solar Spectrum",s:"@",t:"The sun isn’t dying. It’s carrying the debt from Undo #1, and someone is pumping it. The harmonics match the engine. A warning is etched into the console: “SIGNALS ARE NEVER LOST. ONLY SCRAMBLED. SAME LETTERS, NEW ORDER.”",h:"The etching says the signal isn’t encrypted, only shuffled. Rearrange the letters."},
+o2:{n:"Receiver Tape",s:"@",t:"The tape repeats one scrambled word, over and over: OLOP. OLOP. OLOP. Beneath it, four notes. The same four notes.",h:"Four letters, repeated again and again. Someone wants you to unscramble them."},
+o3:{n:"The Dish",s:"@",t:"ACCESS GRANTED. The dish locks onto its source: the machine room. The word is LOOP. Someone is telling you the loop never stopped, and that it can be ended.",h:"Rearrange the letters of OLOP into a real word. Think about what this whole nightmare is.",p:"odish"},
+k1:{n:"Lev’s Ledger",s:"@",t:"LEV’S LEDGER: “Loop one cost 3. The debt doubles with each loop.” In the margin: “She’s still alive in Test 0. Every time. Every time.”",h:"The ledger gives the first debt and the rule."},
+k2:{n:"The Anchor Seat",s:"@",t:"A chair wired into the machine, scorched. Plate: “Seams hold only when the debts are entered in the order they were incurred. No spaces.” Someone has sat here many, many times.",h:"Order and format of the stabilizer code."},
+k3:{n:"Seam Stabilizer",s:"@",t:"The seams steady. The two skylines flicker, then settle into one. Behind you, someone claps slowly.",h:"Three debts, in order. You watched the system print the first two after each undo.",p:"kmach"}
+};
+const PZ={
+zsafe:{type:"code",title:"WALL SAFE",pr:"Plate: “Paint it in the order you painted it. Count what is inside.”",ans:"247",ml:3,ph:"3 digits"},
+yradio:{type:"seq",title:"OLD RADIO",pr:"The dial lights. It plays whatever you give it. Rebuild the receipt: play each number as its note, in the order printed.",ans:"GCBE"},
+rterm:{type:"code",title:"TERMINAL",pr:"LOCKED. Encrypted passphrase: ZSITJSI",ans:"UNDOEND",ml:12,ph:"decrypted word"},
+rlocker:{type:"code",title:"LOCKER",pr:"Note: “Date first. Then the hour it stopped. No spaces.”",ans:"149",ml:3,ph:"code"},
+bchain:{type:"order",title:"DEBT CHAIN",pr:"Reconstruct the chain of debt, root first.",cards:["The worlds touch","Test 0","The dead rise","The sun swells"],ans:["Test 0","The dead rise","The sun swells","The worlds touch"]},
+odish:{type:"code",title:"DISH CONTROL",pr:"Transmission word: OLOP. The letters are scrambled. Rearrange them into the real word.",ans:"LOOP",ml:8,ph:"unscrambled word"},
+kmach:{type:"code",title:"SEAM STABILIZER",pr:"Enter the debts of Loop 1, Loop 2 and Loop 3. No spaces.",ans:"3612",ml:6,ph:"code"}
+};
+const INTRO={
+zhenya:[["@","Day three. The sky is the wrong color and the dead are in the streets. I keep drawing the same machine, and the same man beside it. I can’t remember his name."],["@","Four notes, over and over, in every drawing. And a place: BUNKER 9. Someone left me a map in a gallery I haven’t visited since the world ended."]],
+yoru:[["@","Day three. I locked the store, then stopped locking it. The dead don’t buy anything."],["@","The register keeps ringing four notes by itself. Same four. I think it’s telling me where to go. I think it’s been telling me for years."]],
+renee:[["@","Day three. Everyone’s running. I’m counting. The outbreak spread in a pattern, and patterns are just code someone forgot to hide."],["@","My old robotics lab received a signal at 03:12 on day one. Four notes. I’m going back to read the logs and find out who sent them."]],
+rocco:[["@","Day three. Half my crew is dead. The other half is hungry. I’ve got a locker I’ve never opened and no gas."],["@","A dead courier had four notes scrawled on his hand like a ringtone, and BUNKER 9. Dead men don’t send invitations. Somebody is using them."]]
+};
+const PREMISE=[["SYSTEM","THE SHORT VERSION. A man named Lev built a machine that can UNDO a disaster. It never erases it, it MOVES the damage somewhere else. He used it once (Test 0) and that move became the zombie plague."],["SYSTEM","Your goal across three acts: (1) the dead, (2) the sun, (3) the collision of universes. Each undo moves the debt to the next disaster. The Journal keeps track."]];
+const BUN=[["SYSTEM","Four doors. Four keycards. One tone. All four arrive in the same minute."],["ROCCO","Hands where I can see them. All of you."],["RENÉE","Four strangers, one invitation. Statistically, this is a trap or a book club."],["YORU","Sorry! It’s the tone. Did you all follow the tone too?"],["ZHENYA","Four notes. I’ve been drawing them for three days."],["RENÉE","The door log: four cards, four doors, one timestamp. This place was built for us."],["ROCCO","So whoever built it knows who we are."],["YORU","I’d like to know who I am. I work a register."],["RENÉE","New rule. We share everything. No lies."],["ROCCO","I lie for a living."],["RENÉE","Then be bad at it."],["ZHENYA","You don’t have to like each other. You just have to stay alive."],["SYSTEM","Talk to your teammates (E near them), then inspect the ◆ clues. When everything is done, the exit arrow appears."]];
+const PRE1=[["RENÉE","Let me say it simply. Test 0 undid one night. The debt of that night became the virus. The engine can undo the virus. But undoing moves the debt again."],["ROCCO","Move it where?"],["RENÉE","Voss wrote: to wherever the world is thinnest."],["YORU","The dead are at the door. We don’t have time to find out."],["ZHENYA","Then we do it together. A picture, a tone, a code, a key."],["SYSTEM","UNDO #1 — THE DEAD ARE LAID TO REST.   DEBT MOVED: 3"]];
+const UNDO1=[["RENÉE","They’re lying down. They’re actually lying down."],["YORU","Then why is the sky so bright?"],["ROCCO","Because the debt moved. It’s in the sun now."],["ZHENYA","The tone is higher. It’s coming from the observatory."],["SYSTEM","ACT II · THE SUN. Follow the signal to the Solar Observatory."]];
+const PRE2=[["RENÉE","The sun isn’t dying. It’s carrying the debt from Undo #1, and a signal is pumping it."],["YORU","The dish says LOOP. Like the loop never stopped."],["ZHENYA","It’s coming from the machine room. Whoever sends this is there."],["ROCCO","If we settle the sun, the debt moves again."],["RENÉE","To the seams between universes. But it’s the only way to reach the man who aimed it."],["SYSTEM","UNDO #2 — THE SUN IS SETTLED.   DEBT MOVED: 6"]];
+const UNDO2=[["YORU","It’s just a sun again."],["RENÉE","Look at the horizon."],["ROCCO","That’s two skylines."],["ZHENYA","Overlapping. Like a drawing traced onto the wrong page."],["SYSTEM","ACT III · THE SEAMS. The signal’s origin is the machine room."]];
+const COREIN=[["LEV","You took your time. I was starting to think the bunker had taught you caution."],["ZHENYA","Lev."],["LEV","Hello, Zhenya. You kept drawing me without remembering me. I find that flattering."],["SYSTEM","Look around the machine room first, then speak to him. Understand what you’re about to decide."]];
+const FAREWELL=[
+["SYSTEM","Zhenya lays her last drawing on the console: a man in a dark suit, one hand reaching toward a machine, the other holding a pencil out to a girl who isn’t drawn yet."],
+["ZHENYA","I drew you every day for three days and never knew your name. My hands knew it."],
+["LEV","I took it from you. The one thing that would have made you stop me."],
+["ZHENYA","It didn’t work. Look at them, Lev. You’re in every picture. I couldn’t draw the machine without drawing you standing next to it."],
+["LEV","I didn’t think anyone would keep me."],
+["ZHENYA","I kept you. Even when I didn’t know why my chest hurt every time I drew your hands."],
+["ZHENYA","I told Rocco I was afraid I’d loved someone I couldn’t remember. It was you. Wasn’t it."],
+["LEV","…You were loved, Zhenya. However it counts, whatever it was called. You were."],
+["LEV","Every night I watched her die, and told myself the next one would be different. I forgot how to do anything else. I forgot how to stop."],
+["ZHENYA","Anika would hate what you did in her name."],
+["LEV","Yes."],
+["ZHENYA","But she would want you to be able to put it down. So I’m going to hold your hand, and you’re going to let go."],
+["LEV","…Your hand is warm. I’d forgotten that. I’d forgotten what a warm hand felt like."],
+["ZHENYA","I’m not going anywhere. I’ll remember all of it. Every night. Every drawing."],
+["LEV","Then tell her… tell her I was there."],
+["ZHENYA","I’ll tell everyone. I’ll draw you, Lev. I promise. Somebody should."],
+["SYSTEM","He sits in the anchor seat. The hum of the engine softens, like a long breath let go. The light takes his hand last."]
+];
+
+/* ---------- BUNKER CONVERSATIONS ---------- */
+const CV={
+"zhenya>yoru":["You’re the one who draws. Could you draw the sun? I keep forgetting what a normal one looks like.",["“Yellow circle. Done. Pay me in snacks.”","I can’t pay. I work a register. Worked. I can offer you a very good receipt."],["“It had warmth. You’d stand in it without thinking.”","I’d like that. Standing in something without thinking."]],
+"zhenya>renee":["You drew a machine you’ve never seen. Statistically, that’s genius or a brain tumor.",["“Can I pick neither?”","No. Pick one. I’ll respect the tumor."],["“I think someone put it in me.”","Then someone wrote to you without permission. I’ll find them. And fix their grammar."]],
+"zhenya>rocco":["You’re quiet. Artists usually talk when they’re nervous.",["“I’m sketching your jaw. It’s very punchable.”","Draw it kindly. I’m sensitive."],["“I’m afraid I loved someone I can’t remember.”","That’s worse than the dead outside. Stay close. I don’t forget faces."]],
+"yoru>zhenya":["The tone. You said it follows you. Since when?",["“Since the register. It’s my ringtone now.”","You’ve been on call for the end of the world. Do you get overtime?"],["“Since the night the sky broke. It sounds like someone asking for me.”","Then we answer together. I’ll hum it with you if it helps."]],
+"yoru>renee":["A cashier. What does a cashier even do in an apocalypse?",["“Smile at people who are about to bite me.”","Honestly impressive. Keep doing that."],["“Count. Make change. Notice who isn’t paying attention.”","Observation skills. Okay, you’re useful. Don’t let it go to your head."]],
+"yoru>rocco":["You hum when you’re scared. It’s annoying. Don’t stop.",["“I’m not scared. I’m tuning.”","Sure. Tune quieter."],["“I’m always scared. Humming helps.”","Same. I just break things. Hum louder."]],
+"renee>zhenya":["How old are you, Renée? You talk like a professor and eat like a kid.",["“Old enough to bill you for this conversation.”","Fine. I’ll pay in sketches."],["“Fourteen. Dr. Voss gave me my first soldering iron.”","Then she mattered to you. Hold onto that."]],
+"renee>yoru":["You’re the smartest person here, aren’t you?",["“Obviously. Next question.”","Honestly, a relief."],["“No. Dr. Voss was. I just read her logs.”","Then we’ll find out what she wanted."]],
+"renee>rocco":["Kid. Stay behind me.",["“Statistically, I’m safer behind a server rack.”","Fair. I’ll stand in front of the rack."],["“I’m not a kid. But thanks.”","Never said you were. I’d just rather get bitten first."]],
+"rocco>zhenya":["You don’t seem afraid.",["“I’m very afraid. I just look expensive.”","You do. Stay expensive."],["“I’ve been afraid so long it’s just my shape.”","Then we’ll make a new shape. Together."]],
+"rocco>yoru":["Thank you for earlier. With the dead one.",["“Don’t mention it. Literally.”","Got it. I’ll mention it only once. Twice."],["“Stay close. I’m not letting anyone else die today.”","That’s the nicest thing a stranger has said to me."]],
+"rocco>renee":["You smell like gasoline and bad decisions.",["“Only one of those is a decision.”","Good answer. Teach me to pick a lock?"],["“Stay on my right. Every time.”","Done. And I’ll tell you when the machine lies."]]
+};
+const IDL={zhenya:"Go on. I’ll keep watch.",yoru:"Still humming. Sorry.",renee:"I’m reading logs. Don’t talk to me. Okay, talk to me.",rocco:"Quiet in here. I hate quiet."};
+const ACTL={
+obs:{zhenya:"The sun looks like one of my paintings. I hate that I know which one.",yoru:"The tone’s higher now. Like it’s pleading.",renee:"Voss said the engine moves debt. First the virus. Now this. It’s a chain, and we’re standing in it.",rocco:"Everything turns red when we win. I don’t trust winning."},
+core:{zhenya:"That man built this place around me. I can feel it.",yoru:"Whatever you choose, I’m still humming the tune.",renee:"Three debts, doubling each time. 3, 6, 12. We’re about to be the 12.",rocco:"If he moves, I’m in front of you."}
+};
+
+/* ---------- DRAWING HELPERS ---------- */
+const rect=(x,y,w,h,c)=>{ctx.fillStyle=c;ctx.fillRect(x|0,y|0,w,h)};
+const txt=(s,x,y,sz=14,c="#f0e2c4",a="left")=>{ctx.fillStyle=c;ctx.font=`bold ${sz}px "Courier New",monospace`;ctx.textAlign=a;ctx.fillText(s,x,y)};
+const stroke=(x,y,w,h,c)=>{ctx.strokeStyle=c;ctx.lineWidth=2;ctx.strokeRect(x,y,w,h)};
+const ring=(x,y,r,c,lw)=>{ctx.strokeStyle=c;ctx.lineWidth=lw;ctx.beginPath();ctx.arc(x,y,r,0,Math.PI*2);ctx.stroke()};
+const disc=(x,y,r,c)=>{ctx.fillStyle=c;ctx.beginPath();ctx.arc(x,y,r,0,Math.PI*2);ctx.fill()};
+const sl=(x,y,w,h,c)=>{rect(x+5,y+h-3,w,7,"rgba(0,0,0,.4)");rect(x,y,w,h,c);rect(x,y,w,4,"rgba(255,255,255,.16)");rect(x,y+h-5,w,5,"rgba(0,0,0,.3)");stroke(x,y,w,h,"rgba(0,0,0,.6)")};
+
+function person(g,x,y,id,dir=1,sc=1,walk=0){
+ const c=CH[id];g.save();g.translate(x|0,y|0);g.scale(dir*sc,sc);
+ const R=(a,b,w,h,col)=>{g.fillStyle=col;g.fillRect(a,b,w,h)},sw=Math.sin(walk)*3,sk="#e3ab97";
+ R(-11,26,22,4,"rgba(0,0,0,.35)");
+ R(-7,14,6,13+sw*.4,"#16121c");R(1,14,6,13-sw*.4,"#16121c");
+ const long=id==="lev";
+ R(-9,-4,18,long?26:19,c.col);R(-9,-4,18,3,"rgba(255,255,255,.16)");R(-9,long?19:10,18,3,"rgba(0,0,0,.3)");
+ R(-12,-3,4,13,c.col);R(8,-3,4,13,c.col);R(-12,9,4,3,sk);R(8,9,4,3,sk);
+ R(-7,-16,14,13,sk);R(-7,-19,14,5,c.hair);R(-3,-11,2,2,"#111");R(3,-11,2,2,"#111");
+ if(id==="zhenya"){R(-9,-16,3,12,c.hair);R(6,-16,3,12,c.hair);R(8,2,8,10,"#f0e2c4");R(10,5,4,2,"#d56b79")}
+ if(id==="yoru"){R(-9,-17,3,9,"#e4b95f");R(6,-17,3,9,"#e4b95f");R(-8,-21,16,3,"#e4b95f");R(-9,-4,18,3,"#243a52");R(2,0,5,3,"#e4b95f")}
+ if(id==="renee"){R(-8,-19,16,5,"#65b8b0");R(-3,-25,6,6,c.hair);R(-9,-15,3,8,c.hair);R(6,-15,3,8,c.hair)}
+ if(id==="rocco"){R(-4,-13,2,8,"#a8454f");R(-9,-4,18,3,"#5a1f2b");R(-8,-20,16,3,c.hair)}
+ if(id==="lev"){
+  /* dark swept hair, charcoal suit, white shirt, burgundy tie */
+  R(-9,-17,3,7,c.hair);R(6,-17,3,7,c.hair);R(-8,-21,16,3,c.hair);
+  R(-3,-4,6,12,"#e8e0d0");R(-1,-3,2,10,"#8a1f2e");R(-1,-3,2,2,"#5a1420");
+  R(-5,-4,2,14,"#15161c");R(3,-4,2,14,"#15161c");
+  R(-9,19,18,2,"#15161c");R(-12,-3,4,2,"#2e313c");R(8,-3,4,2,"#2e313c");
+  R(-12,9,4,3,"#e8e0d0");R(8,9,4,3,"#e8e0d0")
+ }
+ g.restore();
+}
+function zomb(z){
+ const g=ctx,b=Math.sin(S.t/7+z.x)*(death?4:2);g.save();g.translate(z.x|0,z.y|0);g.scale(z.d||1,1);
+ const R=(a,c,w,h,col)=>{g.fillStyle=col;g.fillRect(a,c,w,h)};
+ R(-11,26,22,4,"rgba(0,0,0,.4)");R(-7,14,6,13+b,"#222");R(1,14,6,13-b,"#222");
+ R(-9,-4,18,19,"#4a4f3a");R(-9,2,8,3,"#2a1a18");R(0,8,9,4,"#2a1a18");
+ R(-7,-16,14,13,"#7e9a78");R(-7,-19,14,5,"#2a2a22");R(3,-12,3,3,"#ff3030");R(-3,-12,3,3,"#ff3030");R(-3,-6,8,2,"#4a1010");
+ if(death&&death.t>14)R(-3,-6,8,3+(death.t>>2)%2*3,"#8a0e10");
+ R(8,-2,13,4,"#7e9a78");R(8,4,13,4,"#7e9a78");
+ g.restore();
+}
+
+/* ---------- FURNITURE ---------- */
+const K={
+paint:(x,y,w,h)=>{for(let i=0;i<3;i++){const px=x+8+i*82;sl(px,y+3,70,h-6,"#3a2a3a");rect(px+5,y+8,60,h-16,["#7a2a30","#2a2f44","#3b4a3c"][i]);disc(px+35,y+23,9,["#e4b95f","#cfc7d6","#d56b79"][i])}},
+easel:(x,y,w,h)=>{rect(x+14,y+20,6,h-18,"#4a3626");rect(x+w-20,y+20,6,h-18,"#4a3626");sl(x+10,y,w-20,48,"#2b2230");rect(x+18,y+6,w-36,36,"#efe3c8");for(let i=0;i<4;i++)rect(x+24,y+12+i*8,w-48,2,"#8a7a68")},
+safe:(x,y,w,h)=>{sl(x,y,w,h,"#4a4a52");disc(x+w/2,y+23,12,"#cfc7d6");disc(x+w/2,y+23,5,"#2a2a30");rect(x+w-14,y+8,6,28,"#222")},
+shelf:(x,y,w,h)=>{sl(x,y,w,h,"#3a2f27");const c=["#d56b79","#e4b95f","#65b8b0","#6a55b0"];for(let i=0;i<3;i++){rect(x+4,y+14+i*13,w-8,2,"#000a");for(let j=0;j<w/14-1;j++)rect(x+6+j*14,y+6+i*13,10,8,c[(i+j)%4])}},
+counter:(x,y,w,h)=>{sl(x,y+14,w,h-14,"#4b3a2c");sl(x+20,y,50,24,"#2a2a32");rect(x+26,y+5,38,10,"#65b8b0");rect(x+w-50,y+8,30,6,"#e4b95f")},
+radio:(x,y,w,h)=>{sl(x,y,w,h,"#3a3128");for(let i=0;i<5;i++)rect(x+8,y+8+i*7,40,2,"#0009");disc(x+70,y+23,13,"#e4b95f66");disc(x+70,y+23,4,"#111")},
+board:(x,y,w,h)=>{sl(x,y,w,h,"#cfc8b8");for(let i=0;i<4;i++)rect(x+10,y+8+i*9,w-90,2,"#7a7466");rect(x+w-60,y+8,36,28,"#e4b95f");rect(x+w-54,y+15,24,2,"#7a5a10")},
+server:(x,y,w,h)=>{sl(x,y,w,h,"#232a33");for(let i=0;i<4;i++){rect(x+8,y+10+i*14,w-16,9,"#10151b");rect(x+w-20,y+12+i*14,5,5,((S.t/14+i)|0)%2?"#65b8b0":"#d56b79")}},
+term:(x,y,w,h)=>{sl(x,y+34,w,h-34,"#2a313a");sl(x+14,y,w-28,40,"#0f1a1a");rect(x+20,y+6,w-40,28,"#2a8a80");for(let i=0;i<3;i++)rect(x+26,y+11+i*8,w-56,2,"#bff")},
+cal:(x,y,w,h)=>{sl(x+50,y+2,100,h-4,"#e8dcc0");for(let i=0;i<4;i++)rect(x+56,y+12+i*8,88,1,"#8a7a68");rect(x+108,y+22,16,10,"#c2352f");rect(x+50,y+2,100,6,"#a84a3a")},
+clock:(x,y,w,h)=>{disc(x+w/2,y+h/2,22,"#d8cdb0");ring(x+w/2,y+h/2,22,"#2a2a2a",3);rect(x+w/2-15,y+h/2-1,15,3,"#111");rect(x+w/2-1,y+h/2-14,3,14,"#111")},
+locker:(x,y,w,h)=>{sl(x,y,w,h,"#3a4a55");rect(x+w/2,y+4,2,h-8,"#0008");rect(x+w-26,y+30,18,24,"#111");for(let i=0;i<6;i++)rect(x+w-24+(i%3)*6,y+33+((i/3)|0)*10,4,6,"#e4b95f")},
+car:(x,y,w,h)=>{sl(x,y+16,w,h-16,"#2b2a35");sl(x+30,y,w-60,30,"#3a4a60");rect(x+8,y+h-6,22,10,"#080808");rect(x+w-30,y+h-6,22,10,"#080808");rect(x+w-8,y+30,8,8,"#c2352f")},
+arch:(x,y,w,h)=>{for(let i=0;i<4;i++){sl(x+i*65,y,60,h,"#2a3a3a");rect(x+i*65+24,y+20,12,3,"#cfc7d6")}},
+schem:(x,y,w,h)=>{sl(x,y,w,h,"#16314a");ring(x+w/2,y+23,17,"#65b8b0",3);ring(x+w/2,y+23,8,"#d56b79",2);for(let i=0;i<4;i++)rect(x+10,y+9+i*8,70,1,"#65b8b088")},
+console:(x,y,w,h)=>{sl(x,y+24,w,h-24,"#24313a");sl(x+14,y,w-28,36,"#0c1a1e");rect(x+20,y+6,w-40,24,"#1c6a66");for(let i=0;i<6;i++)rect(x+16+i*20,y+48,14,6,"#566a72")},
+panel:(x,y,w,h)=>{sl(x,y,w,h,"#2a1c1c");for(let i=0;i<22;i++)rect(x+10+i*10,y+36-(Math.sin(i+S.t/20)*8+12),6,Math.sin(i+S.t/20)*8+12,["#e4b95f","#d56b79"][i%2])},
+receiver:(x,y,w,h)=>{sl(x,y,w,h,"#2a1f26");for(let i=0;i<5;i++){ctx.strokeStyle=i%2?"#65b8b0":"#d56b79";ctx.lineWidth=2;ctx.beginPath();ctx.arc(x+w/2,y+h-10,14+i*10,Math.PI*1.1,Math.PI*1.9);ctx.stroke()}},
+dish:(x,y,w,h)=>{sl(x,y,w,h,"#2a2226");ring(x+w/2,y+23,18,"#cfc7d6",3);disc(x+w/2,y+23,5,"#e4b95f")},
+table:(x,y,w,h)=>{sl(x,y,w,h,"#3a2f33");rect(x+10,y+8,20,10,"#cfc7d6")},
+ledger:(x,y,w,h)=>{sl(x,y,w,h,"#2a2038");for(let i=0;i<6;i++)rect(x+10,y+8+i*6,w-20-(i%3)*30,1,"#c8b9d3")},
+seat:(x,y,w,h)=>{sl(x+30,y+6,70,48,"#2a2233");for(let i=0;i<4;i++)rect(x+10+i*28,y+h-4,3,10,"#65b8b0");rect(x+38,y,54,12,"#3a2a48")},
+machine:(x,y,w,h)=>{sl(x,y+h-26,w,26,"#2a2038");const p=Math.sin(S.t/20)*3;ring(x+w/2,y+h/2-8,40+p,"#65b8b0",6);ring(x+w/2,y+h/2-8,56,"#d56b79",2);disc(x+w/2,y+h/2-8,14,"#d56b79")},
+statue:(x,y,w,h)=>{sl(x+8,y+30,w-16,h-30,"#5a5a62");rect(x+14,y+4,w-28,28,"#8a8a92")},
+bench:(x,y,w,h)=>sl(x,y,w,h,"#3a2d2a"),
+crate:(x,y,w,h)=>{sl(x,y,w,h,"#4a3a28");rect(x+w/2-2,y,4,h,"#0005");rect(x,y+h/2-2,w,4,"#0005")},
+debris:(x,y,w,h)=>{rect(x,y+h-10,w,10,"#2a2a2e");rect(x+10,y+4,w-30,16,"#3a3a40");rect(x+w-20,y,14,12,"#4a4a50")},
+bunk:(x,y,w,h)=>{sl(x,y,w,h,"#2e3a3a");rect(x+8,y+8,34,16,"#cfc7d6")}
+};
+function furn(f){
+ const [x,y,w,h,k,id]=f;(K[k]||K.crate)(x,y,w,h);
+ if(!id)return;
+ const wall=y+h<=150,ty=wall?y+h+16:y-10,b=Math.sin(S.t/10)*3;
+ if(!clues.has(id)){txt("◆",x+w/2,ty+b,16,"#e4b95f","center");if(near(f))txt("[E] INSPECT",x+w/2,ty+b-16,11,"#fff","center");if(S.glow>0)ring(x+w/2,y+h/2,50+Math.sin(S.t/6)*6,"#e4b95f",2)}
+ else txt("✓",x+w/2,ty,13,"#4fbf86","center");
+}
+
+/* ---------- WORLD ---------- */
+const R=()=>ROOMS[S.room],myName=()=>CH[S.sel].n;
+const near=(f,e=55)=>P.x>f[0]-e&&P.x<f[0]+f[2]+e&&P.y+10>f[1]-e&&P.y+10<f[1]+f[3]+e;
+function npcs(){const r=R();if(!r||!r.team)return[];const ids=["zhenya","yoru","renee","rocco"].filter(x=>x!==S.sel);return r.team.map((p,i)=>({id:ids[i],x:p[0],y:p[1]}))}
+function nearNpc(){return npcs().find(n=>Math.hypot(P.x-n.x,P.y-n.y)<70)}
+function blocked(x,y){const bx=x-9,by=y+8;for(const f of R().f){if(f[1]+f[3]<=150)continue;if(bx<f[0]+f[2]&&bx+18>f[0]&&by<f[1]+f[3]&&by+18>f[1])return true}return false}
+function startRoom(id){
+ S.room=id;const r=R();P.x=r.spawn[0];P.y=r.spawn[1];death=null;
+ Z=(r.z||[]).map(p=>({x:p[0][0],y:p[0][1],i:1,p,d:1}));
+ if(!r.dec){r.dec=[];for(let i=0;i<24;i++)r.dec.push([20+rn()*900,160+rn()*330,10+rn()*40,4+rn()*14,rn()])}
+ amb=[];for(let i=0;i<70;i++)amb.push({x:rn()*W,y:rn()*H,vx:(rn()-.5)*.4,vy:.2+rn()*.6,s:1+rn()*2});
+ updateUI();
+}
+const ready=()=>{const r=R();return !!r&&S.room!=="core"&&r.ids.every(i=>clues.has(i))&&(S.room!=="bunker"||talked.size>=3)};
+function updateUI(){
+ const r=R();if(!r)return;
+ $("chapter").textContent=`ACT ${["","I","II","III"][r.stage]} · ${r.name}`;
+ $("clues").textContent=`CLUES ${clues.size}/12`;
+ let o=r.obj;
+ if(S.room==="bunker"){const left=3-talked.size,cl=r.ids.filter(i=>!clues.has(i)).length;o=(left?`Talk to your teammates (leftleft).`:"")+(cl?`Inspecttheclues({cl} left).`:"")||"Everything done. Take the exit arrow and undo the dead."}
+ $("objective").textContent=o;
+ const rd=ready();("nextArrow").style.display=rd?"block":"none";("nextArrowLabel").style.display=rd?"block":"none";
+}
+function addClue(id){
+ if(clues.has(id))return;clues.add(id);clueLog.push(id);
+ for(let i=0;i<20;i++)amb.push({x:P.x,y:P.y,vx:(Math.random()-.5)*4,vy:-Math.random()*3,s:3,life:40,c:"#e4b95f"});
+ updateUI();
+}
+function drawRoom(){
+ const r=R(),T=TH[r.th],st=r.stage;
+ rect(0,0,W,H,"#060509");rect(0,90,W,62,T.w);
+ for(let x=0;x<W;x+=60){rect(x,92,3,56,"rgba(0,0,0,.28)");rect(x+8,100,44,3,"rgba(255,255,255,.04)")}
+ rect(0,146,W,6,"rgba(0,0,0,.45)");
+ for(let y=152;y<500;y+=32)for(let x=0;x<W;x+=32)rect(x,y,31,31,(((x+y)>>5)&1)?T.f:T.f2);
+ r.dec.forEach(d=>rect(d[0],d[1],d[2],d[3],st===1?(d[4]<.5?"rgba(100,10,18,.5)":"rgba(0,0,0,.3)"):st===2?(d[4]<.5?"rgba(0,0,0,.35)":"rgba(255,140,40,.12)"):"rgba(101,184,176,.2)"));
+ if(S.room!=="bunker"){
+  rect(640,98,90,44,"#0a0608");rect(644,102,38,36,["","#6a3a3a","#ffb04a","#65b8b0"][st]);rect(686,102,40,36,["","#4a2a2a","#e08030","#4a8a84"][st]);
+  const lc=["","120,160,255","255,160,60","101,184,176"][st];ctx.fillStyle=`rgba(${lc},.07)`;ctx.beginPath();ctx.moveTo(640,152);ctx.lineTo(730,152);ctx.lineTo(640,430);ctx.lineTo(480,430);ctx.closePath();ctx.fill()}
+ rect(0,500,W,140,"#07060a");rect(0,500,W,3,T.a+"44");
+ const D=[];
+ r.f.forEach(f=>D.push([f[1]+f[3],()=>furn(f)]));
+ npcs().forEach((n,i)=>D.push([n.y+28,()=>{
+  person(ctx,n.x,n.y+Math.sin(S.t/30+i)*1.5,n.id,n.x<500?1:-1,CH[n.id].sc,0);
+  const b=Math.sin(S.t/10)*3;
+  if(S.room==="bunker"&&!talked.has(n.id))txt("…",n.x,n.y-38+b,18,"#e4b95f","center");
+  if(Math.hypot(P.x-n.x,P.y-n.y)<70)txt("[E] TALK",n.x,n.y-52,11,"#fff","center");
+ }]));
+ if(S.room==="core")D.push([458,()=>person(ctx,820,430,"lev",-1,1.05,0)]);
+ Z.forEach(z=>D.push([z.y+28,()=>zomb(z)]));
+ D.push([P.y+28+(death?1:0),()=>{
+  if(!death){person(ctx,P.x,P.y,S.sel,P.dir,CH[S.sel].sc,P.mv?P.w:0);return}
+  /* death: stagger, then topple backwards around the feet */
+  const f=Math.min(1,Math.max(0,(death.t-6)/34)),e=f*f*(3-2*f);
+  ctx.save();ctx.translate((P.x+(death.t<20?Math.sin(death.t*2)*2:0))|0,(P.y+28)|0);
+  ctx.rotate(-P.dir*e*1.5);ctx.globalAlpha=death.t>96?Math.max(0,1-(death.t-96)/22):1;
+  person(ctx,0,-28,S.sel,P.dir,CH[S.sel].sc,0);ctx.restore();
+  if(death.t>30){ctx.fillStyle="rgba(120,8,14,.75)";const bw=Math.min(60,(death.t-30)*1.2);ctx.beginPath();ctx.ellipse(P.x,P.y+26,bw,bw*.32,0,0,7);ctx.fill()}
+ }]);
+ D.sort((a,b)=>a[0]-b[0]).forEach(d=>d[1]());
+ if(S.room==="core"&&near([820,430,0,0],120))txt("[E] TALK",820,395,11,"#fff","center");
+}
+function light(x,y,r,a){const g=lx.createRadialGradient(x,y,r*.1,x,y,r);g.addColorStop(0,`rgba(0,0,0,${a})`);g.addColorStop(1,"rgba(0,0,0,0)");lx.fillStyle=g;lx.beginPath();lx.arc(x,y,r,0,7);lx.fill()}
+function atmos(){
+ const st=R().stage,d=[0,.78,.36,.6][st];
+ lx.globalCompositeOperation="source-over";lx.clearRect(0,0,W,H);lx.fillStyle=`rgba(4,2,8,${d})`;lx.fillRect(0,0,W,H);
+ lx.globalCompositeOperation="destination-out";
+ light(P.x,P.y+5,st===1?190:270,1);
+ R().f.forEach(f=>{if(f[5]&&!clues.has(f[5]))light(f[0]+f[2]/2,f[1]+f[3]/2,95,.75)});
+ npcs().forEach(n=>light(n.x,n.y,70,.6));
+ if(S.room==="core")light(820,430,130,.7);
+ lx.globalCompositeOperation="source-over";ctx.drawImage(LC,0,0);
+ if(st===1){ctx.fillStyle=`rgba(150,15,25,${.05+.04*Math.sin(S.t/20)})`;ctx.fillRect(0,0,W,H)}
+ if(st===2){ctx.fillStyle="rgba(255,120,30,.10)";ctx.fillRect(0,0,W,H);for(let i=0;i<6;i++){ctx.fillStyle="rgba(255,200,120,.04)";ctx.fillRect(0,160+((S.t*2+i*70)%340),W,6)}}
+ if(st===3){ctx.fillStyle="rgba(101,184,176,.06)";ctx.fillRect(0,0,W,H);if(Math.random()<.09){const y=110+Math.random()*380|0,h=8+Math.random()*30|0;ctx.drawImage(C,0,y,W,h,(Math.random()-.5)*34,y,W,h)}}
+ amb.forEach(a=>{rect(a.x,a.y,a.s,a.s,a.c||["","rgba(210,200,190,.45)","rgba(255,170,70,.6)","rgba(101,184,176,.6)"][st])});
+ const v=ctx.createRadialGradient(W/2,H/2,240,W/2,H/2,640);v.addColorStop(0,"rgba(0,0,0,0)");v.addColorStop(1,"rgba(0,0,0,.6)");ctx.fillStyle=v;ctx.fillRect(0,0,W,H);
+ for(let i=0;i<90;i++)rect(Math.random()*W,Math.random()*H,1,1,`rgba(255,255,255,${Math.random()*.05})`);
+}
+
+/* ---------- DEATH ---------- */
+function deathOverlay(){
+ if(!death)return;const t=death.t;
+ /* red bite flashes and a creeping red tint */
+ const tint=Math.min(.5,t/90*.5);ctx.fillStyle=`rgba(150,8,14,${tint})`;ctx.fillRect(0,0,W,H);
+ if(t>=12&&t%16<3){ctx.fillStyle="rgba(255,40,40,.28)";ctx.fillRect(0,0,W,H)}
+ /* blood-vignette closing in */
+ const k=Math.min(1,t/100),vg=ctx.createRadialGradient(W/2,H/2,Math.max(10,360-k*300),W/2,H/2,640);
+ vg.addColorStop(0,"rgba(60,0,4,0)");vg.addColorStop(1,`rgba(60,0,4,${.35+k*.6})`);ctx.fillStyle=vg;ctx.fillRect(0,0,W,H);
+ /* title card */
+ if(t>44){const a=Math.min(1,(t-44)/20),s=Math.sin(t*1.7)*(t<70?2:0);ctx.globalAlpha=a;txt("DEVOURED",W/2+s,H/2-6,46,"#c2352f","center");txt(myName()+" DID NOT REMEMBER TO RUN",W/2,H/2+24,13,"#e0c7b8","center");ctx.globalAlpha=1}
+ /* fade to black */
+ if(t>88){ctx.fillStyle=`rgba(0,0,0,${Math.min(1,(t-88)/28)})`;ctx.fillRect(0,0,W,H)}
+}
+function stepDeath(dt){
+ death.t+=dt;const t=death.t;
+ /* the pack closes in and crowds the body */
+ death.zs.forEach((q,i)=>{const z=q.z,tx=P.x+Math.cos(q.a)*(16+(i%2)*10),ty=P.y+10+Math.sin(q.a)*10;
+  const sp=t<40?.16:.28;z.x+=(tx-z.x)*sp*dt;z.y+=(ty-z.y)*sp*dt;z.d=P.x>=z.x?1:-1});
+ /* blood spray */
+ if(t>12&&t<85&&Math.floor(t)%2===0){for(let i=0;i<4;i++)amb.push({x:P.x+(Math.random()-.5)*20,y:P.y+(Math.random()-.5)*14,vx:(Math.random()-.5)*5,vy:-1-Math.random()*3.5,s:2+Math.random()*3,life:30,c:Math.random()<.5?"#8a0e10":"#c2352f"})}
+ const f=Math.floor(t);if(f!==death.lf){death.lf=f;if(f===10||f===28||f===46||f===64)tone(70+Math.random()*30,.3)}
+ if(t>=118)finishDeath();
+}
+function finishDeath(){
+ const r=R();death=null;P.x=r.spawn[0];P.y=r.spawn[1];P.mv=false;
+ Z.forEach(z=>{z.x=z.p[0][0];z.y=z.p[0][1];z.i=1});shake=0;
+ say("THE WORLD REWINDS","Teeth. Then nothing. Then the room again, three seconds earlier. You remember being eaten. Nobody else would.");
+}
+function caught(){
+ if(death)return;
+ death={t:0,lf:-1,zs:Z.map((z,i)=>({z,a:(i/Math.max(1,Z.length))*Math.PI*2+.5}))};shake=14;P.mv=false;
+}
+function update(dt){
+ S.t++;if(S.glow>0)S.glow--;if(shake>0)shake--;
+ amb.forEach(a=>{a.x+=a.vx*dt;a.y+=a.vy*dt;if(a.life&&--a.life<=0)a.s=0;if(a.y>H){a.y=0}if(a.x<0)a.x=W;if(a.x>W)a.x=0});
+ amb=amb.filter(a=>a.s>0);
+ if(death){stepDeath(dt);if(death&&death.t<24&&death.t%6<dt)shake=6;return}
+ if(S.dlg||S.modal)return;
+ const dx=(keys.d||keys.arrowright?1:0)-(keys.a||keys.arrowleft?1:0),dy=(keys.s||keys.arrowdown?1:0)-(keys.w||keys.arrowup?1:0);
+ P.mv=!!(dx||dy);
+ if(P.mv){const l=Math.hypot(dx,dy),sp=CH[S.sel].sp*dt;P.w+=.3*dt;
+  const nx=P.x+dx/l*sp;if(!blocked(nx,P.y))P.x=nx;const ny=P.y+dy/l*sp;if(!blocked(P.x,ny))P.y=ny;if(dx)P.dir=dx>0?1:-1}
+ P.x=Math.max(25,Math.min(935,P.x));P.y=Math.max(160,Math.min(492,P.y));
+ Z.forEach(z=>{
+  if(death)return;
+  const d=Math.hypot(P.x-z.x,P.y-z.y);let tx,ty,sp;
+  if(d<CH[S.sel].aw){tx=P.x;ty=P.y;sp=1.25}else{const q=z.p[z.i];tx=q[0];ty=q[1];sp=.7;if(Math.hypot(tx-z.x,ty-z.y)<6)z.i=(z.i+1)%z.p.length}
+  const a=Math.atan2(ty-z.y,tx-z.x);z.x+=Math.cos(a)*sp*dt;z.y+=Math.sin(a)*sp*dt;z.d=Math.cos(a)>=0?1:-1;
+  if(d<24&&!S.dlg)caught();
+ });
+}
+function render(){
+ ctx.save();if(shake>0)ctx.translate((Math.random()-.5)*8,(Math.random()-.5)*8);
+ ctx.clearRect(0,0,W,H);drawRoom();atmos();deathOverlay();ctx.restore();
+}
+
+/* ---------- DIALOGUE ---------- */
+function say(s,t,opts,cb){
+ S.dlg=true;("dialogue").style.display="block";("speaker").textContent=s==="@"?myName():s;$("text").textContent=t;
+ const c=$("choices");c.innerHTML="";
+ const mk=(label,fn,dis)=>{const b=document.createElement("button");b.textContent=label;if(dis)b.disabled=true;b.onclick=()=>{closeD();fn&&fn()};c.appendChild(b)};
+ if(opts&&opts.length)opts.forEach(o=>mk(o.label,o.action,o.locked));else mk("CONTINUE ▸",cb);
+}
+function closeD(){S.dlg=false;$("dialogue").style.display="none"}
+function talk(lines,done){if(!lines.length){done&&done();return}say(lines[0][0],lines[0][1],null,()=>talk(lines.slice(1),done))}
+function flash(cb){const f=$("flash");f.style.display="block";requestAnimationFrame(()=>{f.style.opacity=1});setTimeout(()=>{cb&&cb();f.style.opacity=0;setTimeout(()=>{f.style.display="none"},950)},950)}
+
+/* ---------- INTERACTION ---------- */
+function nearHS(){for(const f of R().f)if(f[5]&&near(f))return f;return null}
+function markTalk(id){talked.add(id);updateUI()}
+function talkTo(n){
+ const c=CH[n.id];
+ if(S.room==="bunker"){
+  if(talked.has(n.id))return say(c.n,IDL[n.id]);
+  const cv=CV[S.sel+">"+n.id];
+  say(c.n,cv[0],[
+   {label:cv[1][0],action:()=>say(c.n,cv[1][1],null,()=>markTalk(n.id))},
+   {label:cv[2][0],action:()=>say(c.n,cv[2][1],null,()=>markTalk(n.id))}
+  ]);
+ }else say(c.n,ACTL[S.room][n.id]);
+}
+function interact(){
+ if(S.state!=="play"||S.dlg||S.modal||death)return;
+ if(S.room==="core"&&near([820,430,0,0],120))return confront();
+ const n=nearNpc();if(n)return talkTo(n);
+ const f=nearHS();if(!f)return;
+ const id=f[5],h=HS[id];
+ if(clues.has(id))return say(h.s,h.t);
+ if(h.p)return openPuzzle(h.p,id);
+ addClue(id);say(h.s,h.t);
+}
+function look(){
+ if(S.state!=="play"||S.dlg||S.modal||death)return;
+ let best=null,bd=1e9;R().f.forEach(f=>{if(f[5]&&!clues.has(f[5])){const d=Math.hypot(P.x-f[0]-f[2]/2,P.y-f[1]-f[3]/2);if(d<bd){bd=d;best=f}}});
+ const pre={zhenya:"You trace the room with your eyes, the way you’d trace a sketch. ",yoru:"You go still and listen. ",renee:"You scan the room like a system. ",rocco:"You case the place like a job. "}[S.sel];
+ if(S.sel==="zhenya")S.glow=360;
+ if(!best){
+  if(S.room==="bunker"&&talked.size<3)return say("@",pre+"All clues are found. Now talk to your teammates (the … above them).");
+  if(S.room==="core")return say("@",pre+"Nothing left to inspect. Talk to Lev when you’re ready.");
+  return say("@",pre+"There is nothing left to find here."+(ready()?" Take the exit arrow.":""));
+ }
+ say("@",pre+HS[best[5]].h);
+}
+function addStory(t){story.push(t)}
+function openJournal(){
+ S.modal=true;$("journal").style.display="flex";
+ const st=story.length?`<div class="story"><b>THE STORY SO FAR</b><br>${story.join("<br>")}</div>`:"";
+ ("jBody").innerHTML=st+(clueLog.length?clueLog.map(id=>`<divclass="jl"><b>{HS[id].n}</b><br>${HS[id].t}</div>`).join(""):"<p>No clues yet.</p>");
+}
+function closeJournal(){S.modal=false;$("journal").style.display="none"}
+
+/* ---------- AUDIO + PUZZLES ---------- */
+let AC;function tone(f,d=.35){try{AC=AC||new(window.AudioContext||window.webkitAudioContext)();const o=AC.createOscillator(),g=AC.createGain();o.type="triangle";o.frequency.value=f;g.gain.setValueAtTime(.18,AC.currentTime);g.gain.exponentialRampToValueAtTime(.001,AC.currentTime+d);o.connect(g);g.connect(AC.destination);o.start();o.stop(AC.currentTime+d)}catch(e){}}
+function closePuzzle(){S.modal=false;$("puzzle").style.display="none"}
+function openPuzzle(pid,hid){
+ const p=PZ[pid];S.modal=true;$("puzzle").style.display="flex";
+ ("pzBody").innerHTML=`<h3>{p.title}</h3><p>${p.pr}</p><div id="pzA"></div><div id="pzM"></div><button id="pzX">STEP AWAY</button>`;
+ const A=$("pzA"),msg=t=>{$("pzM").textContent=t};
+ const win=()=>{closePuzzle();addClue(hid);say(HS[hid].s,HS[hid].t)};
+ $("pzX").onclick=closePuzzle;
+ if(p.type==="code"){
+  A.innerHTML=`<input id="pin" maxlength="p.ml"autocomplete="off"placeholder="{p.ph||""}"><button id="pgo" class="primary">ENTER</button>`;
+  const go=()=>{if(lock>Date.now())return msg("LOCKED OUT. Wait a few seconds.");
+   const v=$("pin").value.toUpperCase().replace(/\s/g,"");
+   if(v===p.ans)win();else{fails++;msg("ACCESS DENIED.");if(fails%3===0&&S.sel!=="renee"){lock=Date.now()+5000;msg("TOO MANY ATTEMPTS. LOCKED FOR 5s.")}}};
+  ("pgo").onclick=go;("pin").onkeydown=e=>{if(e.key==="Enter")go()};setTimeout(()=>$("pin").focus(),50);
+ }
+ if(p.type==="seq"){
+  const N={C:262,E:330,G:392,B:494},cl={C:"#d56b79",E:"#e4b95f",G:"#65b8b0",B:"#8a75d0"};let inp="";
+  A.innerHTML=`<div id="pads"></div><div id="dots"></div>${S.sel==="yoru"?'<button id="ls">LISTEN</button>':""}<button id="rs">RESET</button>`;
+  const dots=()=>{$("dots").textContent="● ".repeat(inp.length)+"○ ".repeat(p.ans.length-inp.length)};dots();
+  Object.keys(N).forEach(n=>{const b=document.createElement("button");b.className="pad";b.textContent=n;b.style.background=cl[n];
+   b.onclick=()=>{tone(N[n]);inp+=n;dots();if(inp.length===p.ans.length){if(inp===p.ans)win();else{msg("Static. Wrong pattern.");inp="";dots()}}};$("pads").appendChild(b)});
+  $("rs").onclick=()=>{inp="";dots();msg("")};
+  if(("ls"))("ls").onclick=()=>[...p.ans].forEach((n,i)=>setTimeout(()=>tone(N[n],.4),i*500));
+ }
+ if(p.type==="order"){
+  let pick=[];A.innerHTML=`<div id="cards"></div><div id="pk"></div><button id="rs">RESET</button>`;
+  const show=()=>{$("pk").textContent=pick.map((c,i)=>(i+1)+". "+c).join("\n")};
+  p.cards.forEach(c=>{const b=document.createElement("button");b.textContent=c;b.onclick=()=>{if(pick.includes(c))return;pick.push(c);show();
+   if(pick.length===p.ans.length){if(pick.join("|")===p.ans.join("|"))win();else{msg("The chain rejects that order.");pick=[];show()}}};$("cards").appendChild(b)});
+  $("rs").onclick=()=>{pick=[];show();msg("")};
+ }
+}
+
+/* ---------- STORY FLOW ---------- */
+function nextRoom(){
+ if(S.state!=="play"||S.dlg||S.modal||death||!ready())return;
+ const id=S.room;
+ if(R().stage===1&&id!=="bunker"){startRoom("bunker");talk([["SYSTEM","The tone leads you down a service stairwell. A steel door opens before you touch it. BUNKER 9."]].concat(BUN))}
+ else if(id==="bunker")talk(PRE1,()=>flash(()=>{addStory("<b>UNDO #1</b> (the dead lie down) → the debt moved into the <b>SUN</b>.");startRoom("obs");talk(UNDO1)}));
+ else if(id==="obs")talk(PRE2,()=>flash(()=>{addStory("<b>UNDO #2</b> (the sun settles) → the debt tore the <b>SEAMS</b> between universes: two skylines.");startRoom("core");talk(UNDO2.concat(COREIN))}));
+}
+function confront(){
+ if(!R().ids.every(i=>clues.has(i)))return say("LEV","Not yet. You still don’t understand what you’re about to decide. Look around.");
+ const T=[
+  {k:"t1",label:"What is the machine?",txt:"An undo button with a bill. It never deletes a disaster, it moves it. Test 0 undid one night: the night Anika Voss, my mentor, died in a lab fire. The fire’s debt became the virus. Your Undo #1 moved it into the sun. Undo #2 moved it into the seams. That’s the whole chain."},
+  {k:"t2",label:"Why us?",txt:"An undo only sticks if someone remembers it. Four witnesses: a picture (Zhenya), a tone (Yoru), a code (Renée), a key (Rocco). You were all within a block of the lab on the night of Test 0, so the engine tagged you. I called you here with the tone."},
+  {k:"t3",label:"Why doesn’t Zhenya remember you?",txt:"She would have stopped me. So I paid for my first edit with her memory. I asked the engine to take me out of her head. It left the drawings."},
+  {k:"t4",label:"Why not stop?",txt:"Every undo sends me back to the night she is alive. One more night. That’s all it ever was."}
+ ];
+ const menu=()=>{
+  const all=T.every(t=>flags[t.k]);
+  const opts=T.map(t=>({label:flags[t.k]?"✓ "+t.label:t.label,action:()=>{flags[t.k]=1;say("LEV",t.txt,null,menu)}}));
+  if(all)opts.push({label:"DECIDE",action:decide});
+  say("LEV",all?"You have your answers. Choose.":"Ask. You have until the seams give out.",opts);
+ };
+ menu();
+}
+function decide(){
+ const n=clues.size;
+ say("LEV","Undo #3 is yours. Close the loop for good, hold it open yourself, or let me do it one more time.",[
+  {label:"CLOSE THE LOOP"+(n<12?" (needs all 12 clues)":""),locked:n<12,action:()=>ending("close")},
+  {label:"TAKE THE ANCHOR SEAT"+(n<8?" (needs 8 clues)":""),locked:n<8,action:()=>ending("anchor")},
+  {label:"UNDO ONE MORE TIME",action:()=>ending("again")}
+ ]);
+}
+function ending(type){
+ /* emotional Lev & Zhenya cutscene plays before the best ending */
+ if(type==="close"&&!flags.farewell){flags.farewell=1;return talk(FAREWELL,()=>flash(()=>ending("close")))}
+ S.state="end";$("ending").style.display="flex";closeD();
+ const N=myName();let title,body;
+ if(type==="close"){title="ENDING · THE NIGHT SHE DIES, FACED";body=`Zhenya never lets go of his hand until the light takes it.\n\nYoru hums four notes, soft, so that Lev has something to hold onto. Renée types the passphrase with shaking hands. Rocco turns the key and doesn’t say a single joke.\n\nThe engine closes the loop. No outbreak. No swollen sun. No second skyline. Voss’s fire burns the way it always did, and it takes her, and the world goes on.\n\nA cashier hears four notes from a register that has printed nothing, and looks up to see three strangers who somehow already know his name.\n\nMonths later, in a small gallery, a girl hangs one painting by itself: a man in a dark suit, one hand held out, smiling like someone who has finally been allowed to rest. The plate beneath it reads only “L.”\n\nPeople stop and ask who he was. She tells them the truth.\n\n“He was there.”\n\nShe remembers. Nobody else will.\nIt’s enough to start a friendship with.`}
+ else if(type==="anchor"){title="ENDING · THE SEAT THAT HOLDS";body=`${N} takes the anchor seat.\n\nThe engine accepts a single anchor, if that person remembers everything and never looks away. The seams tighten around ${N}’s memory like stitches.\n\nThe others stay as long as the walls allow. Renée swears she can write a patch. Rocco swears he’ll find another way. Yoru stays by the door, humming four notes, so ${N} can find the way back to the tune.\n\nThe sky is one color again. Not everything is saved. But the world is no longer spent to pay for one night.\n\nLev watches from the doorway, dark suit crumpled, hands empty. For the first time he looks like someone who is waiting for a sentence.`}
+ else{title="ENDING · LOOP FOUR";body=`Lev smiles with relief. The engine hums. The seams stitch themselves shut.\n\nFor one second you remember a bunker, a name, a friend.\n\nThen nothing.\n\nA cashier hears four notes from a register. A girl draws a machine she has never seen. A prodigy finds a log that was edited after the author died. A courier finds a crate he never delivered.\n\nSomewhere, a man writes in a ledger: “Loop four cost 12.”\n\nNext time, LOOK closer.`}
+ ("ending").innerHTML=`<divstyle="margin:auto;max-width:700px;padding:30px20px"><divstyle="color:#e4b95f;letter-spacing:2px">{title}</div><h1 class="glt" data-t="UNDOEND" style="font-size:44px;margin:12px auto;display:inline-block">UNDOEND</h1><p class="sub" style="white-space:pre-line;margin:10px auto 24px;text-align:left">${body}</p><p style="color:#8e7a80;font-size:12px">CLUES FOUND: ${clues.size}/12</p><button class="primary" onclick="location.reload()">↻ PLAY AGAIN</button></div>`;
+}
+
+/* ---------- SELECT / START ---------- */
+function portrait(cv,id){
+ const g=cv.getContext("2d");g.imageSmoothingEnabled=false;g.fillStyle="#120c16";g.fillRect(0,0,90,92);
+ const gr=g.createRadialGradient(45,40,5,45,40,55);gr.addColorStop(0,"#4a1c26");gr.addColorStop(1,"#120c16");g.fillStyle=gr;g.fillRect(0,0,90,92);
+ person(g,45,42,id,1,2,0);
+}
+function buildRoster(){
+ const r=$("roster");r.innerHTML="";
+ ["zhenya","yoru","renee","rocco"].forEach(id=>{
+  const c=CH[id],d=document.createElement("button");d.className="char";
+  d.innerHTML=`<canvas width="90" height="92"></canvas><h3>c.n</h3><divclass="tag2">{c.role}</div><small>${c.d}</small><small style="color:#e4b95f;margin-top:5px">★ c.skill</small><smallstyle="margin-top:3px">{c.pass}</small>`;
+  d.onclick=()=>choose(id);r.appendChild(d);portrait(d.querySelector("canvas"),id);
+ });
+}
+function choose(id){
+ S.sel=id;$("select").style.display="none";S.state="play";startRoom(CH[id].route);
+ addStory("<b>TEST 0</b>: Lev’s engine undid one night. The engine never erases a disaster, it <b>MOVES</b> it. → The debt became the <b>VIRUS</b> (the dead).");
+ talk(PREMISE.concat(INTRO[id],[["SYSTEM","ACT I · THE DEAD. Find a way into Bunker 9. E inspects ◆ clues, SPACE looks for hints, J opens your journal."]]));
+}
+$("start").onclick=()=>{$("title").style.display="none";$("select").style.display="flex";S.state="select";buildRoster()};
+$("howBtn").onclick=()=>{const h=$("how");h.style.display=h.style.display==="block"?"none":"block"};
+$("menuBtn").onclick=()=>{if(S.state==="play"){S.modal=true;$("pausePanel").style.display="flex"}};
+$("resume").onclick=()=>{S.modal=false;$("pausePanel").style.display="none"};
+$("restart").onclick=()=>location.reload();
+$("jBtn").onclick=()=>{if(S.state==="play"&&!S.modal&&!death)openJournal()};
+$("jX").onclick=closeJournal;
+("interactBtn").onclick=interact;("lookBtn").onclick=look;
+$("nextArrow").addEventListener("click",nextRoom);
+document.querySelectorAll("[data-key]").forEach(b=>{
+ const k=b.dataset.key,dn=e=>{e.preventDefault();keys[k]=true},up=e=>{e.preventDefault();keys[k]=false};
+ b.addEventListener("touchstart",dn,{passive:false});b.addEventListener("touchend",up,{passive:false});b.addEventListener("touchcancel",up,{passive:false});
+ b.addEventListener("mousedown",dn);b.addEventListener("mouseup",up);b.addEventListener("mouseleave",up);
+});
+addEventListener("keydown",e=>{
+ if(e.target.tagName==="INPUT")return;
+ const k=e.key.toLowerCase();
+ if(["arrowup","arrowdown","arrowleft","arrowright"," "].includes(k))e.preventDefault();
+ if(S.dlg){const ch=$("choices");if(ch.children.length===1&&["e","enter"," "].includes(k)){ch.children[0].click()}return}
+ if(k==="escape"){if(("puzzle").style.display==="flex")closePuzzle();if(("journal").style.display==="flex")closeJournal();return}
+ keys[k]=true;
+ if(S.state!=="play")return;
+ if(k==="e")interact();if(k===" ")look();
+ if(k==="j"){if($("journal").style.display==="flex")closeJournal();else if(!S.modal&&!death)openJournal()}
+ if(k==="enter")nextRoom();
+});
+addEventListener("keyup",e=>{keys[e.key.toLowerCase()]=false});
+
+/* ---------- TITLE SCREEN ---------- */
+const tg=$("tc").getContext("2d");
+function mkCity(minH,maxH,minW,maxW){const a=[];for(let x=-30;x<1000;){const w=minW+rn()*(maxW-minW),h=minH+rn()*(maxH-minH),win=[];for(let i=0;i<12;i++)win.push({x:4+rn()*(w-10),y:10+rn()*(h-20),l:rn()<.2});a.push({x,w,h,win,n:rn()*20});x+=w-3}return a}
+const far=mkCity(90,210,34,70),nearC=mkCity(150,340,50,95),ash=[];
+for(let i=0;i<130;i++)ash.push({x:rn()*W,y:rn()*H,vx:-.3-rn()*.5,vy:.4+rn()*.9,s:1+rn()*2});
+function titleFrame(){
+ const g=tg,t=S.t;
+ const sky=g.createLinearGradient(0,0,0,H);sky.addColorStop(0,"#090308");sky.addColorStop(.5,"#3a0a14");sky.addColorStop(.78,"#a8321c");sky.addColorStop(1,"#1a0608");g.fillStyle=sky;g.fillRect(0,0,W,H);
+ const sx=480,sy=290,sg=g.createRadialGradient(sx,sy,20,sx,sy,280);sg.addColorStop(0,"rgba(255,190,90,.95)");sg.addColorStop(.35,"rgba(230,70,30,.65)");sg.addColorStop(1,"rgba(120,10,20,0)");
+ g.fillStyle=sg;g.beginPath();g.arc(sx,sy,280,0,7);g.fill();
+ g.fillStyle="#ffcf7a";g.beginPath();g.arc(sx,sy,96,0,7);g.fill();
+ g.strokeStyle="#5a0e12";g.lineWidth=3;
+ for(let i=0;i<8;i++){const a=i*.8+.3;g.beginPath();g.moveTo(sx,sy);let px=sx,py=sy;for(let j=1;j<5;j++){px+=Math.cos(a+Math.sin(t/40+i+j)*.12)*24;py+=Math.sin(a+Math.sin(t/40+i+j)*.12)*24;g.lineTo(px,py)}g.stroke()}
+ g.fillStyle="rgba(101,184,176,.2)";g.beginPath();g.arc(sx+46+Math.sin(t/70)*12,sy+34,96,0,7);g.fill();
+ g.strokeStyle="rgba(255,150,60,.5)";g.lineWidth=4;for(let i=0;i<3;i++){g.beginPath();g.arc(sx,sy,120+i*18+Math.sin(t/25+i)*4,Math.PI*(1.1+i*.2),Math.PI*(1.6+i*.2));g.stroke()}
+ const city=(a,col,by)=>a.forEach(b=>{g.fillStyle=col;g.fillRect(b.x,by-b.h,b.w,b.h);g.fillRect(b.x+b.n,by-b.h-10,12,10);
+  b.win.forEach(w=>{if(w.l&&Math.sin(t/18+b.n+w.x)>-.4){g.fillStyle="#ffb04a";g.fillRect(b.x+w.x,by-b.h+w.y,3,4)}})});
+ city(far,"#2a0a12",440);
+ g.fillStyle="rgba(180,60,40,.25)";g.fillRect(0,380,W,70);
+ city(nearC,"#0b0508",480);
+ g.fillStyle="#050206";g.fillRect(0,480,W,160);
+ g.fillRect(0,468,W,14);for(let i=0;i<14;i++)g.fillRect(i*74+(i%3)*10,462-(i%4)*6,30+(i%3)*14,12);
+ g.fillStyle="#000";
+ const fig=(x,y,s)=>{g.fillRect(x-5*s,y-30*s,10*s,18*s);g.fillRect(x-4*s,y-44*s,8*s,10*s);g.fillRect(x-4*s,y-12*s,3*s,12*s);g.fillRect(x+1*s,y-12*s,3*s,12*s);g.fillRect(x-9*s,y-34*s,5*s,14*s)};
+ fig(330,520,2);fig(392,524,1.6);
+ for(let i=0;i<5;i++){const zx=640+i*52+Math.sin(t/30+i)*6;g.fillRect(zx-5,452,10,18);g.fillRect(zx-4,440,8,10);g.fillRect(zx+4,448,12,3)}
+ g.fillRect(790,250,4,230);g.fillRect(760,290,64,3);g.fillRect(770,330,44,3);
+ if(Math.sin(t/20)>0){g.fillStyle="#ff3030";g.fillRect(790,244,6,6)}
+ const fog=g.createLinearGradient(0,440,0,560);fog.addColorStop(0,"rgba(120,40,40,0)");fog.addColorStop(1,"rgba(120,40,40,.28)");g.fillStyle=fog;g.fillRect(0,440,W,130);
+ ash.forEach(a=>{a.x+=a.vx;a.y+=a.vy;if(a.y>H){a.y=-4;a.x=rn()*W}if(a.x<0)a.x=W;g.fillStyle="rgba(220,200,190,.45)";g.fillRect(a.x,a.y,a.s,a.s)});
+ if(Math.random()<.05){const y=Math.random()*H|0,h=6+Math.random()*30|0;g.drawImage($("tc"),0,y,W,h,(Math.random()-.5)*40,y,W,h)}
+ const v=g.createRadialGradient(W/2,H/2,200,W/2,H/2,620);v.addColorStop(0,"rgba(0,0,0,0)");v.addColorStop(1,"rgba(0,0,0,.75)");g.fillStyle=v;g.fillRect(0,0,W,H);
+ for(let i=0;i<160;i++){g.fillStyle=`rgba(255,255,255,${Math.random()*.07})`;g.fillRect(Math.random()*W,Math.random()*H,1,1)}
+ g.fillStyle="#000";g.fillRect(0,0,W,34);g.fillRect(0,H-34,W,34);
+}
+
+/* ---------- LOOP ---------- */
+let last=0;
+function loop(t){
+ const dt=Math.min(2,(t-(last||t))/16.67);last=t;
+ if(S.state==="title"){S.t++;titleFrame()}
+ else if((S.state==="play"||S.state==="end")&&S.room){update(dt);render()}
+ requestAnimationFrame(loop);
+}
+requestAnimationFrame(loop);
+</script>
+</body>
+</html>
+

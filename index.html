@@ -156,6 +156,30 @@ button:focus-visible,a:focus-visible{outline:2px solid var(--gold2);outline-offs
 .err{position:absolute;inset:0;z-index:4;display:none;place-items:center;align-content:center;gap:14px;text-align:center;padding:24px;background:radial-gradient(circle,#2a1d2e,#05061a 75%)}
 #tp.bad .err{display:grid}#tp.bad iframe{display:none}
 .err .cn{font-size:36px;color:var(--gold2)}.err p{max-width:30em;color:#d3c9ea}.err b{color:var(--gold2)}
+/* ===== the cat and the music button ===== */
+#cat{position:fixed;left:0;top:0;width:104px;height:112px;z-index:300;cursor:grab;touch-action:none;user-select:none;-webkit-user-select:none;-webkit-tap-highlight-color:transparent}
+#cat.held{cursor:grabbing}
+#cat .ci{width:100%;height:100%;transform-origin:50% 100%;transition:transform .25s cubic-bezier(.3,1.6,.5,1);filter:drop-shadow(0 6px 10px #000a) drop-shadow(0 0 10px #e8c27a33)}
+#cat svg{display:block;width:100%;height:100%;overflow:visible}
+#cat.held .ci{transform:scale(1.12) rotate(-7deg) translateY(-6px)}
+#cat.drop .ci{animation:land .5s ease}
+@keyframes land{30%{transform:scale(1.1,.88)}60%{transform:scale(.96,1.05)}}
+#cat .tail{transform-box:view-box;transform-origin:90px 116px;animation:wag 3.2s ease-in-out infinite}
+#cat.happy .tail{animation-duration:.6s}
+@keyframes wag{50%{transform:rotate(-14deg)}}
+#cat .head{transform-box:view-box;transform-origin:60px 70px;animation:nod 6s ease-in-out infinite}
+@keyframes nod{50%{transform:rotate(2.5deg)}}
+#cat.happy .head{animation:nuz .45s ease 3}
+@keyframes nuz{50%{transform:rotate(-7deg) translateY(2px)}}
+#cat .eyes{transform-box:fill-box;transform-origin:center;animation:blink 5s infinite}
+@keyframes blink{0%,94%,100%{transform:scaleY(1)}97%{transform:scaleY(.1)}}
+#cat .hap{display:none}
+#cat.happy .eyes{display:none}
+#cat.happy .hap{display:inline}
+.heart{position:fixed;z-index:301;pointer-events:none;color:#ff8fb3;font-size:22px;font-style:normal;text-shadow:0 0 12px #ff8fb3aa;animation:heart 1.4s ease-out forwards}
+@keyframes heart{from{opacity:1;transform:translate(0,0) scale(.6)}to{opacity:0;transform:translate(var(--dx),-80px) scale(1.2)}}
+#snd{position:fixed;right:14px;bottom:calc(14px + env(safe-area-inset-bottom));z-index:300;background:#0b0d2acc;border:1px solid #e8c27a88;color:var(--gold2);padding:7px 18px;border-radius:2px;font-style:italic;backdrop-filter:blur(6px);transition:.25s}
+#snd:hover{background:#e8c27a22}
 @media (prefers-reduced-motion:reduce){*{animation-duration:.01ms!important;animation-delay:0s!important;transition-duration:.01ms!important}}
 </style>
 </head>
@@ -231,12 +255,38 @@ button:focus-visible,a:focus-visible{outline:2px solid var(--gold2);outline-offs
 </div>
 
 <div id="toast"></div>
+
+<div id="cat" role="button" tabindex="0" aria-label="Pet the cat. Drag to move it.">
+ <div class="ci">
+  <svg viewBox="0 0 120 130" aria-hidden="true">
+   <g class="tail"><path d="M90 116C116 114 122 86 106 74" fill="none" stroke="#c79a4a88" stroke-width="12" stroke-linecap="round"/><path d="M90 116C116 114 122 86 106 74" fill="none" stroke="#221d4a" stroke-width="9" stroke-linecap="round"/></g>
+   <path d="M24 124C16 96 30 72 60 72C90 72 104 96 96 124Z" fill="#221d4a" stroke="#c79a4a88" stroke-width="1.5"/>
+   <ellipse cx="44" cy="123" rx="12" ry="6" fill="#221d4a" stroke="#c79a4a88" stroke-width="1.2"/>
+   <ellipse cx="76" cy="123" rx="12" ry="6" fill="#221d4a" stroke="#c79a4a88" stroke-width="1.2"/>
+   <path d="M36 78Q60 90 84 78" fill="none" stroke="#a6291f" stroke-width="6" stroke-linecap="round"/>
+   <circle cx="60" cy="87" r="4.5" fill="#e8c27a" stroke="#8a5a1c"/>
+   <g class="head">
+    <path d="M29 42L31 10L52 27Z" fill="#221d4a" stroke="#c79a4a88" stroke-width="1.5" stroke-linejoin="round"/>
+    <path d="M91 42L89 10L68 27Z" fill="#221d4a" stroke="#c79a4a88" stroke-width="1.5" stroke-linejoin="round"/>
+    <path d="M35 36L36 19L47 28Z" fill="#a6291f" opacity=".75"/>
+    <path d="M85 36L84 19L73 28Z" fill="#a6291f" opacity=".75"/>
+    <ellipse cx="60" cy="50" rx="34" ry="29" fill="#221d4a" stroke="#c79a4a88" stroke-width="1.5"/>
+    <g class="eyes"><ellipse cx="46" cy="50" rx="6.5" ry="8" fill="#f2c777"/><ellipse cx="74" cy="50" rx="6.5" ry="8" fill="#f2c777"/><ellipse cx="46" cy="50" rx="2" ry="6.5" fill="#0a0612"/><ellipse cx="74" cy="50" rx="2" ry="6.5" fill="#0a0612"/><circle cx="48.4" cy="46" r="1.6" fill="#fff"/><circle cx="76.4" cy="46" r="1.6" fill="#fff"/></g>
+    <g class="hap" fill="none" stroke="#f2c777" stroke-width="3" stroke-linecap="round"><path d="M39 52Q46 43 53 52"/><path d="M67 52Q74 43 81 52"/></g>
+    <path d="M56.5 60H63.5L60 64Z" fill="#e9a8b8"/>
+    <path d="M60 64Q56 69 51 66M60 64Q64 69 69 66" fill="none" stroke="#e9a8b8" stroke-width="1.4" stroke-linecap="round"/>
+    <g stroke="#f6ecd2" stroke-opacity=".55" stroke-width="1" stroke-linecap="round"><path d="M40 62L22 58M40 66L22 68M80 62L98 58M80 66L98 68"/></g>
+   </g>
+  </svg>
+ </div>
+</div>
+<button id="snd" aria-pressed="false">♪ Off</button>
 <script>
 /* File names must match your real files exactly, saved in the same folder as index.html */
 const CVS=[
  {f:"cv-elva.html",g:"王",n:"Elva Lalita Nathania",s:"Our Alpha Leader"},
- {f:"cv-jesslyn.html",g:"林",n:"Jesslyn Angelica Klarise",s:"Leader's Omega 1"},
- {f:"cv-jill.html",g:"陈",n:"Jill Valencia",s:"Leader's Omega 2"}
+ {f:"cv-jesslyn.html",g:"林",n:"Jesslyn Angelica Klarise",s:"Alpha Pack Member"},
+ {f:"cv-jill.html",g:"陈",n:"Jill Valencia",s:"Alpha Pack Member"}
 ];
 const ART=[
  {f:"melotunes.html",n:"MeloTunes",c:"音",s:"Scan Sheet and Play the Melody",
@@ -336,6 +386,7 @@ addEventListener("keydown",e=>{
 /* ===== navigation ===== */
 $("#enter").onclick=e=>{
  e.stopPropagation();const g=$("#gate");g.classList.add("leaving");
+ startMusic();updSnd();
  setTimeout(()=>{show("cv");g.classList.remove("leaving")},1700);
 };
 $("#toGallery").onclick=()=>show("gal");
@@ -367,7 +418,7 @@ const flies=Array.from({length:22},()=>({x:R()*W,y:R()*H,a:R()*6,sp:.25+R()*.45,
 const petals=Array.from({length:18},()=>({x:R()*W,y:R()*H,r:3+R()*3.5,vy:.25+R()*.45,vx:R()-.5,a:R()*6,c:R()<.65?"#e9a8b8":"#f6ecd2"}));
 let sparks=[],lanterns=[],shoot=null;
 function burst(x,y,n=16){for(let i=0;i<n;i++){const a=R()*6.28,s=.8+R()*2.6;sparks.push({x,y,vx:Math.cos(a)*s,vy:Math.sin(a)*s,l:1})}}
-addEventListener("click",e=>{if(e.target.closest("button,a,#tp"))return;lanterns.push({x:e.clientX,y:e.clientY,p:R()*6,s:.8+R()*.5,h:R()<.5?34:10});burst(e.clientX,e.clientY,8)});
+addEventListener("click",e=>{if(e.target.closest("button,a,#tp,#cat"))return;lanterns.push({x:e.clientX,y:e.clientY,p:R()*6,s:.8+R()*.5,h:R()<.5?34:10});burst(e.clientX,e.clientY,8)});
 function loop(){
  g.clearRect(0,0,W,H);
  if(mode==="gate"){
@@ -392,6 +443,156 @@ function loop(){
  sparks=sparks.filter(s=>s.l>0);
  sparks.forEach(s=>{s.x+=s.vx;s.y+=s.vy;s.vy+=.03;s.l-=.022;g.globalAlpha=Math.max(s.l,0);g.fillStyle="#e8c27a";g.beginPath();g.arc(s.x,s.y,1.8,0,7);g.fill()});
  g.globalAlpha=1;requestAnimationFrame(loop)}
+/* ===== audio: theme song (B minor pentatonic, plucked zither, bamboo flute, temple bell) + cat sounds, all synthesized ===== */
+let ctx=null,musicG,sfxG,rev,playing=false,muted=false,timer=null,step=0,nextT=0;
+function audio(){
+ if(!ctx){
+  const AC=window.AudioContext||window.webkitAudioContext;if(!AC)return null;
+  ctx=new AC();
+  sfxG=ctx.createGain();sfxG.gain.value=.8;sfxG.connect(ctx.destination);
+  musicG=ctx.createGain();musicG.gain.value=0;musicG.connect(ctx.destination);
+  const len=ctx.sampleRate*3,buf=ctx.createBuffer(2,len,ctx.sampleRate);
+  for(let c=0;c<2;c++){const d=buf.getChannelData(c);for(let i=0;i<len;i++)d[i]=(R()*2-1)*Math.pow(1-i/len,2.6)}
+  rev=ctx.createConvolver();rev.buffer=buf;
+  const wg=ctx.createGain();wg.gain.value=.5;rev.connect(wg);wg.connect(musicG);
+ }
+ if(ctx.state==="suspended")ctx.resume();
+ return ctx;
+}
+function pluck(f,t,v,d){
+ const o=ctx.createOscillator(),o2=ctx.createOscillator(),gn=ctx.createGain(),g2=ctx.createGain(),lp=ctx.createBiquadFilter();
+ o.type="triangle";o2.type="sine";
+ o.frequency.setValueAtTime(f*.985,t);o.frequency.exponentialRampToValueAtTime(f,t+.05);
+ o2.frequency.setValueAtTime(f*2.005,t);
+ lp.type="lowpass";lp.frequency.setValueAtTime(3600,t);lp.frequency.exponentialRampToValueAtTime(600,t+d);
+ gn.gain.setValueAtTime(0,t);gn.gain.linearRampToValueAtTime(v,t+.006);gn.gain.exponentialRampToValueAtTime(.0001,t+d);
+ g2.gain.value=.25;
+ o.connect(lp);o2.connect(g2);g2.connect(lp);lp.connect(gn);gn.connect(musicG);gn.connect(rev);
+ o.start(t);o2.start(t);o.stop(t+d+.1);o2.stop(t+d+.1);
+}
+function bell(f,t,v,d){
+ [1,2.76,5.4].forEach((m,i)=>{
+  const o=ctx.createOscillator(),gn=ctx.createGain();
+  o.type="sine";o.frequency.value=f*m;
+  gn.gain.setValueAtTime(0,t);gn.gain.linearRampToValueAtTime(v/(i+1),t+.01);gn.gain.exponentialRampToValueAtTime(.0001,t+d/(i*.6+1));
+  o.connect(gn);gn.connect(musicG);gn.connect(rev);o.start(t);o.stop(t+d+.1);
+ });
+}
+function flute(f,t,d,v){
+ const o=ctx.createOscillator(),lf=ctx.createOscillator(),lg=ctx.createGain(),gn=ctx.createGain();
+ o.type="sine";o.frequency.value=f;lf.frequency.value=5;
+ lg.gain.setValueAtTime(0,t);lg.gain.linearRampToValueAtTime(f*.006,t+d*.6);
+ lf.connect(lg);lg.connect(o.frequency);
+ gn.gain.setValueAtTime(0,t);gn.gain.linearRampToValueAtTime(v,t+d*.3);gn.gain.linearRampToValueAtTime(v*.7,t+d*.7);gn.gain.linearRampToValueAtTime(0,t+d);
+ o.connect(gn);gn.connect(musicG);gn.connect(rev);
+ o.start(t);lf.start(t);o.stop(t+d+.1);lf.stop(t+d+.1);
+}
+function pad(){
+ [[123.47,.05],[185,.035],[246.94,.025]].forEach(([f,v],i)=>{
+  const o=ctx.createOscillator(),gn=ctx.createGain(),lp=ctx.createBiquadFilter(),lf=ctx.createOscillator(),lg=ctx.createGain();
+  o.type="triangle";o.frequency.value=f;o.detune.value=i*4-4;
+  lp.type="lowpass";lp.frequency.value=520;
+  lf.frequency.value=.07+i*.03;lg.gain.value=180;lf.connect(lg);lg.connect(lp.frequency);
+  gn.gain.value=v;o.connect(lp);lp.connect(gn);gn.connect(musicG);gn.connect(rev);
+  o.start();lf.start();
+ });
+}
+const N=null,
+ SC=[246.94,293.66,329.63,369.99,440,493.88,587.33,659.25,739.99,880],
+ BS=[123.47,185,164.81,146.83],
+ PH=[[5,N,6,N,7,N,6,4,3,N,4,N,2,N,N,N],[4,N,6,N,5,N,3,N,4,N,6,7,9,N,7,N],[7,N,6,4,6,N,N,N,5,N,4,N,3,N,2,N],[3,4,6,N,4,N,3,N,2,N,3,N,0,N,N,N]],
+ OR=[0,1,0,2,1,3],SP=.46;
+function playStep(n,t){
+ const s=n%16,b=Math.floor(n/16),p=PH[OR[b%OR.length]],note=p[s];
+ if(note!=null)pluck(SC[note],t,.2+R()*.07,2.2);
+ if(s%8===0)pluck(BS[(b*2+s/8)%4],t,.28,3.2);
+ if(s===0&&b%2===0)bell(110,t,.07,6);
+ if(s===0&&b%3===1)flute(SC[[7,5,6,4][b%4]],t,5,.045);
+ if(s===15&&b%2===1)for(let i=0;i<5;i++)pluck(SC[i+3],t+i*.07,.12,1.2);
+}
+function startMusic(){
+ if(playing)return;
+ const c=audio();if(!c)return;
+ playing=true;pad();nextT=c.currentTime+.4;step=0;
+ timer=setInterval(()=>{while(nextT<c.currentTime+1.5){playStep(step++,nextT);nextT+=SP}},120);
+ setVol();
+}
+function setVol(){
+ if(!ctx)return;
+ musicG.gain.cancelScheduledValues(ctx.currentTime);
+ musicG.gain.setTargetAtTime(muted?0:.5,ctx.currentTime,muted?.3:2);
+}
+function updSnd(){
+ const on=playing&&!muted,b=$("#snd");
+ b.textContent=on?"♪ On":"♪ Off";b.setAttribute("aria-pressed",on);
+}
+$("#snd").onclick=()=>{
+ if(!playing){muted=false;startMusic()}else{muted=!muted;setVol()}
+ updSnd();
+};
+function meow(k=1){
+ const c=audio();if(!c)return;
+ const t=c.currentTime,d=(.55+R()*.25)*k,b=(430+R()*140)*(k<1?1.25:1);
+ const o=c.createOscillator(),lf=c.createOscillator(),lg=c.createGain(),gn=c.createGain(),f1=c.createBiquadFilter(),f2=c.createBiquadFilter();
+ o.type="sawtooth";
+ o.frequency.setValueAtTime(b*.8,t);o.frequency.linearRampToValueAtTime(b*1.65,t+d*.3);o.frequency.linearRampToValueAtTime(b*.95,t+d);
+ lf.frequency.value=6;lg.gain.value=9;lf.connect(lg);lg.connect(o.frequency);
+ f1.type="bandpass";f1.Q.value=5;f1.frequency.setValueAtTime(650,t);f1.frequency.linearRampToValueAtTime(1000,t+d*.35);f1.frequency.linearRampToValueAtTime(700,t+d);
+ f2.type="bandpass";f2.Q.value=6;f2.frequency.setValueAtTime(1500,t);f2.frequency.linearRampToValueAtTime(2300,t+d*.35);f2.frequency.linearRampToValueAtTime(1700,t+d);
+ gn.gain.setValueAtTime(0,t);gn.gain.linearRampToValueAtTime(.9,t+.07);gn.gain.setValueAtTime(.8,t+d*.55);gn.gain.linearRampToValueAtTime(0,t+d);
+ o.connect(f1);o.connect(f2);f1.connect(gn);f2.connect(gn);gn.connect(sfxG);
+ o.start(t);lf.start(t);o.stop(t+d+.05);lf.stop(t+d+.05);
+}
+function purr(){
+ const c=audio();if(!c)return;
+ const t=c.currentTime+.4,len=Math.floor(c.sampleRate*1.6),buf=c.createBuffer(1,len,c.sampleRate),dd=buf.getChannelData(0);
+ for(let i=0;i<len;i++)dd[i]=R()*2-1;
+ const s=c.createBufferSource(),lp=c.createBiquadFilter(),am=c.createGain(),lf=c.createOscillator(),lg=c.createGain(),gn=c.createGain();
+ s.buffer=buf;lp.type="lowpass";lp.frequency.value=180;
+ am.gain.value=.5;lf.frequency.value=24;lg.gain.value=.5;lf.connect(lg);lg.connect(am.gain);
+ gn.gain.setValueAtTime(0,t);gn.gain.linearRampToValueAtTime(1,t+.3);gn.gain.linearRampToValueAtTime(0,t+1.6);
+ s.connect(lp);lp.connect(am);am.connect(gn);gn.connect(sfxG);
+ s.start(t);lf.start(t);lf.stop(t+1.7);
+}
+
+/* ===== the cat: pat it, stroke it, drag it anywhere ===== */
+const cat=$("#cat"),CW=104,CH=112;
+let cx=18,cy=innerHeight-CH-100,cd=null,cmoved=false,strokeAcc=0,lastS=null,lastMeow=0;
+function place(){cx=Math.max(0,Math.min(innerWidth-CW,cx));cy=Math.max(0,Math.min(innerHeight-CH,cy));cat.style.transform=`translate(${cx}px,${cy}px)`}
+place();addEventListener("resize",place);
+function heart(){
+ const h=document.createElement("i");h.className="heart";h.textContent="♥";
+ h.style.left=(cx+CW*.25+R()*CW*.5)+"px";h.style.top=(cy+8)+"px";h.style.setProperty("--dx",(R()*50-25)+"px");
+ document.body.appendChild(h);setTimeout(()=>h.remove(),1500);
+}
+function happy(){cat.classList.add("happy");clearTimeout(cat._t);cat._t=setTimeout(()=>cat.classList.remove("happy"),1600)}
+function pat(x,y){happy();for(let i=0;i<3;i++)setTimeout(heart,i*160);meow();purr();lastMeow=Date.now();burst(x,y,8)}
+function stroke(x,y){happy();heart();setTimeout(heart,200);purr();if(Date.now()-lastMeow>2500){meow();lastMeow=Date.now()}burst(x,y,4)}
+cat.addEventListener("pointerdown",e=>{
+ if(e.button)return;e.preventDefault();
+ cat.setPointerCapture(e.pointerId);
+ cd={x:e.clientX,y:e.clientY,ox:cx,oy:cy};cmoved=false;
+});
+cat.addEventListener("pointermove",e=>{
+ if(cd){
+  const dx=e.clientX-cd.x,dy=e.clientY-cd.y;
+  if(!cmoved&&Math.hypot(dx,dy)>6){cmoved=true;cat.classList.add("held");meow(.3)}
+  if(cmoved){cx=cd.ox+dx;cy=cd.oy+dy;place()}
+ }else if(e.pointerType==="mouse"){
+  if(lastS)strokeAcc+=Math.hypot(e.clientX-lastS.x,e.clientY-lastS.y);
+  lastS={x:e.clientX,y:e.clientY};
+  if(strokeAcc>260){strokeAcc=0;stroke(e.clientX,e.clientY)}
+ }
+});
+cat.addEventListener("pointerleave",()=>{lastS=null;strokeAcc=0});
+cat.addEventListener("pointerup",e=>{
+ if(!cd)return;const was=cmoved;cd=null;cat.classList.remove("held");
+ if(!was)pat(e.clientX,e.clientY);
+ else{cat.classList.add("drop");setTimeout(()=>cat.classList.remove("drop"),500)}
+});
+cat.addEventListener("pointercancel",()=>{cd=null;cat.classList.remove("held")});
+cat.addEventListener("keydown",e=>{if(e.key==="Enter"||e.key===" "){e.preventDefault();pat(cx+CW/2,cy+CH/2)}});
+
 show("gate");requestAnimationFrame(loop);
 </script>
 </body>

@@ -223,7 +223,7 @@
         let rnd = mulberry(7);
         const R = (a, b) => a + rnd() * (b - a);
         const gau = () => (rnd() + rnd() + rnd() - 1.5) / 1.5;      // soft bell curve, about -1..1
-        const hsl = (h, s, l, a = 1) => `hsla(h,{s}%,l%,{a})`;
+        const hsl = (h, s, l, a = 1) => `hsla(${h},${s}%,${l}%,${a})`;
 
         /* =====================================================================
            GLOW SPRITES
@@ -232,9 +232,9 @@
             const c = document.createElement('canvas'); c.width = c.height = 128;
             const x = c.getContext('2d');
             const gr = x.createRadialGradient(64, 64, 0, 64, 64, 64);
-            gr.addColorStop(0,   `rgba(r,{g},${b},1)`);
-            gr.addColorStop(0.25,`rgba(r,{g},${b},.45)`);
-            gr.addColorStop(1,   `rgba(r,{g},${b},0)`);
+            gr.addColorStop(0,   `rgba(${r},${g},${b},1)`);
+            gr.addColorStop(0.25,`rgba(${r},${g},${b},.45)`);
+            gr.addColorStop(1,   `rgba(${r},${g},${b},0)`);
             x.fillStyle = gr; x.fillRect(0, 0, 128, 128);
             return c;
         }
@@ -418,7 +418,7 @@
             const g = c.getContext('2d'); g.scale(dpr, dpr);
             const cols = ['255,255,255', '255,220,235', '200,220,255', '255,240,210'];
             const star = () => {
-                g.fillStyle = `rgba(cols[(rnd()*4)|0],{0.18 + Math.pow(rnd(), 2) * 0.7})`;
+                g.fillStyle = `rgba(${cols[(rnd() * 4) | 0]},${0.18 + Math.pow(rnd(), 2) * 0.7})`;
                 return 0.4 + Math.pow(rnd(), 3) * 1.1;
             };
             for (let i = 0; i < 2600; i++) { const s = star(); g.fillRect(rnd() * W, rnd() * H * 0.82, s, s); }
@@ -440,7 +440,7 @@
             const blob = (sx, sy, sr, col, a) => {
                 const x = (sx + 60) * sc, y = (sy + 30) * sc, r = sr * sc;
                 const gr = g.createRadialGradient(x, y, 0, x, y, r);
-                gr.addColorStop(0, `rgba(col,{a})`); gr.addColorStop(0.5, `rgba(col,{a * 0.45})`); gr.addColorStop(1, `rgba(${col},0)`);
+                gr.addColorStop(0, `rgba(${col},${a})`); gr.addColorStop(0.5, `rgba(${col},${a * 0.45})`); gr.addColorStop(1, `rgba(${col},0)`);
                 g.fillStyle = gr; g.fillRect(x - r, y - r, r * 2, r * 2);
             };
             const sets = [['255,70,170', '200,60,210'], ['130,80,255', '255,110,200'], ['70,150,255', '150,90,255'], ['255,100,160', '255,170,110'], ['60,200,220', '120,120,255']];
@@ -469,7 +469,7 @@
             const g = c.getContext('2d');
             const glow = (x, y, r, col, a) => {
                 const gr = g.createRadialGradient(x, y, 0, x, y, r);
-                gr.addColorStop(0, `rgba(col,{a})`); gr.addColorStop(0.5, `rgba(col,{a * 0.4})`); gr.addColorStop(1, `rgba(${col},0)`);
+                gr.addColorStop(0, `rgba(${col},${a})`); gr.addColorStop(0.5, `rgba(${col},${a * 0.4})`); gr.addColorStop(1, `rgba(${col},0)`);
                 g.fillStyle = gr; g.fillRect(x - r, y - r, r * 2, r * 2);
             };
             g.globalCompositeOperation = 'lighter';
@@ -482,13 +482,13 @@
                 const th = arms[ai] + r * TW + gau() * (0.16 + r / 1100) * (ai > 1 ? 1.8 : 1);
                 const k = r / 356;
                 const col = k < 0.22 ? '255,228,196' : k < 0.5 ? (rnd() < 0.5 ? '255,170,215' : '255,205,225') : (rnd() < 0.55 ? '190,215,255' : '255,160,215');
-                g.fillStyle = `rgba(col,{(0.2 + rnd() * 0.7) * (1 - k * 0.5)})`;
+                g.fillStyle = `rgba(${col},${(0.2 + rnd() * 0.7) * (1 - k * 0.5)})`;
                 const s = 0.5 + Math.pow(rnd(), 3) * 1.7;
                 g.fillRect(c0 + Math.cos(th) * r, c0 + Math.sin(th) * r, s, s);
             }
             for (let i = 0; i < 2500; i++) {                         // warm central bulge
                 const r = Math.abs(gau()) * 70, a = rnd() * 6.283;
-                g.fillStyle = `rgba(255,200+(rnd()*40)|0,{160 + (rnd() * 50) | 0},${0.25 + rnd() * 0.6})`;
+                g.fillStyle = `rgba(255,${200 + (rnd() * 40) | 0},${160 + (rnd() * 50) | 0},${0.25 + rnd() * 0.6})`;
                 g.fillRect(c0 + Math.cos(a) * r, c0 + Math.sin(a) * r, 0.7 + rnd() * 1.1, 0.7 + rnd() * 1.1);
             }
             for (let i = 0; i < 100; i++) {                          // glowing star-forming knots
@@ -621,7 +621,7 @@
 
             // stem
             ctx.lineCap = 'round';
-            ctx.strokeStyle = `hsl(150-lit*20,{38 + lit * 10}%,${(13 + lit * 20) * dim + (f.layer === 2 ? 2 : 0)}%)`;
+            ctx.strokeStyle = `hsl(${150 - lit * 20},${38 + lit * 10}%,${(13 + lit * 20) * dim + (f.layer === 2 ? 2 : 0)}%)`;
             ctx.lineWidth = Math.max(1, f.size * (f.type === 'lupin' ? 0.2 : 0.15));
             ctx.beginPath(); ctx.moveTo(f.x, f.by); ctx.quadraticCurveTo(cx, cy, tx, ty); ctx.stroke();
 
@@ -634,7 +634,7 @@
 
             // leaves, in pairs along the stem
             const bez = u => [(1 - u) * (1 - u) * f.x + 2 * (1 - u) * u * cx + u * u * tx, (1 - u) * (1 - u) * f.by + 2 * (1 - u) * u * cy + u * u * ty];
-            const lc = `hsl(150,40%,(15+lit*18)*dim%)`,lm=`hsl(150,35%,{(24 + lit * 16) * dim}%)`;
+            const lc = `hsl(150,40%,${(15 + lit * 18) * dim}%)`, lm = `hsl(150,35%,${(24 + lit * 16) * dim}%)`;
             const sw = Math.sin(t * 0.002 + f.ph) * 0.08;
             const L = f.size * (f.layer === 2 ? 2.4 : 2.1);
             let p = bez(0.24); leaf(p[0], p[1], L, -0.75 + sw, lc, lm);
@@ -785,7 +785,7 @@
             /* twinkling stars (the brightest get diffraction spikes) */
             for (const s of stars) {
                 const a = 0.25 + (Math.sin(t * 0.001 * s.sp + s.a * 20) + 1) * 0.36;
-                ctx.fillStyle = `rgba(s.tint,{a})`;
+                ctx.fillStyle = `rgba(${s.tint},${a})`;
                 ctx.fillRect(s.x, s.y, s.s, s.s);
                 if (s.big) {
                     ctx.globalCompositeOperation = 'lighter';
@@ -889,7 +889,7 @@
                 if (p.y > H + 20) Object.assign(p, newPetal(false));
                 ctx.save(); ctx.translate(p.x, p.y); ctx.rotate(p.a);
                 ctx.scale(1, Math.abs(Math.cos(p.a * 0.7)) * 0.7 + 0.3);
-                ctx.fillStyle = `rgba(p.c,{p.blur ? 0.28 : 0.75})`;
+                ctx.fillStyle = `rgba(${p.c},${p.blur ? 0.28 : 0.75})`;
                 const sz = p.blur ? p.s * 2.6 : p.s;
                 ctx.beginPath(); ctx.moveTo(0, -sz * 0.5); ctx.quadraticCurveTo(sz, -sz * 0.6, sz, 0); ctx.quadraticCurveTo(sz * 0.5, sz * 0.6, 0, sz * 0.5); ctx.quadraticCurveTo(-sz * 0.3, 0, 0, -sz * 0.5);
                 ctx.fill(); ctx.restore();
@@ -1138,4 +1138,3 @@
     </script>
 </body>
 </html>
-

@@ -284,11 +284,11 @@ button:focus-visible,a:focus-visible,input:focus-visible{outline:2px solid var(-
 <section class="stage" id="gal">
  <div class="gsky"></div><div class="gmoon"></div><div class="mt a" id="mtA"></div><div class="mt b" id="mtB"></div>
  <div class="pan" id="pan"><div class="track" id="track"><div class="gbeam"></div>
-  <div class="intro"><span class="cn">画廊</span><div><h2>The Gallery</h2><p>Scroll sideways or drag to wander the corridor. Every painting opens onto something we made—and right ahead hangs our Fish Lantern Photo pavilion.</p></div></div>
+  <div class="intro"><span class="cn">画廊</span><div><h2>The Gallery</h2><p>Scroll sideways or drag to wander the corridor.</p></div></div>
  </div></div>
  <div class="rail"></div>
  <div class="nav">
-  <button class="booth-nav-btn" id="openFishNav">🐟 Fish Lantern Photo</button>
+  <button class="booth-nav-btn" id="openFishNav">🐟 Fish Lantern Studio</button>
   <button id="reReleaseNav" style="display:none">Release Fish Lantern</button>
   <button id="wander">Open a random painting</button>
   <button id="backCv">Back to the scrolls</button>
@@ -311,7 +311,7 @@ button:focus-visible,a:focus-visible,input:focus-visible{outline:2px solid var(-
 <div id="fishBooth" class="portal-layer" aria-hidden="true">
  <div class="portal-bar">
   <button class="bbtn" id="boothClose" type="button"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M13.5 8L9.5 12l4 4"/></svg><span>Return to the gallery</span></button>
-  <div class="ttl"><i class="tseal cn">鱼</i><span class="ttl-text">Fish Lantern Photo · 鲤鱼留影</span></div>
+  <div class="ttl"><i class="tseal cn">鱼</i><span class="ttl-text">· 鲤鱼留影</span></div>
   <div style="justify-self:end"><button class="bbtn" id="boothTopAction" type="button" style="padding:6px 14px"><span>Upload Photo</span></button></div>
  </div>
  <input id="boothFile" type="file" accept="image/*" style="display:none">
@@ -319,7 +319,7 @@ button:focus-visible,a:focus-visible,input:focus-visible{outline:2px solid var(-
   <div class="booth-inner">
    <div style="text-align:center;margin-bottom:22px">
     <div class="cn" style="font-size:24px;color:var(--gold2)">锦鲤花灯 · 留影</div>
-    <h2 style="font-size:clamp(28px,4.2vw,44px);font-style:italic;font-weight:500;line-height:1.15">Fish Lantern Photo</h2>
+    <h2 style="font-size:clamp(28px,4.2vw,44px);font-style:italic;font-weight:500;line-height:1.15">Fish Lantern Studio</h2>
     <p style="color:#d8ccb2;max-width:36em;margin:4px auto 0">Choose, Photo, Write, and Draw!!</p>
    </div>
    <div class="booth-grid">
@@ -558,7 +558,7 @@ $("#scrolls").innerHTML=CVS.map(c=>`<button class="scroll" aria-label="Open the 
 
 const track=$("#track");
 /* Distinct Hanging Fish Lantern Pavilion inside Gallery */
-track.insertAdjacentHTML("beforeend",`<button class="fish-booth-hang" id="fishGalleryHang" aria-label="Enter Fish Lantern Photo">
+track.insertAdjacentHTML("beforeend",`<button class="fish-booth-hang" id="fishGalleryHang" aria-label="Enter Fish Lantern Studio">
  <i class="cord"></i>
  <span class="fish-shrine">
   <svg viewBox="0 0 260 220" class="fish-shrine-svg" aria-hidden="true">

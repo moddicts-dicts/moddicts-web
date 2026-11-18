@@ -3,26 +3,55 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Observe — See the shape of the noise</title>
-    
+    <title>Lumora — A garden that glows after dark</title>
+
     <!-- Tailwind CSS CDN -->
     <script src="https://cdn.tailwindcss.com"></script>
-    
+
     <!-- Iconify CDN -->
     <script src="https://code.iconify.design/iconify-icon/1.0.7/iconify-icon.min.js"></script>
-    
-    <!-- Google Fonts: Instrument Serif -->
+
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&display=swap');
 
-        :root {
-            --bg: #000000;
-            --fg: #ffffff;
+        :root { --bg: #000000; --fg: #ffffff; }
+
+        .font-serif-instrument { font-family: 'Instrument Serif', serif; }
+
+        #cosmic-canvas {
+            position: fixed;
+            inset: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 0;
         }
 
-        .font-serif-instrument {
-            font-family: 'Instrument Serif', serif;
+        /* soft pool of shade behind the headline so it stays readable over the galaxy */
+        .headline-halo::before {
+            content: '';
+            position: absolute;
+            left: 50%; top: 50%;
+            width: 130%; height: 170%;
+            transform: translate(-50%, -50%);
+            background: radial-gradient(closest-side, rgba(14, 2, 14, 0.66), rgba(14, 2, 14, 0) 100%);
+            z-index: -1;
+            pointer-events: none;
         }
+
+        @keyframes rise {
+            from { opacity: 0; transform: translateY(14px); filter: blur(6px); }
+            to   { opacity: 1; transform: translateY(0);    filter: blur(0); }
+        }
+        .rise   { animation: rise 1.4s cubic-bezier(.2,.7,.2,1) both; }
+        .rise-2 { animation-delay: .25s; }
+        .rise-3 { animation-delay: .5s; }
+        .rise-4 { animation-delay: .75s; }
+
+        @keyframes hintpulse { 0%,100% { opacity: .55; } 50% { opacity: 1; } }
+        #music-hint { animation: hintpulse 2.6s ease-in-out infinite; transition: opacity .8s; }
+        @keyframes eq { 0%,100% { transform: scaleY(.3); } 50% { transform: scaleY(1); } }
+        .eq-bar { transform-origin: bottom; animation: eq 1.6s ease-in-out infinite; }
 
         /* LIQUID GLASS CSS */
         .liquid-glass {
@@ -35,28 +64,21 @@
             position: relative;
             overflow: hidden;
         }
-
         .liquid-glass::before {
             content: '';
             position: absolute;
             inset: 0;
             border-radius: inherit;
             padding: 1.4px;
-            background: linear-gradient(
-                180deg,
-                rgba(255, 255, 255, 0.45) 0%,
-                rgba(255, 255, 255, 0.15) 20%,
-                rgba(255, 255, 255, 0) 40%,
-                rgba(255, 255, 255, 0) 60%,
-                rgba(255, 255, 255, 0.15) 80%,
-                rgba(255, 255, 255, 0.45) 100%
-            );
+            background: linear-gradient(180deg,
+                rgba(255,255,255,0.45) 0%, rgba(255,255,255,0.15) 20%,
+                rgba(255,255,255,0) 40%,  rgba(255,255,255,0) 60%,
+                rgba(255,255,255,0.15) 80%, rgba(255,255,255,0.45) 100%);
             -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
             -webkit-mask-composite: xor;
             mask-composite: exclude;
             pointer-events: none;
         }
-
         .liquid-glass-circle {
             background-blend-mode: luminosity;
             backdrop-filter: blur(8px);
@@ -66,21 +88,16 @@
             position: relative;
             overflow: hidden;
         }
-
         .liquid-glass-circle::before {
             content: '';
             position: absolute;
             inset: 0;
             border-radius: inherit;
             padding: 1.4px;
-            background: linear-gradient(
-                180deg,
-                rgba(255, 255, 255, 0.45) 0%,
-                rgba(255, 255, 255, 0.22) 30%,
-                rgba(255, 255, 255, 0.16) 50%,
-                rgba(255, 255, 255, 0.22) 70%,
-                rgba(255, 255, 255, 0.45) 100%
-            );
+            background: linear-gradient(180deg,
+                rgba(255,255,255,0.45) 0%, rgba(255,255,255,0.22) 30%,
+                rgba(255,255,255,0.16) 50%, rgba(255,255,255,0.22) 70%,
+                rgba(255,255,255,0.45) 100%);
             -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
             -webkit-mask-composite: xor;
             mask-composite: exclude;
@@ -90,67 +107,80 @@
 </head>
 <body class="bg-black text-white min-h-screen selection:bg-white selection:text-black overflow-hidden">
 
-    <div class="bg-black text-white min-h-screen selection:bg-white selection:text-black overflow-hidden">
+    <!-- ANIMATED NIGHT GARDEN (fixed, behind everything) -->
+    <canvas id="cosmic-canvas"></canvas>
+
+    <div class="text-white min-h-screen selection:bg-white selection:text-black overflow-hidden">
         <section class="min-h-screen relative overflow-hidden flex flex-col">
 
-            <!-- ANIMATED COSMIC GARDEN BACKGROUND (Pink Galaxy Theme) -->
-            <canvas id="cosmic-canvas" class="absolute inset-0 w-full h-full pointer-events-none z-0"></canvas>
-
-            <nav class="relative z-20 px-6 py-6">
+            <nav class="relative z-20 px-6 py-6 rise">
                 <div class="liquid-glass rounded-full max-w-5xl mx-auto pl-6 pr-1.5 py-1.5 flex items-center justify-between">
-                    
+
                     <!-- Left Group -->
                     <div class="flex items-center gap-2">
-                        <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" class="w-6 h-6">
-                            <path d="M4.21 16.5 A9 9 0 0 1 16.5 4.21" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
-                            <path d="M16.5 4.21 A9 9 0 0 1 19.79 16.5" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-dasharray="2.4 2.3"/>
-                            <path d="M19.79 16.5 A9 9 0 0 1 4.21 16.5" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-dasharray="0.01 4.7"/>
-                            <circle cx="12" cy="12" r="2.5" fill="currentColor"/>
+                        <!-- blossom mark -->
+                        <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" width="24" height="24" aria-hidden="true" class="w-6 h-6">
+                            <g stroke="currentColor" stroke-width="1.6" stroke-linecap="round">
+                                <ellipse cx="12" cy="6.2" rx="2.3" ry="3.6"/>
+                                <ellipse cx="12" cy="6.2" rx="2.3" ry="3.6" transform="rotate(72 12 12)"/>
+                                <ellipse cx="12" cy="6.2" rx="2.3" ry="3.6" transform="rotate(144 12 12)"/>
+                                <ellipse cx="12" cy="6.2" rx="2.3" ry="3.6" transform="rotate(216 12 12)"/>
+                                <ellipse cx="12" cy="6.2" rx="2.3" ry="3.6" transform="rotate(288 12 12)"/>
+                            </g>
+                            <circle cx="12" cy="12" r="2" fill="currentColor"/>
                         </svg>
-                        <span class="font-semibold text-lg tracking-tight">Observe</span>
-                        
+                        <span class="font-semibold text-lg tracking-tight">Lumora</span>
+
                         <div class="hidden md:flex gap-8 ml-8">
-                            <a href="#" class="text-white/80 hover:text-white text-sm font-medium transition-colors">Product</a>
-                            <a href="#" class="text-white/80 hover:text-white text-sm font-medium transition-colors">Pricing</a>
-                            <a href="#" class="text-white/80 hover:text-white text-sm font-medium transition-colors">Contact us</a>
+                            <a href="#" class="text-white/80 hover:text-white text-sm font-medium transition-colors">Wander</a>
+                            <a href="#" class="text-white/80 hover:text-white text-sm font-medium transition-colors">Seasons</a>
+                            <a href="#" class="text-white/80 hover:text-white text-sm font-medium transition-colors">Say hello</a>
                         </div>
                     </div>
 
                     <!-- Right Group -->
                     <div class="flex items-center gap-4">
-                        <button class="text-white text-sm font-medium">Sign Up</button>
-                        <button class="bg-white rounded-full px-5 py-2 text-black text-sm font-medium whitespace-nowrap hover:scale-105 transition-transform duration-300">Join Waitlist</button>
+                        <button class="text-white text-sm font-medium">Sign In</button>
+                        <button class="bg-white rounded-full px-5 py-2 text-black text-sm font-medium whitespace-nowrap hover:scale-105 transition-transform duration-300">Enter the Garden</button>
                     </div>
 
                 </div>
             </nav>
 
             <div class="relative z-10 flex-1 flex flex-col items-center justify-center px-6 py-12 text-center -translate-y-[20%]">
-                
-                <!-- Headline -->
-                <h1 class="text-6xl md:text-7xl lg:text-8xl font-serif-instrument tracking-tight whitespace-nowrap mb-4"
-                    style="text-shadow: 0 0 72px rgba(0, 0, 0, 0.42), 0 4px 28px rgba(0, 0, 0, 0.28);">
-                    See the shape of the <em class="italic">noise</em>
-                </h1>
 
-                <!-- Subline -->
-                <p class="text-white/70 text-sm leading-relaxed max-w-2xl md:whitespace-nowrap mb-10"
-                   style="text-shadow: 0 0 30px rgba(0, 0, 0, 0.32), 0 1px 10px rgba(0, 0, 0, 0.20);">
-                    Every event from your product — rendered as one picture you can actually read.
-                </p>
+                <div class="headline-halo relative flex flex-col items-center">
+                    <!-- Eyebrow -->
+                    <p class="rise rise-2 text-pink-200/70 text-xs tracking-[0.35em] uppercase mb-5"
+                       style="text-shadow: 0 0 24px rgba(0,0,0,.6);">
+                        ✦ &nbsp;open after sunset&nbsp; ✦
+                    </p>
+
+                    <!-- Headline -->
+                    <h1 class="rise rise-2 text-5xl md:text-7xl lg:text-8xl font-serif-instrument tracking-tight max-w-5xl mb-4 leading-[1.02]"
+                        style="text-shadow: 0 0 72px rgba(0, 0, 0, 0.6), 0 4px 28px rgba(0, 0, 0, 0.45);">
+                        Wander through a garden of <em class="italic text-pink-200">starlight</em>
+                    </h1>
+
+                    <!-- Subline -->
+                    <p class="rise rise-3 text-white/80 text-sm md:text-base leading-relaxed max-w-xl mb-10"
+                       style="text-shadow: 0 0 30px rgba(0, 0, 0, 0.6), 0 1px 10px rgba(0, 0, 0, 0.4);">
+                        One quiet walk beneath a pink galaxy, where every petal remembers the light.
+                    </p>
+                </div>
 
                 <!-- Email Capture -->
-                <div class="max-w-xl w-full">
+                <div class="rise rise-4 max-w-xl w-full">
                     <div class="liquid-glass rounded-full pl-6 pr-1.5 py-1.5 flex items-center gap-3">
-                        <input type="email" placeholder="Enter your email"
-                               class="bg-transparent border-none outline-none flex-1 text-white placeholder:text-white/90 text-sm">
-                        <button class="bg-white rounded-full px-6 py-3 text-black text-sm font-medium whitespace-nowrap hover:scale-105 transition-transform duration-300">Join Waitlist</button>
+                        <input type="email" placeholder="Your email, for a lantern-lit invitation"
+                               class="bg-transparent border-none outline-none flex-1 min-w-0 text-white placeholder:text-white/80 text-sm">
+                        <button id="plant-btn" class="bg-white rounded-full px-6 py-3 text-black text-sm font-medium whitespace-nowrap hover:scale-105 transition-transform duration-300">Plant a Seed</button>
                     </div>
                 </div>
 
             </div>
 
-            <div class="relative z-10 flex justify-center gap-4 pb-12">
+            <div class="relative z-10 flex justify-center gap-4 pb-12 rise rise-4">
                 <button class="liquid-glass-circle w-14 h-14 flex items-center justify-center rounded-full text-white/80 hover:text-white hover:bg-white/5 transition-all">
                     <iconify-icon icon="lucide:instagram" class="text-xl"></iconify-icon>
                 </button>
@@ -165,184 +195,948 @@
         </section>
     </div>
 
-    <!-- ANIMATION SCRIPT -->
+    <!-- MUSIC TOGGLE -->
+    <div class="fixed z-30 bottom-6 right-6 flex items-center gap-3 rise rise-4">
+        <span id="music-hint" class="text-white/70 text-xs tracking-wide hidden sm:inline" style="text-shadow:0 0 12px #000;">♪ tap anywhere for calming music</span>
+        <button id="music-btn" type="button" aria-label="Toggle calming music" aria-pressed="false" title="Calming music"
+                class="liquid-glass-circle w-12 h-12 flex items-center justify-center rounded-full text-white/85 hover:text-white hover:bg-white/5 transition-all">
+            <!-- muted icon -->
+            <svg id="ic-off" viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                <path d="M11 5 6 9H3v6h3l5 4V5z"/><path d="m16 9 5 6"/><path d="m21 9-5 6"/>
+            </svg>
+            <!-- playing icon -->
+            <svg id="ic-on" viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="display:none">
+                <path d="M11 5 6 9H3v6h3l5 4V5z"/><path d="M15.5 8.5a5 5 0 0 1 0 7"/><path d="M18.5 5.5a9 9 0 0 1 0 13"/>
+            </svg>
+        </button>
+    </div>
+
+    <!-- NIGHT GARDEN SCENE -->
     <script>
+    (() => {
         const canvas = document.getElementById('cosmic-canvas');
         const ctx = canvas.getContext('2d');
+        let W = 0, H = 0, dpr = 1;
+
+        /* ---------- seeded random so the garden is the same every visit ---------- */
+        function mulberry(a) { return () => { a |= 0; a = a + 0x6D2B79F5 | 0; let t = Math.imul(a ^ a >>> 15, 1 | a); t = t + Math.imul(t ^ t >>> 7, 61 | t) ^ t; return ((t ^ t >>> 14) >>> 0) / 4294967296; }; }
+        let rnd = mulberry(7);
+        const R = (a, b) => a + rnd() * (b - a);
+        const gau = () => (rnd() + rnd() + rnd() - 1.5) / 1.5;      // soft bell curve, about -1..1
+        const hsl = (h, s, l, a = 1) => `hsla(h,{s}%,l%,{a})`;
+
+        /* =====================================================================
+           GLOW SPRITES
+           ===================================================================== */
+        function makeGlow(r, g, b) {
+            const c = document.createElement('canvas'); c.width = c.height = 128;
+            const x = c.getContext('2d');
+            const gr = x.createRadialGradient(64, 64, 0, 64, 64, 64);
+            gr.addColorStop(0,   `rgba(r,{g},${b},1)`);
+            gr.addColorStop(0.25,`rgba(r,{g},${b},.45)`);
+            gr.addColorStop(1,   `rgba(r,{g},${b},0)`);
+            x.fillStyle = gr; x.fillRect(0, 0, 128, 128);
+            return c;
+        }
+        const GLOW = [makeGlow(255, 120, 190), makeGlow(255, 225, 245), makeGlow(190, 140, 255), makeGlow(255, 215, 140)];
+
+        function makeMist() {
+            const c = document.createElement('canvas'); c.width = 512; c.height = 128;
+            const x = c.getContext('2d');
+            x.save(); x.scale(1, 0.25);
+            const gr = x.createRadialGradient(256, 256, 0, 256, 256, 256);
+            gr.addColorStop(0, 'rgba(255,170,220,.55)');
+            gr.addColorStop(1, 'rgba(255,170,220,0)');
+            x.fillStyle = gr; x.fillRect(0, 0, 512, 512); x.restore();
+            return c;
+        }
+        const MIST = makeMist();
+
+        /* =====================================================================
+           PAINTED FLOWER HEADS — each bloom is drawn once, petal by petal,
+           with gradients, veins and shading, then stamped thousands of times.
+           ===================================================================== */
+        const SZ = 192, C0 = 96, RAD = 88;
+        function mk(draw) {
+            const c = document.createElement('canvas'); c.width = c.height = SZ;
+            const g = c.getContext('2d'); g.translate(C0, C0); draw(g); return c;
+        }
+        function petalPath(g, len, wid, round, notch) {
+            const tipx = notch ? wid * 0.38 : 0;
+            g.beginPath(); g.moveTo(0, 0);
+            g.bezierCurveTo(wid * (1 + round * 0.4), -len * 0.1, wid * (1 + round * 0.3), -len * (0.88 + round * 0.08), tipx, -len);
+            if (notch) { g.lineTo(0, -len * 0.92); g.lineTo(-tipx, -len); }
+            g.bezierCurveTo(-wid * (1 + round * 0.3), -len * (0.88 + round * 0.08), -wid * (1 + round * 0.4), -len * 0.1, 0, 0);
+            g.closePath();
+        }
+        // col = [hue, sat, lightness at base, lightness at tip]
+        function petal(g, len, wid, col, o = {}) {
+            const { round = 0, notch = false, rot = 0, vein = true } = o;
+            const [h, s, lb, lt] = col;
+            g.save(); g.rotate(rot);
+            const gr = g.createLinearGradient(0, 0, 0, -len);
+            gr.addColorStop(0, hsl(h, s + 8, lb - 10));
+            gr.addColorStop(0.45, hsl(h, s, lb + (lt - lb) * 0.45));
+            gr.addColorStop(1, hsl(h + 5, s - 12, lt));
+            petalPath(g, len, wid, round, notch); g.fillStyle = gr; g.fill();
+            if (vein) {
+                g.strokeStyle = hsl(h, s, lb - 14, 0.32); g.lineWidth = Math.max(0.5, len * 0.011);
+                for (const v of [-0.45, 0, 0.45]) {
+                    g.beginPath(); g.moveTo(0, -len * 0.05);
+                    g.quadraticCurveTo(wid * v * 0.9, -len * 0.5, wid * v * 0.5, -len * 0.9); g.stroke();
+                }
+            }
+            g.strokeStyle = hsl(h, s - 10, Math.min(99, lt + 4), 0.45); g.lineWidth = 0.8;
+            petalPath(g, len, wid, round, notch); g.stroke();
+            g.restore();
+        }
+        const disc = (g, x, y, r, f) => { g.fillStyle = f; g.beginPath(); g.arc(x, y, r, 0, 6.283); g.fill(); };
+
+        function bloomDaisy(col) {
+            return mk(g => {
+                const n = 20;
+                for (let i = 0; i < n; i++) petal(g, 86, 6.5, col, { rot: i / n * 6.283, vein: false });
+                for (let i = 0; i < n; i++) petal(g, 74, 6.2, col, { rot: (i + 0.5) / n * 6.283, vein: false });
+                disc(g, 0, 0, 22, 'rgba(90,40,20,.35)');
+                const cg = g.createRadialGradient(-4, -4, 1, 0, 0, 19);
+                cg.addColorStop(0, '#fff0a0'); cg.addColorStop(0.6, '#f2b52c'); cg.addColorStop(1, '#b8721a');
+                disc(g, 0, 0, 18, cg);
+                for (let i = 0; i < 46; i++) {
+                    const a = Math.random() * 6.283, r = Math.sqrt(Math.random()) * 16;
+                    disc(g, Math.cos(a) * r, Math.sin(a) * r, 1.1, Math.random() < 0.5 ? 'rgba(130,70,10,.55)' : 'rgba(255,240,170,.6)');
+                }
+            });
+        }
+        function bloomCosmos(col) {
+            return mk(g => {
+                for (let i = 0; i < 8; i++) petal(g, 86, 30, col, { round: 0.6, notch: true, rot: i / 8 * 6.283 });
+                for (let i = 0; i < 8; i++) petal(g, 64, 23, [col[0], col[1], col[2] + 6, col[3] + 4], { round: 0.6, notch: true, rot: (i + 0.5) / 8 * 6.283, vein: false });
+                disc(g, 0, 0, 14, 'rgba(70,20,40,.4)');
+                const cg = g.createRadialGradient(-2, -2, 1, 0, 0, 12);
+                cg.addColorStop(0, '#fff2a8'); cg.addColorStop(1, '#e8a31e');
+                disc(g, 0, 0, 11, cg);
+                for (let i = 0; i < 22; i++) { const a = i / 22 * 6.283; disc(g, Math.cos(a) * 9.5, Math.sin(a) * 9.5, 1.6, '#ffd45a'); }
+            });
+        }
+        function bloomRose(col) {
+            return mk(g => {
+                const rings = [[9, 84, 36], [8, 70, 32], [7, 56, 27], [6, 43, 22], [5, 31, 16], [4, 19, 11]];
+                rings.forEach(([n, len, w], k) => {
+                    disc(g, 0, 0, len * 0.72, 'rgba(40,0,25,.26)');
+                    const off = Math.random() * 6.283;
+                    for (let i = 0; i < n; i++)
+                        petal(g, len, w, [col[0], col[1], col[2] - k * 2, col[3] - k * 3],
+                              { round: 1, rot: off + i / n * 6.283 + (Math.random() - 0.5) * 0.18, vein: k < 3 });
+                });
+                g.strokeStyle = hsl(col[0], col[1], col[2] - 16, 0.55); g.lineWidth = 1.2; g.beginPath();
+                for (let a = 0; a < 9; a += 0.25) { const r = a * 1.1; g.lineTo(Math.cos(a) * r, Math.sin(a) * r); }
+                g.stroke();
+            });
+        }
+        function bloomTulip(col) {
+            return mk(g => {
+                g.translate(0, 34);
+                petal(g, 104, 34, col, { round: 0.9, rot: -0.34 });
+                petal(g, 104, 34, col, { round: 0.9, rot: 0.34 });
+                petal(g, 100, 30, [col[0], col[1], col[2] - 12, col[3] - 10], { round: 0.9, vein: false });
+                petal(g, 98, 33, col, { round: 0.9 });
+                g.strokeStyle = 'rgba(255,255,255,.28)'; g.lineWidth = 2.2; g.lineCap = 'round';
+                g.beginPath(); g.moveTo(-6, -12); g.quadraticCurveTo(-12, -48, -4, -84); g.stroke();
+            });
+        }
+        function bloomLily(col) {
+            return mk(g => {
+                for (let i = 0; i < 6; i++) {
+                    const a = i / 6 * 6.283 + 0.2, big = i % 2 === 0;
+                    petal(g, big ? 90 : 78, big ? 19 : 17, col, { round: -0.45, rot: a });
+                    g.save(); g.rotate(a);
+                    g.strokeStyle = 'rgba(255,255,215,.5)'; g.lineWidth = 2; g.lineCap = 'round';
+                    g.beginPath(); g.moveTo(0, -8); g.lineTo(0, -(big ? 62 : 52)); g.stroke();
+                    for (let d = 0; d < 13; d++) disc(g, (Math.random() - 0.5) * 16, -14 - Math.random() * 40, 1.2, hsl(col[0], 70, 26, 0.8));
+                    g.restore();
+                }
+                disc(g, 0, 0, 5, '#c9d87a');
+                for (let i = 0; i < 6; i++) {
+                    const a = i / 6 * 6.283 + 0.5, L = 46 + Math.random() * 12, ex = Math.cos(a) * L, ey = Math.sin(a) * L;
+                    g.strokeStyle = '#f4e3b0'; g.lineWidth = 1.6; g.lineCap = 'round';
+                    g.beginPath(); g.moveTo(0, 0); g.quadraticCurveTo(ex * 0.5 + 3, ey * 0.5 - 3, ex, ey); g.stroke();
+                    g.save(); g.translate(ex, ey); g.rotate(a);
+                    g.fillStyle = '#b5551a'; g.beginPath(); g.ellipse(0, 0, 5, 2.4, 0, 0, 6.283); g.fill(); g.restore();
+                }
+            });
+        }
+        function bloomFloret(col) {
+            return mk(g => {
+                for (let i = 0; i < 5; i++) petal(g, 70, 34, col, { round: 1, rot: i / 5 * 6.283, vein: false });
+                disc(g, 0, -6, 12, hsl(col[0], col[1], Math.min(96, col[3] + 12), 0.9));
+            });
+        }
+        const VAR = {
+            daisy:  [[340, 60, 78, 97], [48, 40, 84, 98], [290, 45, 76, 95]],
+            cosmos: [[325, 85, 45, 70], [340, 80, 50, 78], [300, 70, 52, 76]],
+            rose:   [[338, 78, 38, 70], [322, 70, 40, 68], [8, 78, 46, 74]],
+            tulip:  [[345, 80, 45, 72], [322, 76, 44, 70], [14, 85, 52, 74]],
+            lily:   [[330, 70, 52, 88], [350, 35, 80, 97], [18, 85, 55, 80]],
+            lupin:  [[285, 60, 48, 76], [310, 62, 52, 78], [262, 60, 52, 78]]
+        };
+        const SPR = {
+            daisy:  VAR.daisy.map(bloomDaisy),
+            cosmos: VAR.cosmos.map(bloomCosmos),
+            rose:   VAR.rose.map(bloomRose),
+            tulip:  VAR.tulip.map(bloomTulip),
+            lily:   VAR.lily.map(bloomLily),
+            lupin:  VAR.lupin.map(bloomFloret)
+        };
+        const TYPEK = { daisy: 1.0, cosmos: 1.05, rose: 1.0, tulip: 1.0, lily: 1.12 };
+        const TYPES = ['daisy', 'cosmos', 'rose', 'tulip', 'lily', 'lupin', 'cosmos', 'rose', 'daisy', 'lily'];
+        const SPECK = [[330, 80, 70], [300, 70, 75], [20, 90, 75], [280, 60, 75]];
+
+        /* =====================================================================
+           TERRAIN
+           ===================================================================== */
+        const hill = (x, layer) => {
+            const base = [0.735, 0.80, 0.91][layer];
+            const amp  = [0.022, 0.020, 0.018][layer];
+            return H * base
+                 + Math.sin(x * 0.0035 + layer * 2.1) * H * amp
+                 + Math.sin(x * 0.0102 + layer * 1.3) * H * amp * 0.45;
+        };
+        const ridge = (x, k) => H * (0.66 - k * 0.035)
+                 - Math.abs(Math.sin(x * 0.0021 + k * 3.7)) * H * (0.07 + k * 0.02)
+                 - Math.sin(x * 0.0074 + k) * H * 0.012;
+
+        /* =====================================================================
+           SCENE DATA
+           ===================================================================== */
+        let stars = [], flowers = [], grass = [[], [], []], fireflies = [], petals = [], shooting = [];
+        let starfield = null, nebula = null, gal = null;
+
+        /* ---- a deep, dusty starfield + milky band, painted once ---- */
+        function buildStarfield() {
+            const c = document.createElement('canvas');
+            c.width = Math.round(W * dpr); c.height = Math.round(H * 0.82 * dpr);
+            const g = c.getContext('2d'); g.scale(dpr, dpr);
+            const cols = ['255,255,255', '255,220,235', '200,220,255', '255,240,210'];
+            const star = () => {
+                g.fillStyle = `rgba(cols[(rnd()*4)|0],{0.18 + Math.pow(rnd(), 2) * 0.7})`;
+                return 0.4 + Math.pow(rnd(), 3) * 1.1;
+            };
+            for (let i = 0; i < 2600; i++) { const s = star(); g.fillRect(rnd() * W, rnd() * H * 0.82, s, s); }
+            // milky band sweeping across the sky
+            for (let i = 0; i < 5200; i++) {
+                const t = rnd(), x = -W * 0.1 + t * W * 1.2, y = H * (0.56 - 0.52 * t);
+                const nx = 0.69, ny = 0.72;                        // normal of the band
+                const off = gau() * H * 0.075 * (0.6 + rnd() * 0.8);
+                const s = star(); g.fillRect(x + nx * off, y + ny * off, s, s);
+            }
+            starfield = c;
+        }
+
+        /* ---- soft nebula clouds (half-res; they are blurry anyway) ---- */
+        function buildNebula() {
+            const sc = 0.5, w = Math.ceil((W + 120) * sc), h = Math.ceil((H * 0.82 + 60) * sc);
+            const c = document.createElement('canvas'); c.width = w; c.height = h;
+            const g = c.getContext('2d');
+            const blob = (sx, sy, sr, col, a) => {
+                const x = (sx + 60) * sc, y = (sy + 30) * sc, r = sr * sc;
+                const gr = g.createRadialGradient(x, y, 0, x, y, r);
+                gr.addColorStop(0, `rgba(col,{a})`); gr.addColorStop(0.5, `rgba(col,{a * 0.45})`); gr.addColorStop(1, `rgba(${col},0)`);
+                g.fillStyle = gr; g.fillRect(x - r, y - r, r * 2, r * 2);
+            };
+            const sets = [['255,70,170', '200,60,210'], ['130,80,255', '255,110,200'], ['70,150,255', '150,90,255'], ['255,100,160', '255,170,110'], ['60,200,220', '120,120,255']];
+            g.globalCompositeOperation = 'lighter';
+            for (let i = 0; i < 10; i++) {                           // scattered emission nebulae
+                const cx = rnd() * W, cy = rnd() * H * 0.6, set = sets[i % 5];
+                for (let j = 0; j < 18; j++) blob(cx + gau() * W * 0.12, cy + gau() * H * 0.09, 50 + rnd() * 150, rnd() < 0.6 ? set[0] : set[1], 0.035 + rnd() * 0.07);
+            }
+            for (let i = 0; i < 16; i++) {                           // halo of colour around the galaxy
+                const set = sets[(rnd() * 3) | 0];
+                blob(W / 2 + gau() * W * 0.22, H * 0.27 + gau() * H * 0.14, 90 + rnd() * 200, rnd() < 0.6 ? set[0] : set[1], 0.04 + rnd() * 0.05);
+            }
+            for (let i = 0; i < 24; i++) {                           // glow along the milky band
+                const t = rnd();
+                blob(-W * 0.1 + t * W * 1.2 + gau() * 40, H * (0.56 - 0.52 * t) + gau() * 40, 120 + rnd() * 120, '190,150,255', 0.035);
+            }
+            g.globalCompositeOperation = 'source-over';              // dark dust gives the clouds structure
+            for (let i = 0; i < 16; i++) blob(rnd() * W, rnd() * H * 0.6, 60 + rnd() * 120, '6,0,12', 0.2);
+            nebula = c;
+        }
+
+        /* ---- the galaxy itself, painted once and then slowly spun ---- */
+        function buildGalaxy() {
+            const S = 820, c0 = 410;
+            const c = document.createElement('canvas'); c.width = c.height = S;
+            const g = c.getContext('2d');
+            const glow = (x, y, r, col, a) => {
+                const gr = g.createRadialGradient(x, y, 0, x, y, r);
+                gr.addColorStop(0, `rgba(col,{a})`); gr.addColorStop(0.5, `rgba(col,{a * 0.4})`); gr.addColorStop(1, `rgba(${col},0)`);
+                g.fillStyle = gr; g.fillRect(x - r, y - r, r * 2, r * 2);
+            };
+            g.globalCompositeOperation = 'lighter';
+            glow(c0, c0, 380, '150,60,190', 0.16); glow(c0, c0, 260, '255,110,185', 0.22); glow(c0, c0, 120, '255,170,200', 0.35);
+
+            const arms = [0, Math.PI, Math.PI * 0.5, Math.PI * 1.5], TW = 0.0135;
+            for (let i = 0; i < 15000; i++) {                        // ~15k stars across four arms
+                const m = i % 10, ai = m < 4 ? 0 : m < 8 ? 1 : m < 9 ? 2 : 3;
+                const r = 16 + Math.pow(rnd(), 0.62) * 340;
+                const th = arms[ai] + r * TW + gau() * (0.16 + r / 1100) * (ai > 1 ? 1.8 : 1);
+                const k = r / 356;
+                const col = k < 0.22 ? '255,228,196' : k < 0.5 ? (rnd() < 0.5 ? '255,170,215' : '255,205,225') : (rnd() < 0.55 ? '190,215,255' : '255,160,215');
+                g.fillStyle = `rgba(col,{(0.2 + rnd() * 0.7) * (1 - k * 0.5)})`;
+                const s = 0.5 + Math.pow(rnd(), 3) * 1.7;
+                g.fillRect(c0 + Math.cos(th) * r, c0 + Math.sin(th) * r, s, s);
+            }
+            for (let i = 0; i < 2500; i++) {                         // warm central bulge
+                const r = Math.abs(gau()) * 70, a = rnd() * 6.283;
+                g.fillStyle = `rgba(255,200+(rnd()*40)|0,{160 + (rnd() * 50) | 0},${0.25 + rnd() * 0.6})`;
+                g.fillRect(c0 + Math.cos(a) * r, c0 + Math.sin(a) * r, 0.7 + rnd() * 1.1, 0.7 + rnd() * 1.1);
+            }
+            for (let i = 0; i < 100; i++) {                          // glowing star-forming knots
+                const ai = rnd() < 0.5 ? 0 : 1, r = 70 + rnd() * 270, th = arms[ai] + r * TW + gau() * 0.1;
+                glow(c0 + Math.cos(th) * r, c0 + Math.sin(th) * r, 6 + rnd() * 16, rnd() < 0.75 ? '255,90,180' : '110,170,255', 0.4);
+            }
+            g.globalCompositeOperation = 'source-over';             // dark dust lanes
+            for (let i = 0; i < 260; i++) {
+                const ai = rnd() < 0.5 ? 0 : 1, r = 50 + rnd() * 280, th = arms[ai] + r * TW - 0.16 + gau() * 0.04;
+                glow(c0 + Math.cos(th) * r, c0 + Math.sin(th) * r, 5 + rnd() * 13, '14,2,20', 0.2);
+            }
+            g.globalCompositeOperation = 'lighter';
+            glow(c0, c0, 70, '255,240,225', 0.9); glow(c0, c0, 26, '255,255,250', 0.95);
+            gal = c;
+        }
+
+        function build() {
+            rnd = mulberry(7);
+
+            buildStarfield(); buildNebula(); buildGalaxy();
+
+            // twinkling stars (a handful are bright enough to carry diffraction spikes)
+            stars = Array.from({ length: Math.round(W * H / 4200) }, () => ({
+                x: R(0, W), y: R(0, H * 0.72), s: Math.pow(rnd(), 2.4) * 1.9 + 0.35,
+                a: rnd(), sp: R(0.4, 1.6), tint: rnd() < 0.3 ? '255,200,235' : '255,255,255', big: false
+            }));
+            for (let i = 0; i < 16; i++) { const s = stars[i]; s.big = true; s.s = R(1.8, 2.8); }
+
+            // flowers
+            flowers = [];
+            const add = (layer, count, hMin, hMax, sMin, sMax, yJit) => {
+                for (let i = 0; i < count; i++) {
+                    const x = R(-30, W + 30);
+                    const type = TYPES[(rnd() * TYPES.length) | 0], v = (rnd() * 3) | 0;
+                    const y = hill(x, layer) + R(yJit[0], yJit[1]);
+                    const sp = SPECK[(rnd() * 4) | 0];
+                    flowers.push({
+                        x, by: y, h: R(hMin, hMax), size: R(sMin, sMax), type, v, tilt: R(0.62, 1),
+                        hue: sp[0], sat: sp[1], lit: sp[2],
+                        ph: R(0, 6.28), layer, front: layer === 2 || (layer === 1 && y > hill(x, 1) + 5),
+                        glow: type === 'daisy' ? 1 : (type === 'lupin' ? 2 : 0)
+                    });
+                }
+            };
+            const scale = Math.max(0.7, Math.min(1.5, H / 760));
+            add(0, Math.round(W / 8),  8 * scale, 20 * scale, 1.6 * scale, 2.8 * scale, [0, 16]);
+            add(1, Math.round(W / 10), 40 * scale, 84 * scale, 6.5 * scale, 11 * scale, [-4, 26]);
+            add(2, Math.round(W / 75), 150 * scale, 270 * scale, 17 * scale, 28 * scale, [8, 40]);
+            flowers.sort((a, b) => a.by - b.by);
+
+            // blades of grass for the meadow and the foreground
+            grass = [[], [[], []], [[], []]];
+            for (let i = 0; i < Math.round(W / 2.2); i++) { const x = R(-20, W + 20); grass[1][i % 2].push({ x, by: hill(x, 1) + R(-6, 30), h: R(16, 46) * scale }); }
+            for (let i = 0; i < Math.round(W / 5); i++)   { const x = R(-20, W + 20); grass[2][i % 2].push({ x, by: hill(x, 2) + R(6, 60),  h: R(50, 130) * scale }); }
+
+            fireflies = Array.from({ length: 46 }, () => ({
+                x: R(0, W), y: R(H * 0.45, H * 0.92), ph: R(0, 6.28), sp: R(0.25, 0.7), r: R(14, 30)
+            }));
+            petals = Array.from({ length: 46 }, () => newPetal(true));
+        }
+
+        function newPetal(anywhere) {
+            return {
+                x: R(-50, W + 50), y: anywhere ? R(0, H) : R(-40, -10), s: R(3, 9) * (H / 760),
+                vy: R(14, 38), vx: R(-14, 14), a: R(0, 6.28), sp: R(-1.2, 1.2), sw: R(0, 6.28),
+                c: rnd() > 0.5 ? '255,150,210' : '255,205,240', blur: rnd() < 0.2
+            };
+        }
 
         function resize() {
-            canvas.width = window.innerWidth;
-            canvas.height = window.innerHeight;
+            dpr = Math.min(window.devicePixelRatio || 1, 2);
+            W = window.innerWidth; H = window.innerHeight;
+            canvas.width = Math.round(W * dpr); canvas.height = Math.round(H * dpr);
+            ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+            build();
+            man.x = Math.min(man.x, W + 80);
         }
-        window.addEventListener('resize', resize);
-        resize();
 
-        // Twinkling stars
-        const stars = Array.from({ length: 160 }, () => ({
-            x: Math.random() * canvas.width,
-            y: Math.random() * canvas.height,
-            size: Math.random() * 2 + 0.5,
-            alpha: Math.random(),
-            speed: Math.random() * 0.015 + 0.005
-        }));
+        /* =====================================================================
+           THE WALKER
+           ===================================================================== */
+        const man = { x: -140, phase: 0, speed: 52 };
+        let lantern = { x: -999, y: 0, r: 0 };
+        const mScale = () => Math.max(0.75, Math.min(1.5, H / 760));
 
-        // Shooting stars
-        let shootingStars = [];
-        function triggerShootingStar() {
-            shootingStars.push({
-                x: Math.random() * canvas.width,
-                y: Math.random() * (canvas.height * 0.4),
-                len: Math.random() * 70 + 30,
-                speed: Math.random() * 10 + 6,
-                angle: Math.PI / 4 + (Math.random() * 0.2 - 0.1),
-                opacity: 1
-            });
+        function windAt(x, t) {
+            return Math.sin(t * 0.0011 + x * 0.006) * 0.55 + Math.sin(t * 0.0027 + x * 0.013) * 0.25 + Math.sin(t * 0.0006 + x * 0.002) * 0.3;
         }
-        setInterval(triggerShootingStar, 3000);
+        function pushAt(x) {                         // flowers part around the walker
+            const d = x - man.x, reach = 60 * mScale();
+            if (Math.abs(d) > reach) return 0;
+            return Math.sign(d || 1) * Math.pow(1 - Math.abs(d) / reach, 1.4);
+        }
+        function litAt(x, y) {
+            const d = Math.hypot(x - lantern.x, (y - lantern.y) * 1.3);
+            return Math.max(0, 1 - d / (230 * mScale()));
+        }
 
-        // Flying petals
-        const petals = Array.from({ length: 40 }, () => ({
-            x: Math.random() * canvas.width,
-            y: Math.random() * canvas.height,
-            size: Math.random() * 7 + 3,
-            speedY: Math.random() * 0.6 + 0.2,
-            speedX: Math.random() * 0.8 - 0.4,
-            angle: Math.random() * Math.PI * 2,
-            spin: Math.random() * 0.02 - 0.01,
-            color: Math.random() > 0.5 ? 'rgba(255, 150, 210, 0.7)' : 'rgba(255, 200, 240, 0.7)'
-        }));
-
-        let galaxyAngle = 0;
-        let manX = -120;
-
-        function animate() {
-            ctx.clearRect(0, 0, canvas.width, canvas.height);
-
-            // Pink-themed deep space background gradient
-            let bgGrad = ctx.createRadialGradient(canvas.width / 2, canvas.height * 0.3, 40, canvas.width / 2, canvas.height * 0.3, canvas.width);
-            bgGrad.addColorStop(0, '#2b0822');
-            bgGrad.addColorStop(0.5, '#140310');
-            bgGrad.addColorStop(1, '#000000');
-            ctx.fillStyle = bgGrad;
-            ctx.fillRect(0, 0, canvas.width, canvas.height);
-
-            // Twinkling stars
-            stars.forEach(s => {
-                s.alpha += s.speed;
-                if (s.alpha > 1 || s.alpha < 0.2) s.speed = -s.speed;
-                ctx.fillStyle = `rgba(255, 255, 255, ${Math.abs(s.alpha)})`;
-                ctx.beginPath();
-                ctx.arc(s.x, s.y, s.size, 0, Math.PI * 2);
-                ctx.fill();
-            });
-
-            // Twirling Galaxy (Pink/Magenta theme)
-            ctx.save();
-            let gx = canvas.width / 2;
-            let gy = canvas.height * 0.26;
-            ctx.translate(gx, gy);
-            ctx.rotate(galaxyAngle);
-            galaxyAngle += 0.001;
-
-            let galGrad = ctx.createRadialGradient(0, 0, 5, 0, 0, 280);
-            galGrad.addColorStop(0, 'rgba(255, 240, 245, 0.9)');
-            galGrad.addColorStop(0.3, 'rgba(255, 105, 180, 0.5)');
-            galGrad.addColorStop(0.7, 'rgba(186, 85, 211, 0.2)');
-            galGrad.addColorStop(1, 'transparent');
-            ctx.fillStyle = galGrad;
-            ctx.beginPath();
-            ctx.ellipse(0, 0, 320, 130, Math.PI / 6, 0, Math.PI * 2);
-            ctx.fill();
-            ctx.restore();
-
-            // Shooting stars
-            ctx.lineWidth = 2;
-            shootingStars.forEach((st, i) => {
-                ctx.save();
-                let dx = Math.cos(st.angle) * st.len;
-                let dy = Math.sin(st.angle) * st.len;
-                let grad = ctx.createLinearGradient(st.x, st.y, st.x - dx, st.y - dy);
-                grad.addColorStop(0, `rgba(255, 255, 255, ${st.opacity})`);
-                grad.addColorStop(1, 'transparent');
-                ctx.strokeStyle = grad;
-                ctx.beginPath();
-                ctx.moveTo(st.x, st.y);
-                ctx.lineTo(st.x - dx, st.y - dy);
+        /* ---------- grass ---------- */
+        function drawGrass(layer, t) {
+            const cols = layer === 1 ? ['hsl(155,35%,13%)', 'hsl(140,32%,18%)'] : ['hsl(158,30%,9%)', 'hsl(150,30%,13%)'];
+            ctx.lineWidth = layer === 2 ? 2.2 : 1.3; ctx.lineCap = 'round';
+            for (let k = 0; k < 2; k++) {
+                ctx.strokeStyle = cols[k]; ctx.beginPath();
+                for (const b of grass[layer][k]) {
+                    const sway = windAt(b.x, t) * b.h * 0.18 + (layer === 1 ? pushAt(b.x) * b.h * 0.35 : 0);
+                    ctx.moveTo(b.x, b.by); ctx.quadraticCurveTo(b.x + sway * 0.3, b.by - b.h * 0.6, b.x + sway, b.by - b.h);
+                }
                 ctx.stroke();
-                ctx.restore();
+            }
+        }
 
-                st.x += Math.cos(st.angle) * st.speed;
-                st.y += Math.sin(st.angle) * st.speed;
-                st.opacity -= 0.02;
-                if (st.opacity <= 0) shootingStars.splice(i, 1);
-            });
+        /* ---------- leaves ---------- */
+        function leaf(x, y, len, ang, col, mid) {
+            ctx.save(); ctx.translate(x, y); ctx.rotate(ang);
+            ctx.fillStyle = col; ctx.beginPath(); ctx.moveTo(0, 0);
+            ctx.quadraticCurveTo(len * 0.45, -len * 0.26, len, 0); ctx.quadraticCurveTo(len * 0.45, len * 0.2, 0, 0); ctx.fill();
+            ctx.strokeStyle = mid; ctx.lineWidth = 0.8; ctx.beginPath(); ctx.moveTo(0, 0); ctx.lineTo(len * 0.9, -len * 0.01); ctx.stroke();
+            ctx.restore();
+        }
 
-            // Flower garden landscape (Bottom)
-            ctx.save();
-            let hillGrad = ctx.createLinearGradient(0, canvas.height * 0.72, 0, canvas.height);
-            hillGrad.addColorStop(0, '#1a0515');
-            hillGrad.addColorStop(1, '#030103');
-            ctx.fillStyle = hillGrad;
-            ctx.beginPath();
-            ctx.moveTo(0, canvas.height * 0.76);
-            ctx.bezierCurveTo(canvas.width * 0.35, canvas.height * 0.68, canvas.width * 0.65, canvas.height * 0.8, canvas.width, canvas.height * 0.74);
-            ctx.lineTo(canvas.width, canvas.height);
-            ctx.lineTo(0, canvas.height);
-            ctx.fill();
+        /* ---------- one flower: stem, leaves, glow, painted bloom ---------- */
+        function drawFlower(f, t) {
+            const push = f.layer === 1 ? pushAt(f.x) * 0.7 : 0;
+            const lean = (windAt(f.x, t) * 0.12 + push * 0.55) * f.h * (f.layer === 2 ? 0.8 : 1) + Math.sin(t * 0.002 + f.ph) * f.h * 0.012;
+            const tx = f.x + lean, ty = f.by - f.h;
+            const cx = f.x + lean * 0.15, cy = f.by - f.h * 0.55;
+            const lit = f.layer === 0 ? 0 : litAt(f.x, f.by - f.h * 0.5);
+            const dim = [0.55, 1, 1][f.layer];
 
-            // Glowing pink/magenta flowers
-            for (let x = 0; x < canvas.width; x += 30) {
-                let hY = canvas.height * 0.76 + Math.sin(x * 0.025) * 15;
-                let pulse = (Math.sin(Date.now() * 0.003 + x) + 1) * 0.5;
-                ctx.fillStyle = x % 60 === 0 ? `rgba(255, 140, 200, ${0.4 + pulse * 0.5})` : `rgba(255, 180, 220, ${0.4 + pulse * 0.5})`;
-                ctx.beginPath();
-                ctx.arc(x, hY + 12, 2.5 + pulse * 1.5, 0, Math.PI * 2);
-                ctx.fill();
+            // stem
+            ctx.lineCap = 'round';
+            ctx.strokeStyle = `hsl(150-lit*20,{38 + lit * 10}%,${(13 + lit * 20) * dim + (f.layer === 2 ? 2 : 0)}%)`;
+            ctx.lineWidth = Math.max(1, f.size * (f.type === 'lupin' ? 0.2 : 0.15));
+            ctx.beginPath(); ctx.moveTo(f.x, f.by); ctx.quadraticCurveTo(cx, cy, tx, ty); ctx.stroke();
+
+            if (f.layer === 0) {                      // far meadow: just a glowing speck
+                const p = (Math.sin(t * 0.003 + f.ph) + 1) * 0.5;
+                ctx.fillStyle = hsl(f.hue, f.sat, f.lit, 0.45 + p * 0.4);
+                ctx.beginPath(); ctx.arc(tx, ty, f.size, 0, 6.283); ctx.fill();
+                return;
+            }
+
+            // leaves, in pairs along the stem
+            const bez = u => [(1 - u) * (1 - u) * f.x + 2 * (1 - u) * u * cx + u * u * tx, (1 - u) * (1 - u) * f.by + 2 * (1 - u) * u * cy + u * u * ty];
+            const lc = `hsl(150,40%,(15+lit*18)*dim%)`,lm=`hsl(150,35%,{(24 + lit * 16) * dim}%)`;
+            const sw = Math.sin(t * 0.002 + f.ph) * 0.08;
+            const L = f.size * (f.layer === 2 ? 2.4 : 2.1);
+            let p = bez(0.24); leaf(p[0], p[1], L, -0.75 + sw, lc, lm);
+            p = bez(0.42);     leaf(p[0], p[1], L * 0.85, Math.PI + 0.75 - sw, lc, lm);
+            if (f.layer === 2) { p = bez(0.1); leaf(p[0], p[1], L * 1.1, -0.35 + sw, lc, lm); }
+
+            // soft glow under the bloom
+            const pulse = (Math.sin(t * 0.0022 + f.ph) + 1) * 0.5;
+            const ga = (0.13 + pulse * 0.12 + lit * 0.45) * (f.layer === 2 ? 0.7 : 1);
+            const gs = f.size * (f.type === 'lupin' ? 3.2 : 4.4);
+            ctx.globalCompositeOperation = 'lighter'; ctx.globalAlpha = ga;
+            ctx.drawImage(GLOW[f.glow], tx - gs, ty - gs, gs * 2, gs * 2);
+            ctx.globalAlpha = 1; ctx.globalCompositeOperation = 'source-over';
+
+            if (f.type === 'lupin') {                 // a spike of tiny florets
+                const n = 14;
+                for (let i = n - 1; i >= 0; i--) {
+                    const k = i / (n - 1), u = 1 - k * 0.42, q = bez(u);
+                    const side = (i % 2 ? 1 : -1) * f.size * 0.35 * (1 - k * 0.4), sz = f.size * (0.38 + 0.38 * k);
+                    ctx.drawImage(SPR.lupin[f.v], q[0] + side - sz * 1.2, q[1] - sz * 1.2, sz * 2.4, sz * 2.4);
+                    if (lit > 0.05) {
+                        ctx.globalCompositeOperation = 'lighter'; ctx.globalAlpha = lit * 0.3;
+                        ctx.drawImage(SPR.lupin[f.v], q[0] + side - sz * 1.2, q[1] - sz * 1.2, sz * 2.4, sz * 2.4);
+                        ctx.globalAlpha = 1; ctx.globalCompositeOperation = 'source-over';
+                    }
+                }
+                return;
+            }
+
+            // painted bloom, tilted toward the viewer and swaying with the stem
+            const spr = SPR[f.type][f.v], k = TYPEK[f.type] * f.size / RAD;
+            ctx.save(); ctx.translate(tx, ty); ctx.rotate(lean / f.h * 1.1);
+            ctx.scale(k, f.type === 'tulip' ? k : k * f.tilt);
+            ctx.drawImage(spr, -C0, -C0);
+            if (lit > 0.05) {                         // lantern-lit petals glow warmer
+                ctx.globalCompositeOperation = 'lighter'; ctx.globalAlpha = lit * 0.35;
+                ctx.drawImage(spr, -C0, -C0);
+                ctx.globalAlpha = 1; ctx.globalCompositeOperation = 'source-over';
             }
             ctx.restore();
-
-            // Walking man animation
-            manX += 0.7;
-            if (manX > canvas.width + 80) manX = -120;
-            let groundY = canvas.height * 0.76 + Math.sin(manX * 0.025) * 15 - 42;
-
-            ctx.save();
-            ctx.fillStyle = '#120510';
-            ctx.beginPath();
-            ctx.arc(manX, groundY - 22, 7.5, 0, Math.PI * 2);
-            ctx.fill();
-            ctx.fillRect(manX - 4.5, groundY - 14, 9, 22);
-            let legSwing = Math.sin(manX * 0.1) * 6;
-            ctx.fillRect(manX - 3.5, groundY + 8, 3, 16 + legSwing);
-            ctx.fillRect(manX + 0.5, groundY + 8, 3, 16 - legSwing);
-            ctx.restore();
-
-            // Flying petals
-            petals.forEach(p => {
-                p.y += p.speedY;
-                p.x += p.speedX + Math.sin(p.angle) * 0.4;
-                p.angle += p.spin;
-
-                if (p.y > canvas.height) {
-                    p.y = -20;
-                    p.x = Math.random() * canvas.width;
-                }
-
-                ctx.save();
-                ctx.translate(p.x, p.y);
-                ctx.rotate(p.angle);
-                ctx.fillStyle = p.color;
-                ctx.beginPath();
-                ctx.ellipse(0, 0, p.size, p.size * 0.5, 0, 0, Math.PI * 2);
-                ctx.fill();
-                ctx.restore();
-            });
-
-            requestAnimationFrame(animate);
         }
 
-        animate();
+        /* ---------- man with a lantern ---------- */
+        function limb(x1, y1, x2, y2, w, col) {
+            ctx.strokeStyle = col; ctx.lineWidth = w; ctx.lineCap = 'round';
+            ctx.beginPath(); ctx.moveTo(x1, y1); ctx.lineTo(x2, y2); ctx.stroke();
+        }
+        function drawMan(t) {
+            const s = mScale() * 1.3, ph = man.phase, gy = hill(man.x, 1) + 12 * s;
+            const bob = Math.abs(Math.sin(ph)) * 2.4;
+            const dark = '#17081a', trouser = '#10050f';
+
+            ctx.save(); ctx.translate(man.x, gy); ctx.scale(s, s);
+
+            // contact shadow
+            ctx.fillStyle = 'rgba(0,0,0,.45)'; ctx.beginPath(); ctx.ellipse(0, 1, 18, 4, 0, 0, 6.283); ctx.fill();
+
+            // legs
+            const leg = (p) => {
+                const a = Math.sin(p) * 0.55, bend = 0.12 + 0.6 * Math.max(0, Math.cos(p));
+                const hx = 0, hy = -50 + bob * 0.4;
+                const kx = hx + Math.sin(a) * 25, ky = hy + Math.cos(a) * 25;
+                const b = a - bend;
+                const fx = kx + Math.sin(b) * 25, fy = Math.min(0, ky + Math.cos(b) * 25);
+                limb(hx, hy, kx, ky, 8, trouser); limb(kx, ky, fx, fy, 7, trouser);
+                ctx.fillStyle = '#0a030a'; ctx.beginPath(); ctx.ellipse(fx + 3, fy - 1, 6, 3, 0, 0, 6.283); ctx.fill();
+            };
+            leg(ph + Math.PI);
+
+            // back arm
+            const sa = -Math.sin(ph) * 0.55;
+            limb(-2, -88 + bob, -2 + Math.sin(sa) * 28, -88 + bob + Math.cos(sa) * 28, 6.5, dark);
+
+            // coat
+            const sw = Math.sin(ph) * 3.2, y0 = bob;
+            ctx.fillStyle = dark; ctx.strokeStyle = 'rgba(255,165,215,.38)'; ctx.lineWidth = 1.1;
+            ctx.beginPath();
+            ctx.moveTo(-9, -92 + y0);
+            ctx.quadraticCurveTo(-14, -66 + y0, -15 + sw, -33 + y0);
+            ctx.lineTo(-3, -31 + y0); ctx.lineTo(2, -35 + y0); ctx.lineTo(16 + sw, -32 + y0);
+            ctx.quadraticCurveTo(12, -66 + y0, 9, -92 + y0);
+            ctx.quadraticCurveTo(0, -97 + y0, -9, -92 + y0);
+            ctx.closePath(); ctx.fill(); ctx.stroke();
+
+            // scarf that streams behind in the breeze
+            ctx.strokeStyle = '#ff8fc8'; ctx.lineWidth = 4.2; ctx.lineCap = 'round';
+            ctx.beginPath(); ctx.moveTo(-3, -91 + y0);
+            ctx.bezierCurveTo(-14, -90 + y0 + Math.sin(t * 0.006) * 2, -22, -84 + y0 + Math.sin(t * 0.005 + 1) * 4, -34, -86 + y0 + Math.sin(t * 0.0045) * 6);
+            ctx.stroke();
+            ctx.lineWidth = 5; ctx.strokeStyle = '#f26aa8';
+            ctx.beginPath(); ctx.moveTo(-8, -91 + y0); ctx.lineTo(7, -91 + y0); ctx.stroke();
+
+            // head + hat
+            ctx.fillStyle = dark;
+            ctx.beginPath(); ctx.arc(2, -103 + y0, 7.4, 0, 6.283); ctx.fill();
+            ctx.strokeStyle = 'rgba(255,165,215,.4)'; ctx.lineWidth = 1; ctx.beginPath(); ctx.arc(2, -103 + y0, 7.4, 3.5, 5.1); ctx.stroke();
+            ctx.fillStyle = '#12050f';
+            ctx.beginPath(); ctx.ellipse(2, -108 + y0, 14, 3.1, 0, 0, 6.283); ctx.fill();
+            ctx.beginPath(); ctx.moveTo(-5, -108 + y0); ctx.quadraticCurveTo(-4, -121 + y0, 2, -121 + y0); ctx.quadraticCurveTo(9, -121 + y0, 9, -108 + y0); ctx.fill();
+            ctx.fillStyle = '#f26aa8'; ctx.fillRect(-5, -111.5 + y0, 14, 2.4);
+
+            // front leg
+            leg(ph);
+
+            // lantern arm (reaches forward, gentle sway)
+            const hx = 16, hy = -68 + y0 + Math.sin(ph * 2) * 0.8;
+            limb(3, -88 + y0, 11, -76 + y0, 6.5, dark); limb(11, -76 + y0, hx, hy, 6, dark);
+            const swy = Math.sin(t * 0.004) * 2 + Math.sin(ph) * 1.4;
+            limb(hx, hy, hx + swy * 0.5, hy + 8, 1.2, '#2a1020');
+            const lx0 = hx + swy * 0.5, ly0 = hy + 8;
+            ctx.fillStyle = '#2a1424'; ctx.fillRect(lx0 - 4.5, ly0 - 1, 9, 2);
+            ctx.fillStyle = '#fff0c8'; ctx.fillRect(lx0 - 3.2, ly0 + 1, 6.4, 8);
+            ctx.fillStyle = '#2a1424'; ctx.fillRect(lx0 - 4.5, ly0 + 9, 9, 2);
+
+            // store world position for lighting
+            const tr = ctx.getTransform();
+            lantern = { x: tr.e / dpr + lx0 * s, y: tr.f / dpr + (ly0 + 5) * s, r: 230 * s };
+            ctx.restore();
+        }
+
+        /* =====================================================================
+           FRAME
+           ===================================================================== */
+        let last = 0;
+        function frame(now) {
+            const dt = Math.min(0.05, (now - (last || now)) / 1000); last = now;
+            const t = now;
+
+            man.x += man.speed * dt * mScale();
+            man.phase += man.speed * dt * mScale() * (6.283 / (88 * mScale()));
+            if (man.x > W + 120) man.x = -140;
+
+            /* sky */
+            const sky = ctx.createLinearGradient(0, 0, 0, H * 0.8);
+            sky.addColorStop(0, '#06010d'); sky.addColorStop(0.35, '#16041a');
+            sky.addColorStop(0.7, '#3f0d37'); sky.addColorStop(1, '#7c2a5a');
+            ctx.fillStyle = sky; ctx.fillRect(0, 0, W, H);
+
+            /* deep starfield + milky band */
+            ctx.drawImage(starfield, 0, 0, W, H * 0.82);
+
+            /* drifting, breathing nebulae */
+            ctx.globalCompositeOperation = 'lighter';
+            ctx.globalAlpha = 0.72 + Math.sin(t * 0.00031) * 0.1;
+            ctx.drawImage(nebula, -60 + Math.sin(t * 0.00005) * 14, -30 + Math.cos(t * 0.00004) * 8, W + 120, H * 0.82 + 60);
+            ctx.globalAlpha = 1; ctx.globalCompositeOperation = 'source-over';
+
+            /* twinkling stars (the brightest get diffraction spikes) */
+            for (const s of stars) {
+                const a = 0.25 + (Math.sin(t * 0.001 * s.sp + s.a * 20) + 1) * 0.36;
+                ctx.fillStyle = `rgba(s.tint,{a})`;
+                ctx.fillRect(s.x, s.y, s.s, s.s);
+                if (s.big) {
+                    ctx.globalCompositeOperation = 'lighter';
+                    ctx.globalAlpha = a * 0.55; ctx.drawImage(GLOW[1], s.x - 14, s.y - 14, 28, 28);
+                    ctx.globalAlpha = a * 0.5; ctx.strokeStyle = '#fff'; ctx.lineWidth = 0.7;
+                    const L = 9 + a * 10;
+                    ctx.beginPath(); ctx.moveTo(s.x - L, s.y); ctx.lineTo(s.x + L, s.y); ctx.moveTo(s.x, s.y - L); ctx.lineTo(s.x, s.y + L); ctx.stroke();
+                    ctx.globalAlpha = 1; ctx.globalCompositeOperation = 'source-over';
+                }
+            }
+
+            /* spiral galaxy */
+            const gx = W / 2, gy = H * 0.27, gs = Math.min(1.15, W / 1000);
+            ctx.save(); ctx.translate(gx, gy); ctx.rotate(0.45); ctx.scale(gs, gs * 0.5); ctx.rotate(t * 0.00004);
+            ctx.globalCompositeOperation = 'lighter'; ctx.globalAlpha = 0.82;
+            ctx.drawImage(gal, -410, -410);
+            ctx.restore();
+
+            /* shooting stars */
+            ctx.lineWidth = 2; ctx.lineCap = 'round';
+            for (let i = shooting.length - 1; i >= 0; i--) {
+                const st = shooting[i], dx = Math.cos(st.angle) * st.len, dy = Math.sin(st.angle) * st.len;
+                const gr = ctx.createLinearGradient(st.x, st.y, st.x - dx, st.y - dy);
+                gr.addColorStop(0, `rgba(255,255,255,${st.o})`); gr.addColorStop(1, 'rgba(255,200,235,0)');
+                ctx.strokeStyle = gr; ctx.beginPath(); ctx.moveTo(st.x, st.y); ctx.lineTo(st.x - dx, st.y - dy); ctx.stroke();
+                st.x += Math.cos(st.angle) * st.speed * dt * 60; st.y += Math.sin(st.angle) * st.speed * dt * 60; st.o -= 1.2 * dt;
+                if (st.o <= 0) shooting.splice(i, 1);
+            }
+
+            /* horizon glow + distant ridges */
+            const hg = ctx.createRadialGradient(W * 0.5, H * 0.7, 10, W * 0.5, H * 0.7, W * 0.6);
+            hg.addColorStop(0, 'rgba(255,120,190,.28)'); hg.addColorStop(1, 'rgba(255,120,190,0)');
+            ctx.fillStyle = hg; ctx.fillRect(0, 0, W, H);
+            [[0, 'rgba(70,16,66,.75)'], [1, 'rgba(46,10,48,.9)']].forEach(([k, col]) => {
+                ctx.fillStyle = col; ctx.beginPath(); ctx.moveTo(0, H);
+                for (let x = 0; x <= W; x += 10) ctx.lineTo(x, ridge(x, k));
+                ctx.lineTo(W, H); ctx.closePath(); ctx.fill();
+            });
+
+            /* mist drifting between hills */
+            ctx.globalCompositeOperation = 'lighter';
+            for (let i = 0; i < 4; i++) {
+                const mx = ((t * 0.006 * (1 + i * 0.3) + i * 380) % (W + 700)) - 350;
+                ctx.globalAlpha = 0.16; ctx.drawImage(MIST, mx - 300, H * (0.64 + i * 0.03), 700, 150);
+            }
+            ctx.globalAlpha = 1; ctx.globalCompositeOperation = 'source-over';
+
+            /* hill layers */
+            const fillHill = (layer, c1, c2) => {
+                const top = hill(W / 2, layer) - H * 0.04;
+                const gr = ctx.createLinearGradient(0, top, 0, H);
+                gr.addColorStop(0, c1); gr.addColorStop(1, c2);
+                ctx.fillStyle = gr; ctx.beginPath(); ctx.moveTo(0, H);
+                for (let x = 0; x <= W + 10; x += 8) ctx.lineTo(x, hill(x, layer));
+                ctx.lineTo(W, H); ctx.closePath(); ctx.fill();
+            };
+            fillHill(0, '#2c0c2c', '#1a0619');
+            for (const f of flowers) if (f.layer === 0) drawFlower(f, t);
+            fillHill(1, '#240a24', '#10030f');
+            drawGrass(1, t);
+
+            /* flowers behind the walker */
+            for (const f of flowers) if (f.layer === 1 && !f.front) drawFlower(f, t);
+
+            drawMan(t);
+
+            /* flowers in front of the walker */
+            for (const f of flowers) if (f.layer === 1 && f.front) drawFlower(f, t);
+
+            /* lantern light spilling on the meadow */
+            if (lantern.r) {
+                ctx.globalCompositeOperation = 'lighter';
+                const lg = ctx.createRadialGradient(lantern.x, lantern.y, 0, lantern.x, lantern.y, lantern.r);
+                lg.addColorStop(0, 'rgba(255,215,150,.55)'); lg.addColorStop(0.3, 'rgba(255,170,130,.22)'); lg.addColorStop(1, 'rgba(255,140,170,0)');
+                ctx.fillStyle = lg; ctx.fillRect(lantern.x - lantern.r, lantern.y - lantern.r, lantern.r * 2, lantern.r * 2);
+                ctx.globalCompositeOperation = 'source-over';
+            }
+
+            /* foreground hill + giant blooms */
+            fillHill(2, '#13041a', '#050106');
+            drawGrass(2, t);
+            for (const f of flowers) if (f.layer === 2) drawFlower(f, t);
+
+            /* falling seeds + landing ripples (Plant a Seed) */
+            drawSeeds();
+
+            /* fireflies */
+            ctx.globalCompositeOperation = 'lighter';
+            for (const fl of fireflies) {
+                const x = fl.x + Math.sin(t * 0.0004 * fl.sp + fl.ph) * 60 + Math.sin(t * 0.0011 + fl.ph) * 14;
+                const y = fl.y + Math.cos(t * 0.0005 * fl.sp + fl.ph * 2) * 30;
+                const a = Math.max(0, Math.sin(t * 0.0018 * fl.sp + fl.ph));
+                ctx.globalAlpha = a * 0.9; ctx.drawImage(GLOW[3], x - fl.r / 2, y - fl.r / 2, fl.r, fl.r);
+                ctx.globalAlpha = a; ctx.fillStyle = '#fff6d0'; ctx.fillRect(x - 1, y - 1, 2, 2);
+            }
+            ctx.globalAlpha = 1; ctx.globalCompositeOperation = 'source-over';
+
+            /* drifting petals */
+            for (const p of petals) {
+                p.y += p.vy * dt; p.x += (p.vx + Math.sin(t * 0.0007 + p.sw) * 16) * dt; p.a += p.sp * dt;
+                if (p.y > H + 20) Object.assign(p, newPetal(false));
+                ctx.save(); ctx.translate(p.x, p.y); ctx.rotate(p.a);
+                ctx.scale(1, Math.abs(Math.cos(p.a * 0.7)) * 0.7 + 0.3);
+                ctx.fillStyle = `rgba(p.c,{p.blur ? 0.28 : 0.75})`;
+                const sz = p.blur ? p.s * 2.6 : p.s;
+                ctx.beginPath(); ctx.moveTo(0, -sz * 0.5); ctx.quadraticCurveTo(sz, -sz * 0.6, sz, 0); ctx.quadraticCurveTo(sz * 0.5, sz * 0.6, 0, sz * 0.5); ctx.quadraticCurveTo(-sz * 0.3, 0, 0, -sz * 0.5);
+                ctx.fill(); ctx.restore();
+            }
+
+            /* vignette */
+            const v = ctx.createRadialGradient(W / 2, H * 0.5, Math.min(W, H) * 0.35, W / 2, H * 0.5, Math.max(W, H) * 0.8);
+            v.addColorStop(0, 'rgba(0,0,0,0)'); v.addColorStop(1, 'rgba(0,0,0,.55)');
+            ctx.fillStyle = v; ctx.fillRect(0, 0, W, H);
+
+            requestAnimationFrame(frame);
+        }
+
+        setInterval(() => {
+            if (document.hidden) return;
+            shooting.push({ x: Math.random() * W * 0.8, y: Math.random() * H * 0.3, len: 60 + Math.random() * 80,
+                            speed: 7 + Math.random() * 6, angle: Math.PI / 4 + (Math.random() * 0.3 - 0.15), o: 1 });
+        }, 3500);
+
+        window.addEventListener('resize', resize);
+        resize();
+        requestAnimationFrame(frame);
+
+        /* =====================================================================
+           PLANT A SEED — a glowing seed drops from the button, lands in the
+           garden, and a random flower grows from it.
+           ===================================================================== */
+        const planted = [], seeds = [], rings = [];
+        const M = (a, b) => a + Math.random() * (b - a);
+        const sc = () => Math.max(0.7, Math.min(1.5, H / 760));
+        const ease = x => 1 - Math.pow(1 - x, 3), smooth = x => x * x * (3 - 2 * x);
+
+        // build a flower object from a "recipe"; the stem rises first, then the bud opens
+        function toFlower(r, grown) {
+            const x = r.nx * W, by = hill(x, r.layer) + r.jit * H, k = sc();
+            return {
+                planted: true, x, by, type: r.type, v: r.v, tilt: r.tilt,
+                hue: r.hue, sat: r.sat, lit: r.lit, ph: r.ph, layer: r.layer,
+                front: r.layer === 2 || by > hill(x, 1) + 5,
+                glow: r.type === 'daisy' ? 1 : (r.type === 'lupin' ? 2 : 0),
+                t0: grown ? -1e9 : Infinity,
+                get p() { return Math.min(1, Math.max(0, (performance.now() - this.t0) / 3600)); },
+                get h() { return 1 + r.H * k * ease(Math.min(1, this.p / 0.8)); },
+                get size() { return r.S * k * (0.14 + 0.86 * smooth(Math.max(0, (this.p - 0.35) / 0.65))); }
+            };
+        }
+
+        function plant() {
+            const layer = Math.random() < 0.22 ? 2 : 1;
+            const sp = SPECK[(Math.random() * SPECK.length) | 0];
+            const rec = {
+                nx: M(0.07, 0.93), layer,
+                jit: (layer === 2 ? M(8, 40) : M(-4, 26)) / H,
+                type: TYPES[(Math.random() * TYPES.length) | 0], v: (Math.random() * 3) | 0,
+                tilt: M(0.62, 1), hue: sp[0], sat: sp[1], lit: sp[2], ph: M(0, 6.28),
+                H: layer === 2 ? M(150, 250) : M(70, 115), S: layer === 2 ? M(17, 26) : M(9, 14)
+            };
+            const f = toFlower(rec, false); rec.f = f;
+            const b = document.getElementById('plant-btn').getBoundingClientRect();
+            seeds.push({ sx: b.left + b.width / 2, sy: b.top + b.height / 2, tx: f.x, ty: f.by, t0: performance.now(), dur: 950, f, rec });
+        }
+
+        function drawSeeds() {
+            const now = performance.now();
+            for (let i = seeds.length - 1; i >= 0; i--) {
+                const s = seeds[i], u = (now - s.t0) / s.dur;
+                if (u >= 1) {                                   // landed -> start growing
+                    s.f.t0 = now; flowers.push(s.f); flowers.sort((a, b) => a.by - b.by);
+                    planted.push(s.rec); rings.push({ x: s.tx, y: s.ty, t0: now });
+                    if (planted.length > 150) { const o = planted.shift(); flowers = flowers.filter(q => q !== o.f); }
+                    seeds.splice(i, 1); continue;
+                }
+                ctx.globalCompositeOperation = 'lighter';
+                for (let g = 0; g < 4; g++) {                   // light trail
+                    const uu = Math.max(0, u - g * 0.035);
+                    const x = s.sx + (s.tx - s.sx) * uu, y = s.sy + (s.ty - s.sy) * uu * uu - Math.sin(Math.PI * uu) * 90;
+                    const r = 34 - g * 7; ctx.globalAlpha = 0.9 - g * 0.22;
+                    ctx.drawImage(GLOW[3], x - r, y - r, r * 2, r * 2);
+                }
+                ctx.globalAlpha = 1; ctx.globalCompositeOperation = 'source-over';
+            }
+            for (let i = rings.length - 1; i >= 0; i--) {       // ripple of light on the ground
+                const r = rings[i], u = (now - r.t0) / 1100;
+                if (u >= 1) { rings.splice(i, 1); continue; }
+                ctx.globalCompositeOperation = 'lighter';
+                ctx.strokeStyle = `rgba(255,200,235,${0.6 * (1 - u)})`; ctx.lineWidth = 2;
+                ctx.beginPath(); ctx.ellipse(r.x, r.y, 12 + u * 70, (12 + u * 70) * 0.32, 0, 0, 6.283); ctx.stroke();
+                ctx.globalAlpha = 0.5 * (1 - u); ctx.drawImage(GLOW[1], r.x - 26, r.y - 26, 52, 52);
+                ctx.globalAlpha = 1; ctx.globalCompositeOperation = 'source-over';
+            }
+        }
+
+        // build() resets all flowers on resize, so put the planted ones back (this listener runs after resize())
+        window.addEventListener('resize', () => {
+            planted.forEach(r => { const f = toFlower(r, true); r.f = f; flowers.push(f); });
+            flowers.sort((a, b) => a.by - b.by);
+        });
+
+        // button + Enter in the email field
+        const pb = document.getElementById('plant-btn');
+        let pbTimer;
+        pb.addEventListener('click', () => {
+            plant();
+            pb.textContent = 'Planted ✿'; clearTimeout(pbTimer);
+            pbTimer = setTimeout(() => pb.textContent = 'Plant a Seed', 1400);
+        });
+        const em = document.querySelector('input[type="email"]');
+        if (em) em.addEventListener('keydown', e => { if (e.key === 'Enter') pb.click(); });
+    })();
+    </script>
+
+    <!-- CALMING MUSIC: generative ambient, made live with the Web Audio API (no audio files) -->
+    <script>
+    (() => {
+        const midi = m => 440 * Math.pow(2, (m - 69) / 12);
+        // F major, gently moving: Fmaj7 → Dm9 → B♭maj7 → Csus. Each entry is [bass, ...pad voices]
+        const CHORDS = [
+            [41, 57, 60, 64, 67],
+            [38, 57, 60, 64, 65],
+            [46, 58, 62, 65, 69],
+            [36, 55, 60, 62, 64]
+        ];
+        const BELLS = [69, 72, 74, 77, 79, 81, 84];      // F-major pentatonic, sparkling register
+        const CHORD_LEN = 12;                             // seconds per chord
+
+        let ac, master, reverb, dry, delay, on = false, timers = [], chordI = 0, bellI = 2, wind;
+
+        function impulse(secs = 6.5, decay = 2.6) {
+            const len = ac.sampleRate * secs, buf = ac.createBuffer(2, len, ac.sampleRate);
+            for (let c = 0; c < 2; c++) { const d = buf.getChannelData(c); for (let i = 0; i < len; i++) d[i] = (Math.random() * 2 - 1) * Math.pow(1 - i / len, decay); }
+            return buf;
+        }
+        function init() {
+            ac = new (window.AudioContext || window.webkitAudioContext)();
+            master = ac.createGain(); master.gain.value = 0;
+            const warm = ac.createBiquadFilter(); warm.type = 'lowpass'; warm.frequency.value = 3400;
+            master.connect(warm); warm.connect(ac.destination);
+
+            reverb = ac.createConvolver(); reverb.buffer = impulse();
+            const rg = ac.createGain(); rg.gain.value = 0.95; reverb.connect(rg); rg.connect(master);
+            dry = ac.createGain(); dry.gain.value = 0.5; dry.connect(master);
+
+            delay = ac.createDelay(1.5); delay.delayTime.value = 0.46;
+            const fb = ac.createGain(); fb.gain.value = 0.36;
+            const dl = ac.createBiquadFilter(); dl.type = 'lowpass'; dl.frequency.value = 1800;
+            delay.connect(dl); dl.connect(fb); fb.connect(delay); dl.connect(reverb);
+
+            // a faint breeze: filtered noise with a slow swell
+            const nb = ac.createBuffer(1, ac.sampleRate * 4, ac.sampleRate), nd = nb.getChannelData(0);
+            for (let i = 0; i < nd.length; i++) nd[i] = Math.random() * 2 - 1;
+            wind = ac.createBufferSource(); wind.buffer = nb; wind.loop = true;
+            const bp = ac.createBiquadFilter(); bp.type = 'bandpass'; bp.frequency.value = 520; bp.Q.value = 0.6;
+            const wg = ac.createGain(); wg.gain.value = 0.012;
+            const lfo = ac.createOscillator(); lfo.frequency.value = 0.07;
+            const lg = ac.createGain(); lg.gain.value = 0.01;
+            lfo.connect(lg); lg.connect(wg.gain);
+            wind.connect(bp); bp.connect(wg); wg.connect(dry); wg.connect(reverb);
+            wind.start(); lfo.start();
+        }
+
+        function pad(freq, t0, dur, peak) {
+            const out = ac.createGain();
+            out.gain.setValueAtTime(0.0001, t0);
+            out.gain.linearRampToValueAtTime(peak, t0 + 4);
+            out.gain.setValueAtTime(peak, t0 + dur - 1);
+            out.gain.linearRampToValueAtTime(0.0001, t0 + dur + 5);
+            const lp = ac.createBiquadFilter(); lp.type = 'lowpass'; lp.frequency.value = 760;
+            out.connect(lp); lp.connect(dry); lp.connect(reverb);
+            [['sine', 0], ['triangle', 6], ['sine', -6]].forEach(([type, cents], i) => {
+                const o = ac.createOscillator(); o.type = type; o.frequency.value = freq; o.detune.value = cents;
+                const g = ac.createGain(); g.gain.value = i === 0 ? 1 : 0.4;
+                o.connect(g); g.connect(out); o.start(t0); o.stop(t0 + dur + 5.2);
+            });
+        }
+        function bell(freq, t0, vel = 1) {
+            const out = ac.createGain();
+            out.gain.setValueAtTime(0.0001, t0);
+            out.gain.linearRampToValueAtTime(0.07 * vel, t0 + 0.012);
+            out.gain.exponentialRampToValueAtTime(0.0001, t0 + 3.6);
+            out.connect(dry); out.connect(reverb); out.connect(delay);
+            [[1, 1], [2, 0.22], [3.01, 0.07]].forEach(([mult, amp]) => {
+                const o = ac.createOscillator(); o.type = 'sine'; o.frequency.value = freq * mult;
+                const g = ac.createGain(); g.gain.value = amp;
+                o.connect(g); g.connect(out); o.start(t0); o.stop(t0 + 3.7);
+            });
+        }
+
+        function playChord() {
+            if (!on) return;
+            const c = CHORDS[chordI++ % CHORDS.length], t0 = ac.currentTime + 0.05;
+            pad(midi(c[0]), t0, CHORD_LEN, 0.07);                         // warm bass
+            for (let i = 1; i < c.length; i++) pad(midi(c[i]), t0 + i * 0.35, CHORD_LEN, 0.034);
+            timers.push(setTimeout(playChord, CHORD_LEN * 1000));
+        }
+        function playBell() {
+            if (!on) return;
+            bellI = Math.max(0, Math.min(BELLS.length - 1, bellI + ((Math.random() * 5) | 0) - 2));
+            const t0 = ac.currentTime + 0.05;
+            bell(midi(BELLS[bellI]), t0, 0.7 + Math.random() * 0.5);
+            if (Math.random() < 0.22) bell(midi(BELLS[Math.max(0, bellI - 2)]), t0 + 0.28, 0.5);
+            timers.push(setTimeout(playBell, 1800 + Math.random() * 3800));
+        }
+
+        function start() {
+            if (on) return;
+            if (!ac) init();
+            on = true;
+            ac.resume();
+            master.gain.cancelScheduledValues(ac.currentTime);
+            master.gain.setTargetAtTime(0.9, ac.currentTime, 1.8);        // slow fade-in
+            playChord(); timers.push(setTimeout(playBell, 2500));
+        }
+        function stop() {
+            if (!on) return;
+            on = false; timers.forEach(clearTimeout); timers = [];
+            master.gain.cancelScheduledValues(ac.currentTime);
+            master.gain.setTargetAtTime(0, ac.currentTime, 0.5);          // gentle fade-out
+            setTimeout(() => { if (!on) ac.suspend(); }, 1800);
+        }
+        document.addEventListener('visibilitychange', () => {
+            if (!ac) return;
+            if (document.hidden) ac.suspend(); else if (on) ac.resume();
+        });
+
+        /* ---------- UI wiring ---------- */
+        const btn = document.getElementById('music-btn'), icOn = document.getElementById('ic-on'),
+              icOff = document.getElementById('ic-off'), hint = document.getElementById('music-hint');
+        let chosen = false;
+        const ui = () => {
+            icOn.style.display = on ? '' : 'none'; icOff.style.display = on ? 'none' : '';
+            btn.setAttribute('aria-pressed', on ? 'true' : 'false');
+            if (hint) { hint.style.opacity = on || chosen ? '0' : ''; }
+        };
+        btn.addEventListener('click', () => { chosen = true; on ? stop() : start(); ui(); });
+
+        // Browsers block autoplay, so the music begins on the visitor's first click, tap or key press.
+        const first = e => {
+            if (chosen || on) return;
+            if (e.target && e.target.closest && e.target.closest('#music-btn')) return;
+            start(); ui();
+            ['pointerdown', 'keydown', 'touchstart'].forEach(ev => removeEventListener(ev, first));
+        };
+        ['pointerdown', 'keydown', 'touchstart'].forEach(ev => addEventListener(ev, first, { passive: true }));
+        ui();
+    })();
     </script>
 </body>
 </html>
+
 

@@ -204,13 +204,8 @@ aside .lg button{border-bottom-color:rgba(255,255,255,.18)}aside .lg button:last
   <aside>
     <div class="eyebrow">Personal portfolio / CV</div>
     <span class="spk">✦</span>
-    <div class="frame"><figure class="ph">JK<img id="photoImg" alt="Foto Jesslyn Angelica Klarise" style="display:none"></figure></div>
+    <div class="frame"><figure class="ph">JK<img id="photoImg" alt="Foto Jesslyn Angelica Klarise"></figure></div>
     <div class="birth"><small>Tempat &amp; tanggal lahir</small><b>Bandung</b><span>10 October 2010</span></div>
-    <div class="tools" id="photoTools" data-html2canvas-ignore="true" hidden>
-      <label class="pb">Pilih foto<input type="file" id="photoInput" accept="image/*" hidden></label>
-      <a class="pb" id="photoDownload" download="foto-jesslyn.jpg" hidden>Unduh JPG</a>
-      <button type="button" class="pb" id="photoCopy" hidden>Salin kode foto</button>
-    </div>
 
     <div class="as rv" id="kemampuan">
       <h3>Kemampuan</h3>
@@ -400,49 +395,15 @@ aside .lg button{border-bottom-color:rgba(255,255,255,.18)}aside .lg button:last
     fr.parentNode.addEventListener('pointerleave', function () { fr.style.setProperty('--ry', '0deg'); fr.style.setProperty('--rx', '0deg'); });
   }
 
-  /* FOTO — buka halaman dengan ?edit, pilih foto, klik "Salin kode foto",
-     lalu tempel hasilnya MENGGANTIKAN baris PHOTO_DATA di bawah ini. */
-  var PHOTO_DATA = "";
-  var NAMES = ['foto-jesslyn.jpg', 'foto-jesslyn.jpg.jpg', 'foto-jesslyn.jpeg', 'foto-jesslyn.png', 'foto-jesslyn.webp',
-               'foto-jesslyn.JPG', 'foto-jesslyn.PNG', 'foto.jpg', 'foto.jpeg', 'foto.png'];
-  var img = $('#photoImg'), inp = $('#photoInput'), dl = $('#photoDownload'), cp = $('#photoCopy'), tools = $('#photoTools');
-  var tries = 0, current = '';
-  if (/[?&]edit\b/.test(location.search)) tools.hidden = false;
-  function next() {
-    if (tries < NAMES.length) { img.style.display = 'block'; img.src = './' + NAMES[tries++]; }
-    else img.style.display = 'none';
+  /* FOTO — gunakan direct image URL agar foto dapat dilihat semua pengunjung. */
+  var PHOTO_URL = "https://cdn.phototourl.com/anon/2026-11-18-79e58f7e-a47c-4f02-9880-e608ef47ff35.jpg";
+  var img = $('#photoImg');
+  if (PHOTO_URL && PHOTO_URL !== "https://cdn.phototourl.com/anon/2026-11-18-79e58f7e-a47c-4f02-9880-e608ef47ff35.jpg") {
+    img.src = PHOTO_URL;
+    img.style.display = 'block';
+  } else {
+    img.style.display = 'none';
   }
-  img.onerror = next;
-  function show(url) { current = url; img.style.display = 'block'; img.src = url; dl.href = url; dl.hidden = false; cp.hidden = false; }
-  var saved = ''; try { saved = localStorage.getItem('cvPhoto') || ''; } catch (e) {}
-  if (PHOTO_DATA) show(PHOTO_DATA); else if (saved) show(saved); else next();
-
-  inp.addEventListener('change', function () {
-    var f = inp.files && inp.files[0]; if (!f) return;
-    var r = new FileReader();
-    r.onload = function () {
-      var im = new Image();
-      im.onerror = function () { alert('Format foto tidak bisa dibaca. Gunakan JPG atau PNG (bukan HEIC).'); };
-      im.onload = function () {
-        var sc = Math.min(1, 520 / Math.max(im.width, im.height)), c = document.createElement('canvas');
-        c.width = Math.round(im.width * sc); c.height = Math.round(im.height * sc);
-        c.getContext('2d').drawImage(im, 0, 0, c.width, c.height);
-        var url = c.toDataURL('image/jpeg', 0.8); show(url);
-        try { localStorage.setItem('cvPhoto', url); } catch (e) {}
-      };
-      im.src = r.result;
-    };
-    r.readAsDataURL(f);
-  });
-  cp.addEventListener('click', function () {
-    var text = 'var PHOTO_DATA = "' + current + '";';
-    function done() { cp.textContent = 'Tersalin'; setTimeout(function () { cp.textContent = 'Salin kode foto'; }, 2000); }
-    function fallback() {
-      var t = document.createElement('textarea'); t.value = text; document.body.appendChild(t); t.select();
-      try { document.execCommand('copy'); done(); } catch (e) {} document.body.removeChild(t);
-    }
-    if (navigator.clipboard && navigator.clipboard.writeText) navigator.clipboard.writeText(text).then(done, fallback); else fallback();
-  });
 
   /* UNDUH PDF */
   window.downloadPDF = async function () {

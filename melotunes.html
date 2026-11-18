@@ -2,273 +2,409 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="theme-color" content="#f7d5df">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="format-detection" content="telephone=no">
 <title>MeloTunes | Scan & Play</title>
 
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Caveat:wght@500;700&family=Fraunces:ital,opsz,wght@0,9..144,500;0,9..144,700;1,9..144,500;1,9..144,700&family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet">
 <script async src="https://docs.opencv.org/4.x/opencv.js"></script>
 
 <style>
 :root{
---navy:#172554;
---blue:#2563eb;
---pale:#eff6ff;
---ink:#1e293b;
---muted:#64748b;
---border:#dbe3ef;
+--cream:#fff8ee;--paper:#fffdf9;--ink:#4b3a55;--muted:#8b7b94;
+--rose:#f2b8c6;--berry:#c2578a;--berry2:#a3407a;--lav:#e3d6f7;--lav2:#cbb9ee;
+--sage:#cfe6d6;--butter:#fde6a8;--sky:#cfe6f7;
+--display:'Fraunces',Georgia,serif;--body:'Nunito',system-ui,-apple-system,'Segoe UI',Roboto,sans-serif;--hand:'Caveat','Segoe Script','Bradley Hand',cursive;
+--k:1; /* hanging-strand length multiplier */
+--sat:env(safe-area-inset-top,0px);
+--sar:env(safe-area-inset-right,0px);
+--sab:env(safe-area-inset-bottom,0px);
+--sal:env(safe-area-inset-left,0px);
 }
-
-*{box-sizing:border-box}
-
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
 [hidden]{display:none!important}
-
+html{scroll-behavior:smooth;-webkit-text-size-adjust:100%;text-size-adjust:100%}
 body{
-margin:0;
-background:#f3f6fb;
-color:var(--ink);
-font-family:Arial,sans-serif;
+margin:0;color:var(--ink);font-family:var(--body);
+min-height:100vh;min-height:100dvh;
+overflow-x:hidden;
+-webkit-font-smoothing:antialiased;
+padding-left:var(--sal);padding-right:var(--sar);padding-bottom:var(--sab);
+background:
+radial-gradient(circle at 8% 12%,#fbd9e3 0,transparent 32%),
+radial-gradient(circle at 92% 30%,#e0d4f8 0,transparent 34%),
+radial-gradient(circle at 20% 90%,#d8ecdd 0,transparent 30%),
+url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='140' height='160'%3E%3Cg stroke='%23d9c8e6' stroke-opacity='.55' stroke-width='1'%3E%3Cpath d='M0 50h140M0 58h140M0 66h140M0 74h140M0 82h140'/%3E%3C/g%3E%3C/svg%3E"),
+var(--cream);
+background-attachment:scroll;
 }
 
+/* ---------- floating trinkets ---------- */
+.sky{position:fixed;top:0;left:0;right:0;bottom:0;pointer-events:none;z-index:0;overflow:hidden}
+.fl{position:absolute;width:var(--s,26px);height:var(--s,26px);opacity:.55;animation:drift 9s ease-in-out infinite;animation-delay:var(--d,0s)}
+@keyframes drift{0%,100%{transform:translateY(0) rotate(-6deg)}50%{transform:translateY(-16px) rotate(8deg)}}
+.ico{width:1em;height:1em;vertical-align:-.14em;fill:currentColor;stroke:currentColor}
+.ico.line{fill:none;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
+.line{fill:none;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
+
+/* ---------- hanging lights & stars on the edges ---------- */
+.hangs{position:fixed;top:0;left:0;right:0;bottom:0;pointer-events:none;z-index:0;overflow:hidden}
+.hang{
+position:absolute;top:0;width:0;height:0;transform-origin:50% 0;
+-webkit-animation:swing 5.5s ease-in-out infinite;animation:swing 5.5s ease-in-out infinite;
+-webkit-animation-delay:var(--d,0s);animation-delay:var(--d,0s);
+}
+.hang::before{
+content:"";position:absolute;left:-1px;top:0;width:2px;height:calc(var(--h) * 1px * var(--k));
+background:linear-gradient(#d9c8e6,#c9a8dc);border-radius:2px;opacity:.9;
+}
+.hang svg{
+position:absolute;left:calc(var(--s) / -2);top:calc(var(--h) * 1px * var(--k) - 3px);
+width:var(--s);height:var(--s);fill:currentColor;stroke:none;
+-webkit-filter:drop-shadow(0 0 7px currentColor);filter:drop-shadow(0 0 7px currentColor);
+-webkit-animation:glow 3s ease-in-out infinite;animation:glow 3s ease-in-out infinite;
+-webkit-animation-delay:var(--d,0s);animation-delay:var(--d,0s);
+}
+@keyframes swing{0%,100%{transform:rotate(-4deg)}50%{transform:rotate(4deg)}}
+@keyframes glow{0%,100%{opacity:.95}50%{opacity:.55}}
+
+/* ---------- header ---------- */
 header{
-background:linear-gradient(125deg,#111c43,#263f78);
-color:white;
-text-align:center;
-padding:26px 18px;
+position:relative;z-index:1;text-align:center;
+padding:58px 18px 56px;
+padding:calc(58px + var(--sat)) 18px 56px;
+margin-bottom:34px;
+background:linear-gradient(180deg,#f7d5df,var(--lav));
+}
+header::after{
+content:"";position:absolute;left:0;right:0;bottom:-13px;height:28px;
+background:radial-gradient(circle at 14px 0,var(--lav) 14px,transparent 15px) 0 0/28px 28px repeat-x;
 }
 
+/* decorative layer inside header */
+.deco{position:absolute;top:0;left:0;right:0;bottom:0;overflow:hidden;pointer-events:none}
+.deco .ring{
+position:absolute;border-radius:50%;border:2px dashed #ffffffaa;
+}
+.deco .ring.r1{width:300px;height:300px;left:-120px;top:-130px;border-color:#ffffffbb}
+.deco .ring.r2{width:200px;height:200px;left:-70px;top:-80px;border-style:solid;border-color:#ffffff88}
+.deco .ring.r3{width:130px;height:130px;left:-35px;top:-45px;border-color:#c2578a44}
+.deco .ring.r4{width:300px;height:300px;right:-120px;bottom:-150px;border-color:#ffffffbb}
+.deco .ring.r5{width:200px;height:200px;right:-70px;bottom:-100px;border-style:solid;border-color:#ffffff88}
+.deco .ring.r6{width:130px;height:130px;right:-35px;bottom:-65px;border-color:#c2578a44}
+.deco svg{position:absolute;fill:currentColor;stroke:none;animation:drift 8s ease-in-out infinite;animation-delay:var(--d,0s)}
+.deco svg.stroke{fill:none;stroke:currentColor;stroke-width:1.6;stroke-linecap:round;stroke-linejoin:round;animation:none}
+
+/* string of lights across the top of the header */
+.lights{
+position:absolute;top:0;left:0;right:0;height:0;display:flex;justify-content:space-between;
+padding:0 2.5%;pointer-events:none;z-index:2;
+}
+.lights::before{
+content:"";position:absolute;top:0;left:0;right:0;height:3px;
+background:linear-gradient(90deg,transparent,#c9a8dc 15%,#e79bb8 50%,#c9a8dc 85%,transparent);opacity:.8;
+}
+.lights i{
+position:relative;display:block;width:13px;height:16px;margin-top:var(--t,16px);
+border-radius:50% 50% 50% 50%/40% 40% 60% 60%;background:var(--c,#f0cf7e);
+box-shadow:0 0 14px 4px var(--c,#f0cf7e);
+-webkit-animation:twinkle 2.6s ease-in-out infinite;animation:twinkle 2.6s ease-in-out infinite;
+-webkit-animation-delay:var(--d,0s);animation-delay:var(--d,0s);
+}
+.lights i::before{
+content:"";position:absolute;left:50%;bottom:100%;width:2px;height:var(--t,16px);margin-left:-1px;background:#b99bd0;
+}
+.lights i:nth-child(odd){--t:18px}
+.lights i:nth-child(even){--t:44px}
+@keyframes twinkle{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.45;transform:scale(.88)}}
+
+.logo{display:inline-flex;align-items:center;justify-content:center;flex-wrap:wrap;gap:clamp(6px,1.6vw,18px);position:relative;z-index:1}
+.logo .clef{width:clamp(34px,7.5vw,84px);height:clamp(44px,9.6vw,108px);color:var(--berry);flex:none;fill:currentColor;stroke:currentColor}
 header h1{
-margin:0 0 7px;
-font-size:clamp(26px,4vw,36px);
-letter-spacing:2px;
+margin:0;font:italic 700 clamp(46px,12.5vw,118px)/1 var(--display);letter-spacing:.5px;color:var(--ink);
+text-shadow:0 3px 0 #fff8,0 8px 24px #c2578a2e;
 }
+header h1 b{color:var(--berry);font-style:normal}
+header p{margin:10px 0 0;font:700 clamp(21px,3.6vw,34px)/1.1 var(--hand);color:#7a5c8c;position:relative;z-index:1}
 
-header p{
-margin:0;
-color:#dbeafe;
-}
+/* diamond flourish under tagline */
+.orn{display:flex;align-items:center;justify-content:center;gap:12px;margin:16px auto 0;width:min(340px,70%);color:var(--berry);position:relative;z-index:1}
+.orn::before,.orn::after{content:"";flex:1;height:2px;border-radius:2px;background:linear-gradient(90deg,transparent,currentColor)}
+.orn::after{background:linear-gradient(270deg,transparent,currentColor)}
+.orn .ico{font-size:18px;flex:none}
 
-main{
-width:min(1050px,100%);
-margin:22px auto;
-padding:0 14px 36px;
-}
+.garland{display:flex;justify-content:center;gap:14px;margin-top:14px;color:var(--berry);position:relative;z-index:1}
+.garland .ico{font-size:17px;opacity:.85}
+.garland .ico:nth-child(2n){color:#e0a93a}
+.garland .ico:nth-child(3n){color:#7fb69a}
 
+/* ---------- layout / cards ---------- */
+main{position:relative;z-index:1;width:min(1020px,100%);margin:0 auto;padding:6px 16px 40px}
 .card{
-background:white;
-border:1px solid #e5eaf2;
-border-radius:16px;
-padding:20px;
-margin-bottom:17px;
-box-shadow:0 6px 22px #1e293b0b;
+position:relative;background:var(--paper);border:2px solid #fff;border-radius:26px;
+padding:30px 26px 24px;margin:0 0 30px;
+outline:2px dashed var(--rose);outline-offset:-10px;
+box-shadow:0 10px 30px #8b5fa026,0 2px 0 #fff inset;
 }
+.card::before{
+content:"";position:absolute;top:-12px;left:34px;width:96px;height:26px;border-radius:3px;
+background:repeating-linear-gradient(45deg,#f2b8c6cc 0 9px,#ffffffaa 9px 18px);
+transform:rotate(-3deg);box-shadow:0 1px 3px #0002;
+}
+.card:nth-of-type(2n)::before{left:auto;right:34px;transform:rotate(3deg);background:repeating-linear-gradient(45deg,#cbb9eecc 0 9px,#ffffffaa 9px 18px)}
+.card:nth-of-type(3n)::before{background:repeating-linear-gradient(45deg,#cfe6d6cc 0 9px,#ffffffaa 9px 18px)}
+.card>*{position:relative}
 
 h2{
-margin:0 0 14px;
-color:var(--navy);
-font-size:19px;
+display:flex;align-items:center;gap:13px;margin:0 0 16px;
+font:700 24px/1.1 var(--display);color:var(--ink);
+}
+.seal{
+flex:none;display:grid;place-items:center;width:40px;height:40px;border-radius:50%;
+background:linear-gradient(145deg,#d66a9c,var(--berry2));color:#fff;
+font:italic 700 20px var(--display);box-shadow:0 0 0 3px #fff,0 0 0 5px var(--rose),0 4px 10px #c2578a55;
 }
 
-.row{
-display:flex;
-gap:9px;
-flex-wrap:wrap;
-align-items:center;
-margin-top:12px;
-}
+.row{display:flex;gap:10px;flex-wrap:wrap;align-items:center;margin-top:14px}
+button,select,input{font:inherit}
 
-button,select,input{
-font:inherit;
-}
-
+/* ---------- buttons ---------- */
 button{
-border:0;
-border-radius:9px;
-background:var(--blue);
-color:white;
-padding:11px 15px;
-font-weight:650;
-cursor:pointer;
-transition:.2s;
+display:inline-flex;align-items:center;justify-content:center;gap:8px;
+-webkit-appearance:none;appearance:none;
+min-height:44px;border:0;border-radius:999px;padding:12px 20px;cursor:pointer;
+background:linear-gradient(180deg,#d9679b,var(--berry2));color:#fff;font-weight:800;letter-spacing:.2px;
+box-shadow:0 4px 0 #84305f,0 8px 14px #a3407a38;transition:transform .15s,box-shadow .15s,filter .15s;
+touch-action:manipulation;-webkit-user-select:none;user-select:none;
 }
-
-button:hover{
-filter:brightness(1.1);
-transform:translateY(-1px);
+button .ico{font-size:18px}
+@media (hover:hover){
+button:hover:not(:disabled){transform:translateY(-2px) rotate(-.6deg);filter:brightness(1.06)}
 }
+button:active:not(:disabled){transform:translateY(3px);box-shadow:0 1px 0 #84305f}
+button.secondary{background:linear-gradient(180deg,#fff,#f3ecfb);color:#6b4d86;box-shadow:0 4px 0 var(--lav2),0 8px 14px #8b5fa01f;border:2px solid var(--lav2)}
+button.secondary:active:not(:disabled){box-shadow:0 1px 0 var(--lav2)}
+#playBtn{padding:14px 26px;font-size:17px}
+button:disabled{opacity:.42;cursor:not-allowed;box-shadow:none;filter:grayscale(.3)}
+button:focus-visible,select:focus-visible,input:focus-visible{outline:3px solid var(--berry);outline-offset:2px}
 
-button.secondary{
-background:#475569;
-}
-
-button:disabled{
-opacity:.45;
-cursor:not-allowed;
-transform:none;
-}
-
+/* ---------- inputs ---------- */
+label{font-size:12px;color:var(--muted);font-weight:800;letter-spacing:.9px;text-transform:uppercase;display:flex;gap:8px;align-items:center;flex-wrap:wrap}
 select,input[type=number]{
-border:1px solid #cbd5e1;
-border-radius:9px;
-background:white;
-padding:10px;
-color:var(--ink);
+min-height:44px;
+border:2px solid #eadff3;border-radius:14px;background:#fff;padding:10px 12px;color:var(--ink);font-weight:700;
+font-size:16px; /* stops iOS Safari zooming on focus */
+text-transform:none;letter-spacing:0;transition:border-color .2s,box-shadow .2s;
 }
-
-label{
-font-size:13px;
-color:#475569;
-font-weight:650;
-display:flex;
-gap:8px;
-align-items:center;
-flex-wrap:wrap;
+select{-webkit-appearance:none;-moz-appearance:none;appearance:none;padding-right:34px;background:#fff url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='14' height='9'%3E%3Cpath d='M1 1l6 6 6-6' fill='none' stroke='%23c2578a' stroke-width='2' stroke-linecap='round'/%3E%3C/svg%3E") no-repeat right 12px center;max-width:100%}
+input[type=number]{-moz-appearance:textfield}
+select:focus,input:focus{outline:0;border-color:var(--berry);box-shadow:0 0 0 4px #f2b8c64d}
+input[type=file]{font-size:13px;font-weight:700;text-transform:none;letter-spacing:0;color:var(--muted);max-width:100%}
+input[type=file]::-webkit-file-upload-button{
+-webkit-appearance:none;border:2px dashed var(--lav2);background:#faf6ff;color:#6b4d86;border-radius:999px;padding:10px 16px;margin-right:10px;font:800 13px var(--body);cursor:pointer;
 }
-
-video,#preview{
-width:100%;
-max-height:460px;
-object-fit:contain;
-background:#111827;
-border-radius:11px;
-display:block;
-margin-top:12px;
+input[type=file]::file-selector-button{
+border:2px dashed var(--lav2);background:#faf6ff;color:#6b4d86;border-radius:999px;padding:10px 16px;margin-right:10px;font:800 13px var(--body);cursor:pointer;
 }
+.settings{display:grid;grid-template-columns:repeat(auto-fit,minmax(190px,1fr));gap:16px}
+.settings label{display:block}
+.settings select,.settings input{display:block;width:100%;margin-top:7px}
 
-#preview{
-background:#e2e8f0;
+/* ---------- photo frames ---------- */
+video,#preview,#sheetCanvas{
+display:block;width:100%;margin-top:18px;border:10px solid #fff;border-bottom-width:30px;border-radius:6px;
+box-shadow:0 10px 24px #6b4d8630,0 0 0 1px #eadff3;
 }
+video{max-height:460px;object-fit:contain;background:#2b2233;transform:rotate(-.5deg)}
+#preview{max-height:460px;object-fit:contain;background:#efe6f5;transform:rotate(.5deg)}
+#sheetCanvas{height:auto;cursor:crosshair;background:#fff;touch-action:manipulation;-webkit-user-select:none;user-select:none}
 
-#sheetCanvas{
-cursor:crosshair;
-width:100%;
-height:auto;
-border:1px solid var(--border);
-border-radius:9px;
-margin-top:12px;
-display:block;
-}
+.small{font-size:13.5px;line-height:1.65;color:var(--muted)}
+.hint{font-family:var(--hand);font-size:21px;line-height:1.25;color:#7a5c8c;margin:16px 0 0}
 
-.small{
-font-size:13px;
-line-height:1.6;
-color:var(--muted);
-}
-
+/* ---------- Melo + status bubble ---------- */
+.melo-row{display:flex;gap:14px;align-items:flex-end;margin:16px 0 6px}
+.mascot{flex:none;width:68px;height:68px;transform-origin:50% 90%;animation:sway 4s ease-in-out infinite}
+.playing .mascot{animation:hop .5s ease-in-out infinite}
+@keyframes sway{0%,100%{transform:rotate(-4deg)}50%{transform:rotate(4deg)}}
+@keyframes hop{0%,100%{transform:translateY(0) rotate(-5deg)}50%{transform:translateY(-10px) rotate(5deg)}}
 #status{
-padding:12px 14px;
-border-radius:9px;
-background:var(--pale);
-line-height:1.55;
-margin:12px 0;
-overflow-wrap:anywhere;
+position:relative;flex:1;min-width:0;margin:0;padding:14px 18px;border-radius:20px 20px 20px 6px;
+background:linear-gradient(135deg,#fff,#faf3ff);border:2px solid var(--lav2);
+line-height:1.6;font-weight:600;overflow-wrap:anywhere;word-break:break-word;
+}
+#status::before{
+content:"";position:absolute;left:-11px;bottom:8px;width:16px;height:16px;transform:rotate(45deg);
+background:#faf3ff;border-left:2px solid var(--lav2);border-bottom:2px solid var(--lav2);border-radius:0 0 0 5px;
 }
 
-#notes{
-display:flex;
-flex-wrap:wrap;
-gap:8px;
-margin-top:12px;
-}
-
+/* ---------- note pebbles ---------- */
+#notes{display:flex;flex-wrap:wrap;gap:10px;margin-top:16px}
 .note-chip{
-background:#e8efff;
-border:1px solid #c8d8ff;
-border-radius:9px;
-padding:9px 11px;
-font-weight:700;
-min-width:92px;
+position:relative;min-width:96px;padding:10px 14px 9px;border-radius:20px 20px 20px 7px;
+font:700 19px/1.1 var(--display);background:#fff;border:2px solid var(--rose);color:var(--ink);
+box-shadow:0 3px 0 var(--rose);animation:pop .4s backwards;transition:transform .2s;
 }
-
-.note-chip small{
-display:block;
-color:#536781;
-font-size:11px;
-font-weight:500;
-margin-top:3px;
-}
-
+.note-chip:nth-child(4n+2){border-color:var(--lav2);box-shadow:0 3px 0 var(--lav2)}
+.note-chip:nth-child(4n+3){border-color:#a9d3b8;box-shadow:0 3px 0 #a9d3b8}
+.note-chip:nth-child(4n+4){border-color:#f0cf7e;box-shadow:0 3px 0 #f0cf7e}
+@keyframes pop{from{opacity:0;transform:scale(.7) translateY(8px)}}
+.note-chip small{display:block;margin-top:4px;font:600 11px var(--body);color:var(--muted)}
 .note-chip.active{
-background:#1d4ed8;
-border-color:#1d4ed8;
-color:white;
-box-shadow:0 0 0 3px #bfdbfe;
+background:linear-gradient(145deg,#d9679b,var(--berry2));border-color:var(--berry2);color:#fff;
+box-shadow:0 0 0 4px #f2b8c680,0 6px 14px #a3407a55;transform:translateY(-5px) scale(1.07) rotate(-2deg);
 }
+.note-chip.active small{color:#ffe3ef}
+.bar-chip{align-self:stretch;display:flex;align-items:center;padding:0 4px;font:300 34px var(--display);color:var(--lav2)}
 
-.note-chip.active small{
-color:#dbeafe;
-}
-
-.bar-chip{
-align-self:stretch;
-display:flex;
-align-items:center;
-padding:0 4px;
-font-size:28px;
-font-weight:300;
-color:#94a3b8;
-}
-
-.settings{
-display:grid;
-grid-template-columns:repeat(auto-fit,minmax(190px,1fr));
-gap:12px;
-}
-
-.settings label{
-display:block;
-}
-
-.settings select,
-.settings input{
-display:block;
-width:100%;
-margin-top:6px;
-}
-
-.legend{
-display:flex;
-gap:14px;
-flex-wrap:wrap;
-font-size:12px;
-color:var(--muted);
-margin-top:10px;
-}
-
-.dot{
-display:inline-block;
-width:9px;
-height:9px;
-border-radius:50%;
-margin-right:5px;
-}
-
+/* ---------- info + legend ---------- */
 .info{
-background:#f8fafc;
-border-radius:10px;
-padding:12px;
-font-size:13px;
-line-height:1.6;
-margin-top:12px;
+margin-top:20px;padding:18px 20px;border-radius:20px;background:linear-gradient(135deg,#fff7fa,#f6f0ff);
+border:2px dashed var(--lav2);font-size:14px;line-height:1.55;
 }
+.info>b{font:italic 700 19px var(--display);color:var(--berry2);display:block;margin-bottom:8px}
+.info ol{margin:0;padding:0;list-style:none;counter-reset:s;display:grid;gap:5px 24px;grid-template-columns:repeat(auto-fit,minmax(min(260px,100%),1fr))}
+.info li{counter-increment:s;padding-left:30px;position:relative;color:#5d4b68}
+.info li::before{
+content:counter(s);position:absolute;left:0;top:0;width:21px;height:21px;border-radius:50%;
+background:var(--butter);color:#8a5a12;font:700 12px/21px var(--display);text-align:center;box-shadow:0 0 0 2px #fff,0 0 0 3px #f0cf7e;
+}
+.legend{display:flex;gap:10px 18px;flex-wrap:wrap;font-size:12.5px;font-weight:700;color:var(--muted);margin-top:18px}
+.dot{display:inline-block;width:11px;height:11px;border-radius:50%;margin-right:6px;box-shadow:0 0 0 2px #fff,0 0 0 3px currentColor}
 
+footer{position:relative;z-index:1;text-align:center;padding:6px 16px 40px;font:700 20px var(--hand);color:#9a82ab}
+footer .garland{margin:0 0 8px}
+
+/* ---------- responsive ---------- */
+@media(max-width:900px){
+:root{--k:.8}
+}
 @media(max-width:600px){
-.card{padding:15px}
+:root{--k:.6}
+.card{padding:26px 18px 20px}
 button{flex:1}
 .settings{grid-template-columns:1fr 1fr}
+.mascot{width:54px;height:54px}
+.hint{font-size:19px}
+header{padding:calc(52px + var(--sat)) 14px 48px;padding-top:calc(52px + var(--sat))}
+.deco .ring.r1,.deco .ring.r4{width:220px;height:220px}
+.hang.x{display:none}
+.lights i.m{display:none}
+.lights i:nth-child(even){--t:32px}
 }
+@media(max-width:380px){
+.settings{grid-template-columns:1fr}
+h2{font-size:21px}
+}
+@media(min-width:1500px){
+main{width:min(1100px,100%)}
+}
+@media(prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
 </style>
 </head>
 
 <body>
 
+<!-- trinket library: hand-drawn SVG, no emojis -->
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+<defs>
+<symbol id="i-note" viewBox="0 0 24 24"><ellipse cx="8" cy="18" rx="4.2" ry="3.1" transform="rotate(-20 8 18)" stroke="none"/><path d="M11.6 17V4.5c3 .2 6 1.6 6 5.2" fill="none" stroke-width="1.9" stroke-linecap="round"/></symbol>
+<symbol id="i-notes" viewBox="0 0 24 24"><ellipse cx="6.5" cy="18" rx="3.4" ry="2.6" transform="rotate(-20 6.5 18)" stroke="none"/><ellipse cx="17" cy="16" rx="3.4" ry="2.6" transform="rotate(-20 17 16)" stroke="none"/><path d="M9.6 17V6.5L20 4.5v11M9.6 10l10.4-2" fill="none" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></symbol>
+<symbol id="i-spark" viewBox="0 0 24 24"><path d="M12 1c.8 6.2 4.8 10.2 11 11-6.2.8-10.2 4.8-11 11-.8-6.2-4.8-10.2-11-11C7.2 11.2 11.2 7.2 12 1z" stroke="none"/></symbol>
+<symbol id="i-star5" viewBox="0 0 24 24"><path d="M12 2.2l2.9 6.2 6.8.8-5 4.7 1.3 6.7L12 17.200 6 20.600l1.300-6.700-5-4.700 6.800-.8z" stroke="none"/></symbol>
+<symbol id="i-bulb" viewBox="0 0 24 24"><rect x="9" y="1" width="6" height="4" rx="1.2" stroke="none" opacity=".7"/><path d="M12 5c-4 0-6.500 3-6.500 6.200 0 2.400 1.300 3.800 2.400 5 .6.700 1 1.500 1 2.300h6.200c0-.8.4-1.600 1-2.300 1.100-1.200 2.400-2.600 2.400-5C18.500 8 16 5 12 5z" stroke="none"/><rect x="9.500" y="19.500" width="5" height="2.500" rx="1" stroke="none" opacity=".7"/></symbol>
+<symbol id="i-heart" viewBox="0 0 24 24"><path d="M12 21C5 15.5 2.5 12 2.5 8.4A4.9 4.9 0 0 1 12 6.6a4.9 4.9 0 0 1 9.5 1.8C21.5 12 19 15.5 12 21z" stroke="none"/></symbol>
+<symbol id="i-moon" viewBox="0 0 24 24"><path d="M20 14.5A8.5 8.5 0 0 1 9.5 4a8.5 8.5 0 1 0 10.5 10.5z" stroke="none"/></symbol>
+<symbol id="i-flower" viewBox="0 0 24 24"><g stroke="none"><circle cx="12" cy="5.5" r="3.6"/><circle cx="18.2" cy="10" r="3.6"/><circle cx="15.8" cy="17.3" r="3.6"/><circle cx="8.2" cy="17.3" r="3.6"/><circle cx="5.8" cy="10" r="3.6"/><circle cx="12" cy="12" r="2.6" fill="#fff"/></g></symbol>
+<symbol id="i-cloud" viewBox="0 0 24 24"><path d="M7 18.5a4.5 4.5 0 0 1-.6-8.96A6 6 0 0 1 17.8 9a4.8 4.8 0 0 1-.3 9.5z" stroke="none"/></symbol>
+<symbol id="i-camera" viewBox="0 0 24 24"><path d="M3 8.5A2.5 2.5 0 0 1 5.5 6H8l1.4-2h5.2L16 6h2.5A2.5 2.5 0 0 1 21 8.5v9a2.5 2.5 0 0 1-2.5 2.5h-13A2.5 2.5 0 0 1 3 17.5z" class="line"/><circle cx="12" cy="13" r="3.6" class="line"/></symbol>
+<symbol id="i-search" viewBox="0 0 24 24"><circle cx="10.5" cy="10.5" r="6.3" class="line"/><path d="M15.4 15.4L21 21" class="line"/></symbol>
+<symbol id="i-play" viewBox="0 0 24 24"><path d="M7 4.5c0-1 1-1.5 1.8-1l11 7.5c.7.5.7 1.5 0 2l-11 7.5c-.8.5-1.8 0-1.8-1z" stroke="none"/></symbol>
+<symbol id="i-stop" viewBox="0 0 24 24"><rect x="5.5" y="5.5" width="13" height="13" rx="3.5" stroke="none"/></symbol>
+<symbol id="i-redo" viewBox="0 0 24 24"><path d="M20 6v5h-5" class="line"/><path d="M19.4 11A8 8 0 1 0 17.5 17" class="line"/></symbol>
+<symbol id="i-video" viewBox="0 0 24 24"><rect x="3" y="6" width="13" height="12" rx="3" class="line"/><path d="M16 10.5l5-3v9l-5-3z" class="line"/></symbol>
+<symbol id="i-clef" viewBox="0 0 40 64"><path d="M22 4C14 12 14 22 21 30c6 7 5 17-2 18-6 .8-8-6-3-8 4-1.7 8 1.500 6 6" fill="none" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/><path d="M21 4v52" fill="none" stroke-width="2.6" stroke-linecap="round"/><ellipse cx="17" cy="57" rx="4.2" ry="3.4" stroke="none"/></symbol>
+<symbol id="i-swirl" viewBox="0 0 120 30"><path d="M2 15c10-12 20-12 28 0s18 12 28 0 18-12 28 0 18 12 30 0" fill="none"/></symbol>
+</defs>
+</svg>
+
+<div class="sky" aria-hidden="true">
+<svg class="fl" style="left:5%;top:14%;color:#e79bb8;--d:0s"><use href="#i-note"/></svg>
+<svg class="fl" style="left:90%;top:10%;color:#bda7ea;--s:34px;--d:-2s"><use href="#i-notes"/></svg>
+<svg class="fl" style="left:12%;top:58%;color:#f0cf7e;--s:20px;--d:-4s"><use href="#i-spark"/></svg>
+<svg class="fl" style="left:93%;top:52%;color:#e79bb8;--s:22px;--d:-1s"><use href="#i-heart"/></svg>
+<svg class="fl" style="left:3%;top:82%;color:#a9d3b8;--s:30px;--d:-5s"><use href="#i-flower"/></svg>
+<svg class="fl" style="left:88%;top:84%;color:#bda7ea;--s:26px;--d:-3s"><use href="#i-moon"/></svg>
+<svg class="fl" style="left:48%;top:3%;color:#f0cf7e;--s:18px;--d:-6s"><use href="#i-spark"/></svg>
+<svg class="fl" style="left:70%;top:92%;color:#e79bb8;--s:24px;--d:-2.5s"><use href="#i-note"/></svg>
+<svg class="fl" style="left:25%;top:94%;color:#cfe6f7;--s:40px;--d:-7s"><use href="#i-cloud"/></svg>
+</div>
+
+<!-- hanging lights & stars along both screen edges -->
+<div class="hangs" aria-hidden="true">
+<span class="hang" style="left:1.5%;--h:110;--s:30px;--d:0s;color:#f0cf7e"><svg viewBox="0 0 24 24"><use href="#i-star5"/></svg></span>
+<span class="hang x" style="left:4.2%;--h:190;--s:22px;--d:-1.4s;color:#e79bb8"><svg viewBox="0 0 24 24"><use href="#i-bulb"/></svg></span>
+<span class="hang" style="left:7%;--h:70;--s:20px;--d:-2.6s;color:#bda7ea"><svg viewBox="0 0 24 24"><use href="#i-spark"/></svg></span>
+<span class="hang x" style="left:10%;--h:150;--s:26px;--d:-3.4s;color:#f0cf7e"><svg viewBox="0 0 24 24"><use href="#i-star5"/></svg></span>
+<span class="hang x" style="left:13%;--h:90;--s:18px;--d:-4.2s;color:#a9d3b8"><svg viewBox="0 0 24 24"><use href="#i-bulb"/></svg></span>
+
+<span class="hang" style="right:1.5%;--h:130;--s:28px;--d:-.8s;color:#e79bb8"><svg viewBox="0 0 24 24"><use href="#i-star5"/></svg></span>
+<span class="hang x" style="right:4.2%;--h:80;--s:22px;--d:-2s;color:#f0cf7e"><svg viewBox="0 0 24 24"><use href="#i-bulb"/></svg></span>
+<span class="hang" style="right:7%;--h:175;--s:22px;--d:-3s;color:#bda7ea"><svg viewBox="0 0 24 24"><use href="#i-spark"/></svg></span>
+<span class="hang x" style="right:10%;--h:100;--s:26px;--d:-3.8s;color:#a9d3b8"><svg viewBox="0 0 24 24"><use href="#i-star5"/></svg></span>
+<span class="hang x" style="right:13%;--h:155;--s:18px;--d:-4.6s;color:#e79bb8"><svg viewBox="0 0 24 24"><use href="#i-bulb"/></svg></span>
+</div>
+
 <header>
-<h1>🎼 MeloTunes</h1>
-<p>Turn sheet music into melodies.</p>
+<div class="deco" aria-hidden="true">
+<span class="ring r1"></span><span class="ring r2"></span><span class="ring r3"></span>
+<span class="ring r4"></span><span class="ring r5"></span><span class="ring r6"></span>
+<svg viewBox="0 0 24 24" style="left:9%;top:34%;width:34px;height:34px;color:#fff;opacity:.9;--d:-1s"><use href="#i-moon"/></svg>
+<svg viewBox="0 0 24 24" style="right:9%;top:30%;width:30px;height:30px;color:#c2578a;opacity:.55;--d:-3s"><use href="#i-spark"/></svg>
+<svg viewBox="0 0 24 24" style="left:20%;top:70%;width:20px;height:20px;color:#f0cf7e;--d:-2s"><use href="#i-spark"/></svg>
+<svg viewBox="0 0 24 24" style="right:21%;top:68%;width:24px;height:24px;color:#fff;opacity:.9;--d:-4s"><use href="#i-spark"/></svg>
+<svg viewBox="0 0 24 24" style="left:30%;top:22%;width:16px;height:16px;color:#fff;opacity:.9;--d:-5s"><use href="#i-spark"/></svg>
+<svg viewBox="0 0 24 24" style="right:30%;top:20%;width:18px;height:18px;color:#e0a93a;opacity:.8;--d:-6s"><use href="#i-spark"/></svg>
+<svg class="stroke" viewBox="0 0 120 30" style="left:3%;bottom:14%;width:120px;height:30px;color:#fff"><use href="#i-swirl"/></svg>
+<svg class="stroke" viewBox="0 0 120 30" style="right:3%;bottom:14%;width:120px;height:30px;color:#fff"><use href="#i-swirl"/></svg>
+</div>
+
+<div class="lights" aria-hidden="true">
+<i style="--c:#f0cf7e;--d:0s"></i>
+<i class="m" style="--c:#e79bb8;--d:-.4s"></i>
+<i style="--c:#bda7ea;--d:-.8s"></i>
+<i class="m" style="--c:#a9d3b8;--d:-1.2s"></i>
+<i style="--c:#f0cf7e;--d:-1.6s"></i>
+<i class="m" style="--c:#e79bb8;--d:-2s"></i>
+<i style="--c:#bda7ea;--d:-2.4s"></i>
+<i class="m" style="--c:#a9d3b8;--d:-.6s"></i>
+<i style="--c:#f0cf7e;--d:-1s"></i>
+<i class="m" style="--c:#e79bb8;--d:-1.4s"></i>
+<i style="--c:#bda7ea;--d:-1.8s"></i>
+<i class="m" style="--c:#a9d3b8;--d:-2.2s"></i>
+<i style="--c:#f0cf7e;--d:-.2s"></i>
+</div>
+
+<div class="logo">
+<svg class="clef" viewBox="0 0 40 64" aria-hidden="true"><use href="#i-clef"/></svg>
+<h1>Melo<b>Tunes</b></h1>
+</div>
+<p>sheet music, sung back to you</p>
+<div class="orn" aria-hidden="true"><svg class="ico"><use href="#i-spark"/></svg></div>
+<div class="garland" aria-hidden="true">
+<svg class="ico"><use href="#i-spark"/></svg><svg class="ico"><use href="#i-note"/></svg><svg class="ico"><use href="#i-heart"/></svg><svg class="ico"><use href="#i-flower"/></svg><svg class="ico"><use href="#i-moon"/></svg><svg class="ico"><use href="#i-notes"/></svg><svg class="ico"><use href="#i-spark"/></svg>
+</div>
 </header>
 
 <main>
 
 <section class="card">
-<h2>1. Choose a camera</h2>
+<h2><span class="seal">1</span>Choose a camera</h2>
 
 <label>
 Available camera
@@ -278,20 +414,20 @@ Available camera
 </label>
 
 <div class="row">
-<button id="frontBtn" class="secondary">Front camera</button>
-<button id="backBtn" class="secondary">Back camera</button>
-<button id="startBtn">Start camera</button>
-<button id="stopBtn" class="secondary">Stop camera</button>
+<button id="frontBtn" class="secondary"><svg class="ico"><use href="#i-camera"/></svg>Front camera</button>
+<button id="backBtn" class="secondary"><svg class="ico"><use href="#i-camera"/></svg>Back camera</button>
+<button id="startBtn"><svg class="ico"><use href="#i-video"/></svg>Start camera</button>
+<button id="stopBtn" class="secondary"><svg class="ico"><use href="#i-stop"/></svg>Stop camera</button>
 </div>
 </section>
 
 <section class="card">
-<h2>2. Scan or upload a music sheet</h2>
+<h2><span class="seal">2</span>Scan or upload a music sheet</h2>
 
-<video id="video" autoplay playsinline muted></video>
+<video id="video" autoplay playsinline webkit-playsinline muted></video>
 
 <div class="row">
-<button id="captureBtn" disabled>📷 Capture sheet</button>
+<button id="captureBtn" disabled><svg class="ico"><use href="#i-camera"/></svg>Capture sheet</button>
 
 <label>
 Upload image
@@ -301,14 +437,14 @@ Upload image
 
 <img id="preview" alt="Music sheet preview" hidden>
 
-<p class="small">
-Use a sharp, straight photo with one or more complete staves visible.
-Crop away large empty margins and avoid shadows.
+<p class="hint">
+A sharp, straight photo works best, with one or more complete staves in view.
+Crop away big empty margins and shy away from shadows.
 </p>
 </section>
 
 <section class="card">
-<h2>3. Set the notation</h2>
+<h2><span class="seal">3</span>Set the notation</h2>
 
 <div class="settings">
 
@@ -353,7 +489,7 @@ Time signature
 
 <label>
 Tempo (BPM)
-<input id="tempo" type="number" min="40" max="220" value="100">
+<input id="tempo" type="number" inputmode="numeric" min="40" max="220" value="100">
 </label>
 
 <label>
@@ -368,30 +504,44 @@ Sound
 </div>
 
 <div class="info">
-<b>Recognition process</b><br>
-1. Detect the five staff lines.<br>
-2. Find where the clef / key / time signature ends.<br>
-3. Detect barlines (measure lines; the line closing a row is ignored).<br>
-4. Identify individual noteheads and stems.<br>
-5. Recover missed notes (stems and note spacing).<br>
-6. Check each measure's rhythm against the time signature.<br>
-7. Calculate musical pitches.
+<b>How Melo reads your music</b>
+<ol>
+<li>Detects the five staff lines.</li>
+<li>Finds where the clef, key and time signature end.</li>
+<li>Spots barlines (the line closing a row is ignored).</li>
+<li>Identifies noteheads and stems.</li>
+<li>Recovers missed notes from stems and spacing.</li>
+<li>Checks each measure against the time signature.</li>
+<li>Calculates the musical pitches.</li>
+</ol>
 </div>
 </section>
 
 <section class="card">
-<h2>4. Detect and play</h2>
+<h2><span class="seal">4</span>Detect and play</h2>
 
 <div class="row">
-<button id="detectBtn" disabled>🔎 Detect notes</button>
-<button id="playBtn" disabled>▶ Play music</button>
-<button id="stopMusicBtn" class="secondary" disabled>■ Stop</button>
-<button id="redetectBtn" class="secondary" disabled>↻ Re-detect</button>
+<button id="detectBtn" disabled><svg class="ico"><use href="#i-search"/></svg>Detect notes</button>
+<button id="playBtn" disabled><svg class="ico"><use href="#i-play"/></svg>Play music</button>
+<button id="stopMusicBtn" class="secondary" disabled><svg class="ico"><use href="#i-stop"/></svg>Stop</button>
+<button id="redetectBtn" class="secondary" disabled><svg class="ico"><use href="#i-redo"/></svg>Re-detect</button>
 </div>
 
+<div class="melo-row">
+<svg class="mascot" viewBox="0 0 64 64" aria-hidden="true">
+<rect x="43" y="8" width="4.5" height="38" rx="2.2" fill="#a3407a"/>
+<path d="M47 8c12 4 14 14 8 24 1-9-3-13-8-14z" fill="#a3407a"/>
+<ellipse cx="27" cy="45" rx="19" ry="15.5" fill="#f7c6d4" stroke="#a3407a" stroke-width="2.4"/>
+<circle cx="20.500" cy="43" r="2.3" fill="#4b3a55"/><circle cx="33" cy="43" r="2.3" fill="#4b3a55"/>
+<circle cx="21.200" cy="42.2" r=".8" fill="#fff"/><circle cx="33.700" cy="42.2" r=".8" fill="#fff"/>
+<ellipse cx="15.5" cy="48.5" rx="3.4" ry="2.2" fill="#ef8fb0" opacity=".8"/><ellipse cx="38.500" cy="48.5" rx="3.4" ry="2.2" fill="#ef8fb0" opacity=".8"/>
+<path d="M23.500 49c1.8 2 4.2 2 6 0" fill="none" stroke="#4b3a55" stroke-width="1.8" stroke-linecap="round"/>
+<path d="M9 22l1.600 4 4 1.600-4 1.600L9 33l-1.600-3.800-4-1.600 4-1.600z" fill="#f0cf7e"/>
+</svg>
 <p id="status" role="status" aria-live="polite">
 Loading recognition engine...
 </p>
+</div>
 
 <div id="notes" aria-live="polite"></div>
 
@@ -410,90 +560,61 @@ Add clicked note as
 </label>
 </div>
 
-<p class="small" id="editHint" hidden>
-<b>Fix mistakes:</b> click on the sheet where a missed note belongs to add it.
-Click an existing dot to remove it.
+<p class="hint" id="editHint" hidden>
+Fix a mistake: click the sheet where a missed note belongs to add it, or click an existing dot to remove it.
 </p>
 
 <div class="legend">
-<span><i class="dot" style="background:#ef4444"></i>Detected noteheads</span>
-<span><i class="dot" style="background:#2563eb"></i>Staff lines</span>
-<span><i class="dot" style="background:#16a34a"></i>Measure barlines</span>
-<span><i class="dot" style="background:#f59e0b"></i>Recovered notes</span>
-<span><i class="dot" style="background:#7c3aed"></i>Added by you</span>
+<span style="color:#e0527a"><i class="dot" style="background:#e0527a"></i>Detected noteheads</span>
+<span style="color:#6b7fd7"><i class="dot" style="background:#6b7fd7"></i>Staff lines</span>
+<span style="color:#3fa97c"><i class="dot" style="background:#3fa97c"></i>Measure barlines</span>
+<span style="color:#f0a030"><i class="dot" style="background:#f0a030"></i>Recovered notes</span>
+<span style="color:#8a5cd6"><i class="dot" style="background:#8a5cd6"></i>Added by you</span>
 </div>
 
-<p class="small">
+<p class="small" style="margin-top:16px">
 Rhythm is estimated from notehead, stem and flag appearance, then corrected so every measure adds up to the time signature. Rests, ties, dots and local accidentals are not yet reliably recognized.
 </p>
 </section>
 
 </main>
 
+<footer>
+<div class="garland" aria-hidden="true"><svg class="ico"><use href="#i-heart"/></svg><svg class="ico"><use href="#i-notes"/></svg><svg class="ico"><use href="#i-heart"/></svg></div>
+made with love for little melodies
+</footer>
+
 <script>
 'use strict';
 
 const $=id=>document.getElementById(id);
+const video=('video'),preview=('preview'),canvas=('sheetCanvas'),statusBox=('status'),notesBox=('notes'),cameraSelect=('cameraSelect');
 
-const video=$('video');
-const preview=$('preview');
-const canvas=$('sheetCanvas');
-const statusBox=$('status');
-const notesBox=$('notes');
-const cameraSelect=$('cameraSelect');
+let cvReady=false,stream=null,imageBlob=null,imageURL=null;
+let detectedNotes=[],playbackEvents=[];
+let audioContext=null,activeOscillators=[],playbackTimers=[],playbackToken=0;
+let lastImage=null,lastStaffs=[];
 
-let cvReady=false;
-let stream=null;
-let imageBlob=null;
-let imageURL=null;
-let detectedNotes=[];
-let playbackEvents=[];
-let audioContext=null;
-let activeOscillators=[];
-let playbackTimers=[];
-let playbackToken=0;
-let lastImage=null;
-let lastStaffs=[];
-
-function status(message){
-statusBox.textContent=message;
-}
+function status(message){statusBox.textContent=message;}
 
 /* =========================
    OPENCV INITIALIZATION
 ========================= */
 
 function waitForOpenCV(){
-
 const started=Date.now();
-
 const timer=setInterval(()=>{
-
 if(window.cv&&window.cv.Mat&&window.cv.imread){
-
 clearInterval(timer);
 cvReady=true;
-
 status('MeloTunes recognition engine ready.');
-
-if(imageBlob){
-$('detectBtn').disabled=false;
-}
-
+if(imageBlob){$('detectBtn').disabled=false;}
 }else if(Date.now()-started>60000){
-
 clearInterval(timer);
-
-status(
-'OpenCV failed to load. Check your internet connection.'
-);
-
+status('OpenCV failed to load. Check your internet connection.');
 }
-
 },150);
-
 }
-
 waitForOpenCV();
 
 /* =========================
@@ -501,111 +622,44 @@ waitForOpenCV();
 ========================= */
 
 function stopCamera(show=true){
-
-if(stream){
-
-stream.getTracks().forEach(t=>t.stop());
-stream=null;
-
-}
-
+if(stream){stream.getTracks().forEach(t=>t.stop());stream=null;}
 video.srcObject=null;
 $('captureBtn').disabled=true;
-
-if(show){
-status('Camera stopped.');
-}
-
+if(show){status('Camera stopped.');}
 }
 
 async function refreshCameras(){
-
 if(!navigator.mediaDevices?.enumerateDevices)return;
-
 try{
-
-const cams=(await navigator.mediaDevices.enumerateDevices())
-.filter(d=>d.kind==='videoinput');
-
+const cams=(await navigator.mediaDevices.enumerateDevices()).filter(d=>d.kind==='videoinput');
 const old=cameraSelect.value;
-
-cameraSelect.replaceChildren(
-new Option('Default camera','')
-);
-
-cams.forEach((c,i)=>{
-
-cameraSelect.add(
-new Option(c.label||`Camera ${i+1}`,c.deviceId)
-);
-
-});
-
-if(cams.some(c=>c.deviceId===old)){
-cameraSelect.value=old;
-}
-
-}catch(e){
-console.warn(e);
-}
-
+cameraSelect.replaceChildren(new Option('Default camera',''));
+cams.forEach((c,i)=>{cameraSelect.add(new Option(c.label||`Camera ${i+1}`,c.deviceId));});
+if(cams.some(c=>c.deviceId===old)){cameraSelect.value=old;}
+}catch(e){console.warn(e);}
 }
 
 async function startCamera(deviceId=null,facing='environment'){
-
 if(!navigator.mediaDevices?.getUserMedia){
-
-status(
-'Camera requires HTTPS or localhost. Upload an image instead.'
-);
-
+status('Camera requires HTTPS or localhost. Upload an image instead.');
 return;
-
 }
-
 stopCamera(false);
-
 try{
-
 const constraints=deviceId
-?{
-deviceId:{exact:deviceId},
-width:{ideal:2560},
-height:{ideal:1440}
-}
-:{
-facingMode:{ideal:facing},
-width:{ideal:2560},
-height:{ideal:1440}
-};
-
-stream=await navigator.mediaDevices.getUserMedia({
-video:constraints,
-audio:false
-});
-
+?{deviceId:{exact:deviceId},width:{ideal:2560},height:{ideal:1440}}
+:{facingMode:{ideal:facing},width:{ideal:2560},height:{ideal:1440}};
+stream=await navigator.mediaDevices.getUserMedia({video:constraints,audio:false});
 video.srcObject=stream;
-
 await video.play();
-
 $('captureBtn').disabled=false;
-
 await refreshCameras();
-
-if(deviceId){
-cameraSelect.value=deviceId;
-}
-
+if(deviceId){cameraSelect.value=deviceId;}
 status('Camera ready. Capture your sheet music.');
-
 }catch(e){
-
 stopCamera(false);
-
 status('Camera error: '+e.message);
-
 }
-
 }
 
 /* =========================
@@ -613,154 +667,70 @@ status('Camera error: '+e.message);
 ========================= */
 
 function stopMusic(){
-
 playbackToken++;
-
 playbackTimers.forEach(clearTimeout);
 playbackTimers=[];
-
-activeOscillators.forEach(o=>{
-
-try{o.stop();}catch(e){}
-
-});
-
+activeOscillators.forEach(o=>{try{o.stop();}catch(e){}});
 activeOscillators=[];
-
 $('stopMusicBtn').disabled=true;
-
-document.querySelectorAll('.note-chip.active')
-.forEach(el=>el.classList.remove('active'));
-
+document.body.classList.remove('playing');
+document.querySelectorAll('.note-chip.active').forEach(el=>el.classList.remove('active'));
 }
 
 function saveImage(blob){
-
 if(!blob)return;
-
 imageBlob=blob;
-
-if(imageURL){
-URL.revokeObjectURL(imageURL);
-}
-
+if(imageURL){URL.revokeObjectURL(imageURL);}
 imageURL=URL.createObjectURL(blob);
-
 preview.src=imageURL;
 preview.hidden=false;
-
 detectedNotes=[];
 playbackEvents=[];
-
 notesBox.replaceChildren();
-
 canvas.hidden=true;
-
 lastImage=null;
 lastStaffs=[];
 $('editRow').hidden=true;
 $('editHint').hidden=true;
-
 $('detectBtn').disabled=!cvReady;
 $('playBtn').disabled=true;
 $('redetectBtn').disabled=true;
-
 stopMusic();
-
-status(
-cvReady
+status(cvReady
 ?'Image ready. Select your clef, key and time signature, then detect notes.'
-:'Image ready. Waiting for OpenCV...'
-);
-
+:'Image ready. Waiting for OpenCV...');
 }
 
 $('startBtn').onclick=()=>startCamera(cameraSelect.value||null);
-
 $('frontBtn').onclick=()=>startCamera(null,'user');
-
 $('backBtn').onclick=()=>startCamera(null,'environment');
-
 $('stopBtn').onclick=()=>stopCamera();
-
-cameraSelect.onchange=()=>{
-
-if(cameraSelect.value){
-startCamera(cameraSelect.value);
-}
-
-};
+cameraSelect.onchange=()=>{if(cameraSelect.value){startCamera(cameraSelect.value);}};
 
 $('captureBtn').onclick=()=>{
-
-if(!stream||!video.videoWidth){
-
-status('Start the camera first.');
-return;
-
-}
-
+if(!stream||!video.videoWidth){status('Start the camera first.');return;}
 const c=document.createElement('canvas');
-
 c.width=video.videoWidth;
 c.height=video.videoHeight;
-
-c.getContext('2d').drawImage(
-video,0,0,c.width,c.height
-);
-
-c.toBlob(blob=>{
-
-if(blob){
-saveImage(blob);
-}
-
-},'image/jpeg',.98);
-
+c.getContext('2d').drawImage(video,0,0,c.width,c.height);
+c.toBlob(blob=>{if(blob){saveImage(blob);}},'image/jpeg',.98);
 };
 
 $('fileInput').onchange=e=>{
-
 const f=e.target.files?.[0];
-
 if(!f)return;
-
-if(!f.type.startsWith('image/')){
-
-status('Please upload an image file.');
-return;
-
-}
-
+if(!f.type.startsWith('image/')){status('Please upload an image file.');return;}
 saveImage(f);
-
 };
 
 function loadImage(blob){
-
 return new Promise((resolve,reject)=>{
-
 const im=new Image();
 const url=URL.createObjectURL(blob);
-
-im.onload=()=>{
-
-URL.revokeObjectURL(url);
-resolve(im);
-
-};
-
-im.onerror=()=>{
-
-URL.revokeObjectURL(url);
-reject(new Error('Image could not be opened.'));
-
-};
-
+im.onload=()=>{URL.revokeObjectURL(url);resolve(im);};
+im.onerror=()=>{URL.revokeObjectURL(url);reject(new Error('Image could not be opened.'));};
 im.src=url;
-
 });
-
 }
 
 /* =========================
@@ -768,247 +738,98 @@ im.src=url;
 ========================= */
 
 function staffBounds(lineMask,lines,width,height){
-
-let left=width;
-let right=0;
-
+let left=width,right=0;
 for(const line of lines){
-
 const mid=Math.round(line);
-
-for(
-let y=Math.max(0,mid-2);
-y<=Math.min(height-1,mid+2);
-y++
-){
-
+for(let y=Math.max(0,mid-2);y<=Math.min(height-1,mid+2);y++){
 const row=lineMask.ucharPtr(y);
-
 for(let x=0;x<width;x++){
-
-if(row[x]>0){
-
-left=Math.min(left,x);
-right=Math.max(right,x);
-
+if(row[x]>0){left=Math.min(left,x);right=Math.max(right,x);}
 }
-
 }
-
 }
-
-}
-
-if(right<=left){
-
-left=0;
-right=width-1;
-
-}
-
-return{
-left,
-right,
-width:right-left
-};
-
+if(right<=left){left=0;right=width-1;}
+return{left,right,width:right-left};
 }
 
 function findStaffGroups(lineMask,width,height){
-
 const scores=new Float32Array(height);
-
 for(let y=0;y<height;y++){
-
 const row=lineMask.ucharPtr(y);
-
 let count=0;
-
-for(let x=0;x<width;x++){
-
-if(row[x]>0){
-count++;
-}
-
-}
-
+for(let x=0;x<width;x++){if(row[x]>0){count++;}}
 scores[y]=count/width;
-
 }
-
 const smooth=new Float32Array(height);
-
 for(let y=0;y<height;y++){
-
-let sum=0;
-let n=0;
-
+let sum=0,n=0;
 for(let d=-1;d<=1;d++){
-
-if(y+d>=0&&y+d<height){
-
-sum+=scores[y+d];
-n++;
-
+if(y+d>=0&&y+d<height){sum+=scores[y+d];n++;}
 }
-
-}
-
 smooth[y]=sum/n;
-
 }
-
 let max=0;
-
-for(const v of smooth){
-max=Math.max(max,v);
-}
-
+for(const v of smooth){max=Math.max(max,v);}
 const cutoff=Math.max(.075,max*.22);
-
 const peaks=[];
-
 let y=0;
-
 while(y<height){
-
 if(smooth[y]>=cutoff){
-
-let end=y;
-let weighted=0;
-let total=0;
-let strength=0;
-
+let end=y,weighted=0,total=0,strength=0;
 while(end<height&&smooth[end]>=cutoff){
-
 weighted+=end*smooth[end];
 total+=smooth[end];
-
 strength=Math.max(strength,smooth[end]);
-
 end++;
-
 }
-
-peaks.push({
-y:weighted/Math.max(total,.001),
-strength
-});
-
+peaks.push({y:weighted/Math.max(total,.001),strength});
 y=end;
-
-}else{
-
-y++;
-
+}else{y++;}
 }
-
-}
-
 const candidates=[];
-
 for(let i=0;i<=peaks.length-5;i++){
-
 const p=peaks.slice(i,i+5);
-
-const diff=p.slice(1)
-.map((v,k)=>v.y-p[k].y)
-.sort((a,b)=>a-b);
-
+const diff=p.slice(1).map((v,k)=>v.y-p[k].y).sort((a,b)=>a-b);
 const gap=diff[2];
-
-if(
-gap<3||
-gap>Math.min(120,height*.09)
-)continue;
-
+if(gap<3||gap>Math.min(120,height*.09))continue;
 const spread=Math.max(...diff)-Math.min(...diff);
-
 if(spread>gap*.30)continue;
-
-const strength=p.reduce(
-(s,v)=>s+v.strength,0
-)/5;
-
-candidates.push({
-lines:p.map(v=>v.y),
-gap,
-score:strength-spread/gap*.18
-});
-
+const strength=p.reduce((s,v)=>s+v.strength,0)/5;
+candidates.push({lines:p.map(v=>v.y),gap,score:strength-spread/gap*.18});
 }
-
 candidates.sort((a,b)=>b.score-a.score);
-
 const selected=[];
-
 for(const c of candidates){
-
 const overlap=selected.some(s=>
-s.lines.filter(a=>
-c.lines.some(b=>
-Math.abs(a-b)<Math.min(s.gap,c.gap)*.55
-)
-).length>=3
+s.lines.filter(a=>c.lines.some(b=>Math.abs(a-b)<Math.min(s.gap,c.gap)*.55)).length>=3
 );
-
 if(overlap)continue;
-
-const bounds=staffBounds(
-lineMask,c.lines,width,height
-);
-
-if(bounds.width>width*.18){
-
-selected.push({
-...c,
-...bounds
-});
-
+const bounds=staffBounds(lineMask,c.lines,width,height);
+if(bounds.width>width*.18){selected.push({...c,...bounds});}
 }
-
-}
-
 return selected.sort((a,b)=>a.lines[0]-b.lines[0]);
-
 }
 
 function nearStaffRow(y,lines,gap){
-
 const tolerance=Math.max(1.5,gap*.14);
-
-return lines.some(line=>
-Math.abs(y-line)<=tolerance
-);
-
+return lines.some(line=>Math.abs(y-line)<=tolerance);
 }
 
 /* =========================
    PITCH MAPPING
 ========================= */
 
-const NATURAL={
-C:0,
-D:2,
-E:4,
-F:5,
-G:7,
-A:9,
-B:11
-};
+const NATURAL={C:0,D:2,E:4,F:5,G:7,A:9,B:11};
 
 const KEY_ALTER={
-
 C:{},
 G:{F:1},
 D:{F:1,C:1},
 A:{F:1,C:1,G:1},
 E:{F:1,C:1,G:1,D:1},
 B:{F:1,C:1,G:1,D:1,A:1},
-
 'F#':{F:1,C:1,G:1,D:1,A:1,E:1},
 'C#':{F:1,C:1,G:1,D:1,A:1,E:1,B:1},
-
 F:{B:-1},
 Bb:{B:-1,E:-1},
 Eb:{B:-1,E:-1,A:-1},
@@ -1016,311 +837,130 @@ Ab:{B:-1,E:-1,A:-1,D:-1},
 Db:{B:-1,E:-1,A:-1,D:-1,G:-1},
 Gb:{B:-1,E:-1,A:-1,D:-1,G:-1,C:-1},
 Cb:{B:-1,E:-1,A:-1,D:-1,G:-1,C:-1,F:-1}
-
 };
 
 function pitchForStep(step,clef,key){
-
 const base=clef==='bass'?18:30;
-
 const d=base+step;
-
 const octave=Math.floor(d/7);
-
-const letter=[
-'C','D','E','F','G','A','B'
-][(d%7+7)%7];
-
+const letter=['C','D','E','F','G','A','B'][(d%7+7)%7];
 const alter=(KEY_ALTER[key]||{})[letter]||0;
-
-const midi=
-12*(octave+1)+NATURAL[letter]+alter;
-
-const accidental=
-alter===1?'♯':
-alter===-1?'♭':'';
-
-return{
-name:letter+accidental+octave,
-letter,
-octave,
-midi,
-step
-};
-
+const midi=12*(octave+1)+NATURAL[letter]+alter;
+const accidental=alter===1?'♯':alter===-1?'♭':'';
+return{name:letter+accidental+octave,letter,octave,midi,step};
 }
 
 /* =========================
    HEADER (CLEF / KEY / TIME)
 ========================= */
 
-/*
-Finds where the clef, key signature and time signature end,
-by looking for the first clear empty gap after the header ink.
-Falls back to a fixed margin if no clear gap exists.
-*/
-
 function findNoteStart(binary,staff,key){
-
 const gap=staff.gap;
-
 const accidentalCount=Object.keys(KEY_ALTER[key]||{}).length;
-
-/* The first note can never start before this, so never cut beyond it. */
-const cap=Math.round(
-staff.left+gap*(7+accidentalCount*1.2)
-);
-
-const fallback=Math.min(
-cap,
-Math.round(staff.left+Math.max(gap*5.5,staff.width*.075))
-);
-
+const cap=Math.round(staff.left+gap*(7+accidentalCount*1.2));
+const fallback=Math.min(cap,Math.round(staff.left+Math.max(gap*5.5,staff.width*.075)));
 const top=Math.round(staff.lines[0]);
 const bottom=Math.round(staff.lines[4]);
-
 const x0=Math.max(0,Math.floor(staff.left));
 const x1=Math.min(binary.cols-1,Math.floor(staff.right));
-
 const accidentals=Object.keys(KEY_ALTER[key]||{}).length;
 const maxHeader=gap*(8+accidentals*1.3);
-
 const need=Math.ceil(gap*1.05);
-
-let run=0;
-let inkSeen=0;
-let lastInk=x0;
-
+let run=0,inkSeen=0,lastInk=x0;
 for(let x=x0;x<=x1;x++){
-
 let dark=0;
-
 for(let y=top;y<=bottom;y++){
-
 if(nearStaffRow(y,staff.lines,gap))continue;
-
-if(binary.ucharPtr(y)[x]>0){
-dark++;
+if(binary.ucharPtr(y)[x]>0){dark++;}
 }
-
-}
-
 if(dark>=2){
-
-lastInk=x;
-inkSeen++;
-run=0;
-
+lastInk=x;inkSeen++;run=0;
 }else{
-
 run++;
-
 if(run>=need&&inkSeen>=gap*1.2){
-
 const end=lastInk-staff.left;
-
-if(end>0&&end<=maxHeader){
-return Math.min(cap,Math.round(lastInk+gap*.9));
-}
-
+if(end>0&&end<=maxHeader){return Math.min(cap,Math.round(lastInk+gap*.9));}
 break;
-
 }
-
 }
-
 if(x-staff.left>maxHeader)break;
-
 }
-
 return fallback;
-
 }
 
 /* =========================
    BARLINE (MEASURE LINE) DETECTION
 ========================= */
 
-/*
-A barline is a thin vertical line that covers the whole height
-of the staff. Tall stems can also span the staff, so every
-candidate is checked to make sure nothing (a notehead or beam)
-is attached to it.
-*/
-
 function detectBarlines(binary,staff){
-
 const gap=staff.gap;
-
 const top=Math.round(staff.lines[0]);
 const bottom=Math.round(staff.lines[4]);
 const span=Math.max(1,bottom-top+1);
-
 const x0=Math.max(1,Math.floor(staff.minX));
 const x1=Math.min(binary.cols-2,Math.ceil(staff.right+gap*.5));
-
 if(x1<=x0)return [];
-
 const hits=new Float32Array(binary.cols);
-
 for(let y=top;y<=bottom;y++){
-
 const row=binary.ucharPtr(y);
-
 for(let x=x0;x<=x1;x++){
-
-if(row[x-1]>0||row[x]>0||row[x+1]>0){
-hits[x]++;
+if(row[x-1]>0||row[x]>0||row[x+1]>0){hits[x]++;}
 }
-
 }
-
-}
-
 const threshold=.92;
-
 const clusters=[];
-
 let x=x0;
-
 while(x<=x1){
-
 if(hits[x]/span>=threshold){
-
 let end=x;
-
-while(end+1<=x1&&hits[end+1]/span>=threshold){
-end++;
-}
-
+while(end+1<=x1&&hits[end+1]/span>=threshold){end++;}
 const width=end-x+1;
-
-const candidate={
-start:x,
-end,
-center:(x+end)/2
-};
-
-/* Tall stems also span the staff, so reject anything with a notehead attached. */
-if(
-width<=gap*1.5&&
-isPlainBarline(binary,staff,candidate)
-){
-
-clusters.push(candidate);
-
-}
-
+const candidate={start:x,end,center:(x+end)/2};
+if(width<=gap*1.5&&isPlainBarline(binary,staff,candidate)){clusters.push(candidate);}
 x=end+1;
-
-}else{
-
-x++;
-
+}else{x++;}
 }
-
-}
-
-/*
-Merge clusters that are very close, such as the thin + thick
-lines of a final double barline.
-*/
-
 const merged=[];
-
 for(const c of clusters){
-
 const last=merged[merged.length-1];
-
 if(last&&c.start-last.end<gap*1.3){
-
 last.end=c.end;
 last.center=(last.start+last.end)/2;
-
-}else{
-
-merged.push({...c});
-
+}else{merged.push({...c});}
 }
-
-}
-
 const all=merged.map(c=>c.center);
-
-/*
-Lines at the far right end of a row only close the row.
-They are not measure separators, so they are kept apart.
-*/
 const endLimit=staff.right-gap*1.8;
-
 staff.rowEnd=all.filter(b=>b>=endLimit);
-
 return all.filter(b=>b<endLimit);
-
 }
-
-/*
-A real barline is thin along its whole length.
-A stem has a notehead (or beam) attached, which makes
-the dark run beside it much wider at some rows.
-*/
 
 function isPlainBarline(binary,staff,c){
-
 const gap=staff.gap;
-
 const cx=Math.round(c.center);
 const bw=c.end-c.start+1;
-
 const limit=bw+gap*.55;
-
 const y0=Math.max(0,Math.round(staff.lines[0]-gap*2));
 const y1=Math.min(binary.rows-1,Math.round(staff.lines[4]+gap*1.8));
-
 let wide=0;
-
 for(let y=y0;y<=y1;y++){
-
 if(nearStaffRow(y,staff.lines,gap))continue;
-
 const row=binary.ucharPtr(y);
-
 let x=-1;
-
 for(let d=0;d<=Math.ceil(bw/2)+1;d++){
-
-if(cx+d<binary.cols&&row[cx+d]>0){
-x=cx+d;
-break;
+if(cx+d<binary.cols&&row[cx+d]>0){x=cx+d;break;}
+if(cx-d>=0&&row[cx-d]>0){x=cx-d;break;}
 }
-
-if(cx-d>=0&&row[cx-d]>0){
-x=cx-d;
-break;
-}
-
-}
-
 if(x<0)continue;
-
-let l=x;
-let r=x;
-
+let l=x,r=x;
 while(l>0&&row[l-1]>0)l--;
 while(r<binary.cols-1&&row[r+1]>0)r++;
-
 if(r-l+1>limit)wide++;
-
 }
-
 return wide<Math.max(2,gap*.25);
-
 }
 
 function nearBarline(x,barlines,gap){
-
 return barlines.some(b=>Math.abs(x-b)<gap*.45);
-
 }
 
 /* =========================
@@ -1328,562 +968,209 @@ return barlines.some(b=>Math.abs(x-b)<gap*.45);
 ========================= */
 
 function makeHeadOffsets(gap){
-
-const rx=.66*gap;
-const ry=.43*gap;
-
-const ix=.35*gap;
-const iy=.23*gap;
-
+const rx=.66*gap,ry=.43*gap,ix=.35*gap,iy=.23*gap;
 const angle=-20*Math.PI/180;
-
-const cos=Math.cos(angle);
-const sin=Math.sin(angle);
-
-const core=[];
-const ring=[];
-
-for(
-let dy=-Math.ceil(ry);
-dy<=Math.ceil(ry);
-dy++
-){
-
-for(
-let dx=-Math.ceil(rx);
-dx<=Math.ceil(rx);
-dx++
-){
-
+const cos=Math.cos(angle),sin=Math.sin(angle);
+const core=[],ring=[];
+for(let dy=-Math.ceil(ry);dy<=Math.ceil(ry);dy++){
+for(let dx=-Math.ceil(rx);dx<=Math.ceil(rx);dx++){
 const xr=dx*cos+dy*sin;
 const yr=-dx*sin+dy*cos;
-
-const outer=
-xr*xr/(rx*rx)+yr*yr/(ry*ry);
-
-const inner=
-xr*xr/(ix*ix)+yr*yr/(iy*iy);
-
+const outer=xr*xr/(rx*rx)+yr*yr/(ry*ry);
+const inner=xr*xr/(ix*ix)+yr*yr/(iy*iy);
 if(outer<=1){
-
 const p={dx,dy,xr,yr};
-
-if(inner<=1){
-core.push(p);
-}else{
-ring.push(p);
+if(inner<=1){core.push(p);}else{ring.push(p);}
 }
-
 }
-
 }
-
-}
-
 return{core,ring};
-
 }
 
 function headMetrics(binary,x,y,gap,lines,offsets){
-
-let coreDark=0;
-let coreTotal=0;
-
-let ringDark=0;
-let ringTotal=0;
-
-const quadrants=[
-{d:0,n:0},
-{d:0,n:0},
-{d:0,n:0},
-{d:0,n:0}
-];
-
+let coreDark=0,coreTotal=0,ringDark=0,ringTotal=0;
+const quadrants=[{d:0,n:0},{d:0,n:0},{d:0,n:0},{d:0,n:0}];
 for(const p of offsets.core){
-
-const xx=x+p.dx;
-const yy=y+p.dy;
-
-if(
-xx<0||xx>=binary.cols||
-yy<0||yy>=binary.rows||
-nearStaffRow(yy,lines,gap)
-)continue;
-
+const xx=x+p.dx,yy=y+p.dy;
+if(xx<0||xx>=binary.cols||yy<0||yy>=binary.rows||nearStaffRow(yy,lines,gap))continue;
 coreTotal++;
-
-if(binary.ucharPtr(yy)[xx]>0){
-coreDark++;
+if(binary.ucharPtr(yy)[xx]>0){coreDark++;}
 }
-
-}
-
 for(const p of offsets.ring){
-
-const xx=x+p.dx;
-const yy=y+p.dy;
-
-if(
-xx<0||xx>=binary.cols||
-yy<0||yy>=binary.rows||
-nearStaffRow(yy,lines,gap)
-)continue;
-
+const xx=x+p.dx,yy=y+p.dy;
+if(xx<0||xx>=binary.cols||yy<0||yy>=binary.rows||nearStaffRow(yy,lines,gap))continue;
 ringTotal++;
-
-const q=
-(p.xr>=0?1:0)+(p.yr>=0?2:0);
-
+const q=(p.xr>=0?1:0)+(p.yr>=0?2:0);
 quadrants[q].n++;
-
-if(binary.ucharPtr(yy)[xx]>0){
-
-ringDark++;
-quadrants[q].d++;
-
+if(binary.ucharPtr(yy)[xx]>0){ringDark++;quadrants[q].d++;}
 }
-
-}
-
 const core=coreDark/Math.max(1,coreTotal);
 const ring=ringDark/Math.max(1,ringTotal);
-
-const coverage=quadrants.filter(q=>
-q.n>0&&q.d/q.n>.20
-).length;
-
-const filled=
-core>=.50&&
-ring>=.48&&
-coverage>=3;
-
-const hollow=
-core<=.34&&
-ring>=.25&&
-coverage>=3;
-
-return{
-core,
-ring,
-coverage,
-filled,
-hollow,
-confidence:filled
-?Math.min(core,ring)
-:hollow?ring*.78:0
-};
-
+const coverage=quadrants.filter(q=>q.n>0&&q.d/q.n>.20).length;
+const filled=core>=.50&&ring>=.48&&coverage>=3;
+const hollow=core<=.34&&ring>=.25&&coverage>=3;
+return{core,ring,coverage,filled,hollow,confidence:filled?Math.min(core,ring):hollow?ring*.78:0};
 }
 
 /* =========================
    NOTE DETECTION
 ========================= */
 
-function detectStaffNotes(
-binary,
-staff,
-staffIndex,
-clef,
-key
-){
-
+function detectStaffNotes(binary,staff,staffIndex,clef,key){
 const gap=staff.gap;
 const bottom=staff.lines[4];
 const barlines=[...(staff.barlines||[]),...(staff.rowEnd||[])];
-
 const offsets=makeHeadOffsets(gap);
 
-/*
-Exclude clef, key signature and time signature
-(the start x was measured by findNoteStart).
-*/
-
 const minX=Math.max(0,Math.round(staff.minX));
-
-const maxX=Math.min(
-binary.cols-1,
-Math.round(staff.right-gap*.35)
-);
-
-const minY=Math.max(
-0,
-Math.floor(staff.lines[0]-gap*1.5)
-);
-
-/* Extended downward so notes on ledger lines (C4, B3) are found. */
-const maxY=Math.min(
-binary.rows-1,
-Math.ceil(staff.lines[4]+gap*1.65)
-);
-
+const maxX=Math.min(binary.cols-1,Math.round(staff.right-gap*.35));
+const minY=Math.max(0,Math.floor(staff.lines[0]-gap*1.5));
+const maxY=Math.min(binary.rows-1,Math.ceil(staff.lines[4]+gap*1.65));
 const xStep=Math.max(1,Math.round(gap/15));
 const yStep=Math.max(1,Math.round(gap/18));
-
 const candidates=[];
 
-if(maxX<=minX||maxY<=minY){
-return [];
-}
-
-/* Find potential noteheads. */
+if(maxX<=minX||maxY<=minY){return [];}
 
 for(let y=minY;y<=maxY;y+=yStep){
-
 for(let x=minX;x<=maxX;x+=xStep){
-
-/* Barlines are never noteheads. */
 if(nearBarline(x,barlines,gap))continue;
-
-const m=headMetrics(
-binary,x,y,gap,staff.lines,offsets
-);
-
-const goodFilled=
-m.filled&&
-m.core>=.72&&
-m.ring>=.68&&
-m.confidence>=.70;
-
-const goodHollow=
-m.hollow&&
-m.ring>=.54&&
-m.coverage>=3;
-
+const m=headMetrics(binary,x,y,gap,staff.lines,offsets);
+const goodFilled=m.filled&&m.core>=.72&&m.ring>=.68&&m.confidence>=.70;
+const goodHollow=m.hollow&&m.ring>=.54&&m.coverage>=3;
 if(!goodFilled&&!goodHollow)continue;
-
 candidates.push({
-
-x,
-y,
-
-head:goodHollow&&!goodFilled
-?'hollow':'filled',
-
-confidence:m.confidence,
-core:m.core,
-ring:m.ring,
-coverage:m.coverage
-
+x,y,
+head:goodHollow&&!goodFilled?'hollow':'filled',
+confidence:m.confidence,core:m.core,ring:m.ring,coverage:m.coverage
 });
-
+}
 }
 
-}
-
-/*
-Duplicate filtering.
-For a monophonic melody, nearby X positions
-belong to the same notehead.
-*/
-
-candidates.sort((a,b)=>
-b.confidence-a.confidence
-);
+candidates.sort((a,b)=>b.confidence-a.confidence);
 
 const peaks=[];
-
 const radiusX=gap*1.25;
 
 for(const p of candidates){
-
 let duplicateIndex=-1;
-
 for(let i=0;i<peaks.length;i++){
-
-const q=peaks[i];
-
-if(Math.abs(p.x-q.x)<radiusX){
-
-duplicateIndex=i;
-break;
-
+if(Math.abs(p.x-peaks[i].x)<radiusX){duplicateIndex=i;break;}
 }
-
-}
-
 if(duplicateIndex===-1){
-
 peaks.push(p);
-
 }else{
-
 const existing=peaks[duplicateIndex];
-
-if(p.confidence>existing.confidence){
-
-peaks[duplicateIndex]=p;
-
+if(p.confidence>existing.confidence){peaks[duplicateIndex]=p;}
 }
-
-}
-
 }
 
 peaks.sort((a,b)=>a.x-b.x);
 
-/*
-Refine each notehead on the exact line / space positions.
-Noteheads are always centered on a line or a space, so only
-those exact heights are tested and the best one wins.
-A detected head is never thrown away.
-*/
-
 const refined=[];
-
 const dxRange=Math.max(2,xStep)*2;
 
 for(const peak of peaks){
-
 const rawStep=(bottom-peak.y)/(gap/2);
-
 const baseStep=Math.round(rawStep);
-
 let best=null;
-
 for(let s=baseStep-1;s<=baseStep+1;s++){
-
 if(s<-4||s>12)continue;
-
 const y=Math.round(bottom-s*gap/2);
-
 if(y<0||y>=binary.rows)continue;
-
 for(let dx=-dxRange;dx<=dxRange;dx++){
-
 const x=Math.round(peak.x+dx);
-
 if(x<minX||x>maxX)continue;
-
 if(nearBarline(x,barlines,gap))continue;
-
-const m=headMetrics(
-binary,x,y,gap,staff.lines,offsets
-);
-
-const validFilled=
-m.filled&&
-m.core>=.72&&
-m.ring>=.68;
-
-const validHollow=
-m.hollow&&
-m.ring>=.54&&
-m.coverage>=3;
-
+const m=headMetrics(binary,x,y,gap,staff.lines,offsets);
+const validFilled=m.filled&&m.core>=.72&&m.ring>=.68;
+const validHollow=m.hollow&&m.ring>=.54&&m.coverage>=3;
 if(!validFilled&&!validHollow)continue;
-
 if(!best||m.confidence>best.confidence){
-
 best={
-x,
-y,
-step:s,
-head:validHollow&&!validFilled
-?'hollow':'filled',
-confidence:m.confidence,
-core:m.core,
-ring:m.ring,
-coverage:m.coverage
+x,y,step:s,
+head:validHollow&&!validFilled?'hollow':'filled',
+confidence:m.confidence,core:m.core,ring:m.ring,coverage:m.coverage
 };
-
 }
-
 }
-
 }
-
-refined.push(
-best||{
-...peak,
-step:Math.max(-4,Math.min(12,baseStep))
+refined.push(best||{...peak,step:Math.max(-4,Math.min(12,baseStep))});
 }
-);
-
-}
-
-/*
-Convert each head into a pitch.
-*/
 
 const notes=[];
 
 for(const p of refined){
-
 if(p.step<-4||p.step>12)continue;
-
-const pitch=pitchForStep(
-p.step,
-clef,
-key
-);
-
+const pitch=pitchForStep(p.step,clef,key);
 notes.push({
-
 ...pitch,
-
-x:p.x,
-y:p.y,
-
+x:p.x,y:p.y,
 staff:staffIndex,
 head:p.head,
-
 confidence:p.confidence,
 positionError:0,
-
-coreRatio:p.core,
-ringRatio:p.ring
-
+coreRatio:p.core,ringRatio:p.ring
 });
-
 }
 
-/* Recover heads that have a stem but were missed above. */
-const recovered=recoverMissedNotes(
-binary,staff,staffIndex,clef,key,notes,offsets,barlines
-);
+const recovered=recoverMissedNotes(binary,staff,staffIndex,clef,key,notes,offsets,barlines);
+const filled=fillSpacingGaps(binary,staff,staffIndex,clef,key,notes.concat(recovered),offsets,barlines);
 
-/* Recover heads missing from the regular note spacing. */
-const filled=fillSpacingGaps(
-binary,staff,staffIndex,clef,key,notes.concat(recovered),offsets,barlines
-);
-
-return notes
-.concat(recovered)
-.concat(filled)
-.sort((a,b)=>a.x-b.x);
-
+return notes.concat(recovered).concat(filled).sort((a,b)=>a.x-b.x);
 }
 
 /* =========================
    MISSED NOTE RECOVERY
 ========================= */
 
-/*
-Every note except a whole note has a stem. Find tall thin
-vertical lines (stems) and return their position and ends.
-*/
-
 function findStemClusters(binary,staff,barlines){
-
 const gap=staff.gap;
-
 const y0=Math.max(0,Math.floor(staff.lines[0]-gap*3.5));
 const y1=Math.min(binary.rows-1,Math.ceil(staff.lines[4]+gap*3.5));
-
 const x0=Math.max(0,Math.round(staff.minX));
 const x1=Math.min(binary.cols-1,Math.round(staff.right-gap*.35));
-
 const minRun=Math.round(gap*2.4);
-
 const cols=[];
 
 for(let x=x0;x<=x1;x++){
-
 if(nearBarline(x,barlines,gap*1.3))continue;
-
-let run=0;
-let best=0;
-let end=0;
-
+let run=0,best=0,end=0;
 for(let y=y0;y<=y1;y++){
-
 if(binary.ucharPtr(y)[x]>0){
-
 run++;
-
-if(run>best){
-best=run;
-end=y;
+if(run>best){best=run;end=y;}
+}else{run=0;}
 }
-
-}else{
-
-run=0;
-
-}
-
-}
-
-if(best>=minRun){
-
-cols.push({
-x,
-top:end-best+1,
-bottom:end,
-len:best
-});
-
-}
-
+if(best>=minRun){cols.push({x,top:end-best+1,bottom:end,len:best});}
 }
 
 const clusters=[];
-
 for(const c of cols){
-
 const last=clusters[clusters.length-1];
-
 if(last&&c.x-last.end<=1){
-
 last.end=c.x;
 last.items.push(c);
-
 }else{
-
-clusters.push({
-start:c.x,
-end:c.x,
-items:[c]
-});
-
+clusters.push({start:c.x,end:c.x,items:[c]});
 }
-
 }
 
 return clusters
 .filter(c=>c.end-c.start+1<=gap*.6)
 .map(c=>{
-
-const longest=c.items.reduce(
-(a,b)=>b.len>a.len?b:a
-);
-
-return{
-x:(c.start+c.end)/2,
-top:longest.top,
-bottom:longest.bottom
-};
-
+const longest=c.items.reduce((a,b)=>b.len>a.len?b:a);
+return{x:(c.start+c.end)/2,top:longest.top,bottom:longest.bottom};
 });
-
 }
 
-/*
-For every stem that has no detected notehead beside it,
-look for a notehead at either end of the stem using
-slightly more tolerant thresholds.
-*/
-
-function recoverMissedNotes(
-binary,
-staff,
-staffIndex,
-clef,
-key,
-existing,
-offsets,
-barlines
-){
-
+function recoverMissedNotes(binary,staff,staffIndex,clef,key,existing,offsets,barlines){
 const gap=staff.gap;
 const bottom=staff.lines[4];
-
 const stems=findStemClusters(binary,staff,barlines);
-
 const added=[];
 
 for(const st of stems){
-
 if(existing.some(n=>Math.abs(n.x-st.x)<gap*1.0))continue;
 if(added.some(n=>Math.abs(n.x-st.x)<gap*1.0))continue;
 
@@ -1891,479 +1178,204 @@ const options=[
 {cx:st.x-gap*.55,cy:st.bottom-gap*.1},
 {cx:st.x+gap*.55,cy:st.top+gap*.1}
 ];
-
 let best=null;
 
 for(const o of options){
-
-for(
-let dy=-Math.round(gap*.5);
-dy<=Math.round(gap*.5);
-dy++
-){
-
+for(let dy=-Math.round(gap*.5);dy<=Math.round(gap*.5);dy++){
 for(let dx=-3;dx<=3;dx++){
-
 const x=Math.round(o.cx+dx);
 const y=Math.round(o.cy+dy);
-
-if(
-x<0||y<0||
-x>=binary.cols||y>=binary.rows
-)continue;
-
-const m=headMetrics(
-binary,x,y,gap,staff.lines,offsets
-);
-
-const okFilled=
-m.core>=.55&&
-m.ring>=.50&&
-m.coverage>=3;
-
-const okHollow=
-m.core<=.40&&
-m.ring>=.40&&
-m.coverage>=3;
-
+if(x<0||y<0||x>=binary.cols||y>=binary.rows)continue;
+const m=headMetrics(binary,x,y,gap,staff.lines,offsets);
+const okFilled=m.core>=.55&&m.ring>=.50&&m.coverage>=3;
+const okHollow=m.core<=.40&&m.ring>=.40&&m.coverage>=3;
 if(!okFilled&&!okHollow)continue;
-
-const score=okFilled
-?Math.min(m.core,m.ring)
-:m.ring*.78;
-
+const score=okFilled?Math.min(m.core,m.ring):m.ring*.78;
 if(!best||score>best.score){
-
-best={
-...m,
-x,
-y,
-score,
-head:okFilled?'filled':'hollow'
-};
-
+best={...m,x,y,score,head:okFilled?'filled':'hollow'};
 }
-
 }
-
 }
-
 }
 
 if(!best)continue;
 
 const rawStep=(bottom-best.y)/(gap/2);
-
 const step=Math.round(rawStep);
-
 const positionError=Math.abs(rawStep-step);
 
-if(step < -4||step > 12)continue;
+if(step<-4||step>12)continue;
 
 added.push({
-
 ...pitchForStep(step,clef,key),
-
-x:best.x,
-y:best.y,
-
+x:best.x,y:best.y,
 staff:staffIndex,
 head:best.head,
-
 confidence:best.score,
 positionError,
-
-coreRatio:best.core,
-ringRatio:best.ring,
-
+coreRatio:best.core,ringRatio:best.ring,
 recovered:true
-
 });
-
 }
 
 return added;
-
 }
 
-/*
-Notes are spaced in proportion to their length. If two quarter
-notes are about two beats apart, a note is probably missing
-between them, so look for a head there with relaxed thresholds.
-*/
-
-function fillSpacingGaps(
-binary,
-staff,
-staffIndex,
-clef,
-key,
-notes,
-offsets,
-barlines
-){
-
+function fillSpacingGaps(binary,staff,staffIndex,clef,key,notes,offsets,barlines){
 const gap=staff.gap;
 const bottom=staff.lines[4];
 
 if(notes.length<3)return [];
 
-const info=[...notes]
-.sort((a,b)=>a.x-b.x)
-.map(n=>{
-
+const info=[...notes].sort((a,b)=>a.x-b.x).map(n=>{
 const stem=findStem(binary,n,staff);
-
 const hollow=n.head==='hollow';
-
-const units=hollow
-?(stem?4:8)
-:((stem&&hasFlag(binary,stem,n,staff))?1:2);
-
+const units=hollow?(stem?4:8):((stem&&hasFlag(binary,stem,n,staff))?1:2);
 return{n,units};
-
 });
 
-const between=(x1,x2)=>
-barlines.some(b=>b>x1&&b<x2);
-
+const between=(x1,x2)=>barlines.some(b=>b>x1&&b<x2);
 const samples=[];
 
 for(let i=0;i<info.length-1;i++){
-
 if(info[i].units!==2)continue;
-
 if(between(info[i].n.x,info[i+1].n.x))continue;
-
 samples.push(info[i+1].n.x-info[i].n.x);
-
 }
 
 if(samples.length<2)return [];
 
 samples.sort((a,b)=>a-b);
-
 const q=samples[Math.floor(samples.length/2)];
-
 const added=[];
-
-const taken=()=>[
-...info.map(i=>i.n),
-...added
-];
+const taken=()=>[...info.map(i=>i.n),...added];
 
 for(let i=0;i<info.length-1;i++){
-
-const a=info[i];
-const b=info[i+1];
-
+const a=info[i],b=info[i+1];
 if(a.units!==2)continue;
-
 if(between(a.n.x,b.n.x))continue;
-
 const d=b.n.x-a.n.x;
-
 if(d<q*1.75||d>q*3.6)continue;
-
 const missing=d<q*2.6?1:2;
 
 for(let k=1;k<=missing;k++){
-
 const cx=a.n.x+d*k/(missing+1);
-
 const width=Math.round(q*.3);
-
 let best=null;
 
 for(let dx=-width;dx<=width;dx++){
-
 const x=Math.round(cx+dx);
-
 if(x<0||x>=binary.cols)continue;
-
 if(nearBarline(x,barlines,gap))continue;
-
 if(taken().some(n=>Math.abs(n.x-x)<gap*1.25))continue;
 
 for(let s=-3;s<=11;s++){
-
 const y=Math.round(bottom-s*gap/2);
-
 if(y<0||y>=binary.rows)continue;
-
-const m=headMetrics(
-binary,x,y,gap,staff.lines,offsets
-);
-
-const okFilled=
-m.core>=.55&&
-m.ring>=.50&&
-m.coverage>=3;
-
-const okHollow=
-m.core<=.40&&
-m.ring>=.42&&
-m.coverage>=3;
-
+const m=headMetrics(binary,x,y,gap,staff.lines,offsets);
+const okFilled=m.core>=.55&&m.ring>=.50&&m.coverage>=3;
+const okHollow=m.core<=.40&&m.ring>=.42&&m.coverage>=3;
 if(!okFilled&&!okHollow)continue;
-
-const score=okFilled
-?Math.min(m.core,m.ring)
-:m.ring*.78;
-
+const score=okFilled?Math.min(m.core,m.ring):m.ring*.78;
 if(!best||score>best.score){
-
-best={
-...m,
-x,
-y,
-step:s,
-score,
-head:okFilled?'filled':'hollow'
-};
-
+best={...m,x,y,step:s,score,head:okFilled?'filled':'hollow'};
 }
-
 }
-
 }
 
 if(!best)continue;
 
 added.push({
-
 ...pitchForStep(best.step,clef,key),
-
-x:best.x,
-y:best.y,
-
+x:best.x,y:best.y,
 staff:staffIndex,
 head:best.head,
-
 confidence:best.score,
 positionError:0,
-
-coreRatio:best.core,
-ringRatio:best.ring,
-
+coreRatio:best.core,ringRatio:best.ring,
 recovered:true
-
 });
-
 }
-
 }
 
 return added;
-
 }
 
 /* =========================
    RHYTHM ESTIMATION
 ========================= */
 
-function stemScore(
-binary,x,cy,direction,gap,lines
-){
-
-const start=direction==='up'
-?Math.round(cy-gap*.35)
-:Math.round(cy+gap*.35);
-
-const end=direction==='up'
-?Math.round(cy-gap*4.2)
-:Math.round(cy+gap*4.2);
-
-const lo=Math.min(start,end);
-const hi=Math.max(start,end);
-
-let dark=0;
-let total=0;
-let run=0;
-let bestRun=0;
-
+function stemScore(binary,x,cy,direction,gap,lines){
+const start=direction==='up'?Math.round(cy-gap*.35):Math.round(cy+gap*.35);
+const end=direction==='up'?Math.round(cy-gap*4.2):Math.round(cy+gap*4.2);
+const lo=Math.min(start,end),hi=Math.max(start,end);
+let dark=0,total=0,run=0,bestRun=0;
 for(let y=lo;y<=hi;y++){
-
-if(
-y<0||y>=binary.rows||
-nearStaffRow(y,lines,gap)
-)continue;
-
+if(y<0||y>=binary.rows||nearStaffRow(y,lines,gap))continue;
 total++;
-
 const on=binary.ucharPtr(y)[x]>0;
-
-if(on){
-
-dark++;
-run++;
-
-bestRun=Math.max(bestRun,run);
-
-}else{
-
-run=0;
-
+if(on){dark++;run++;bestRun=Math.max(bestRun,run);}else{run=0;}
 }
-
-}
-
-return{
-ratio:dark/Math.max(1,total),
-bestRun,
-x,
-direction
-};
-
+return{ratio:dark/Math.max(1,total),bestRun,x,direction};
 }
 
 function findStem(binary,note,staff){
-
 const gap=staff.gap;
 const tries=[];
-
 for(const side of [-1,1]){
-
 for(const factor of [.48,.55,.62]){
-
 const x=Math.round(note.x+side*gap*factor);
-
 if(x<0||x>=binary.cols)continue;
-
 for(const dir of ['up','down']){
-
-tries.push(
-stemScore(
-binary,
-x,
-note.y,
-dir,
-gap,
-staff.lines
-)
-);
-
+tries.push(stemScore(binary,x,note.y,dir,gap,staff.lines));
 }
-
 }
-
 }
-
 tries.sort((a,b)=>b.ratio-a.ratio);
-
 const best=tries[0];
-
-return best&&
-best.ratio>.48&&
-best.bestRun>gap*1.2
-?best:null;
-
+return best&&best.ratio>.48&&best.bestRun>gap*1.2?best:null;
 }
-
-/* Follows a stem from the notehead to its far end. */
 
 function stemTip(binary,x,y0,direction,gap){
-
 const step=direction==='up'?-1:1;
 const limit=Math.round(gap*5);
-
-let lastDark=y0;
-let miss=0;
-
+let lastDark=y0,miss=0;
 for(let k=0;k<limit;k++){
-
 const y=y0+step*k;
-
 if(y<0||y>=binary.rows)break;
-
 const row=binary.ucharPtr(y);
-
-const on=
-row[x]>0||
-(x>0&&row[x-1]>0)||
-(x<binary.cols-1&&row[x+1]>0);
-
-if(on){
-
-lastDark=y;
-miss=0;
-
-}else{
-
-miss++;
-
-if(miss>2)break;
-
+const on=row[x]>0||(x>0&&row[x-1]>0)||(x<binary.cols-1&&row[x+1]>0);
+if(on){lastDark=y;miss=0;}else{miss++;if(miss>2)break;}
 }
-
-}
-
 return lastDark;
-
 }
-
-/* Detects a flag or beam at the free end of a stem (eighth notes). */
 
 function hasFlag(binary,stem,note,staff){
-
 const gap=staff.gap;
 const step=stem.direction==='up'?-1:1;
-
 const startY=Math.round(note.y+step*gap*.35);
 const tip=stemTip(binary,stem.x,startY,stem.direction,gap);
-
 if(Math.abs(tip-startY)<gap*1.8)return false;
-
 const near=tip-step*Math.round(gap*1.2);
-
-const lo=Math.min(tip,near);
-const hi=Math.max(tip,near);
-
-const xa=stem.x+2;
-const xb=stem.x+Math.round(gap*.9);
-
-let dark=0;
-let total=0;
-
+const lo=Math.min(tip,near),hi=Math.max(tip,near);
+const xa=stem.x+2,xb=stem.x+Math.round(gap*.9);
+let dark=0,total=0;
 for(let y=lo;y<=hi;y++){
-
-if(
-y<0||y>=binary.rows||
-nearStaffRow(y,staff.lines,gap)
-)continue;
-
+if(y<0||y>=binary.rows||nearStaffRow(y,staff.lines,gap))continue;
 const row=binary.ucharPtr(y);
-
 for(let x=xa;x<=xb&&x<binary.cols;x++){
-
 total++;
-
 if(row[x]>0)dark++;
-
 }
-
 }
-
 return total>0&&dark/total>=.20;
-
 }
 
 function estimateRhythm(binary,note,staff){
-
 const stem=findStem(binary,note,staff);
-
 const hollow=note.head==='hollow';
-
-const flag=!hollow&&stem
-?hasFlag(binary,stem,note,staff)
-:false;
-
-return{
-hollow,
-stem:!!stem,
-flag
-};
-
+const flag=!hollow&&stem?hasFlag(binary,stem,note,staff):false;
+return{hollow,stem:!!stem,flag};
 }
 
 /* =========================
@@ -2371,304 +1383,146 @@ flag
 ========================= */
 
 function groupEvents(notes,staffs){
-
 const events=[];
-
 for(let s=0;s<staffs.length;s++){
-
-const same=notes
-.filter(n=>n.staff===s)
-.sort((a,b)=>a.x-b.x);
-
+const same=notes.filter(n=>n.staff===s).sort((a,b)=>a.x-b.x);
 const local=[];
-
 for(const note of same){
-
-let event=local.find(e=>
-Math.abs(e.x-note.x)<staffs[s].gap*.55
-);
-
+let event=local.find(e=>Math.abs(e.x-note.x)<staffs[s].gap*.55);
 if(!event){
-
-event={
-x:note.x,
-notes:[],
-staff:s
-};
-
+event={x:note.x,notes:[],staff:s};
 local.push(event);
-
 }
-
 event.notes.push(note);
-
 }
-
 local.forEach(e=>{
-
 e.hollow=e.notes.some(n=>n.hollow);
 e.stem=e.notes.some(n=>n.stem);
 e.flag=e.notes.some(n=>n.flag);
-
 });
-
-events.push(
-...local.sort((a,b)=>a.x-b.x)
-);
-
+events.push(...local.sort((a,b)=>a.x-b.x));
 }
-
 return events;
-
 }
 
 /* =========================
    MEASURE-AWARE RHYTHM
 ========================= */
 
-/*
-Durations are stored in eighth-note units:
-1 = eighth, 2 = quarter, 3 = dotted quarter,
-4 = half, 6 = dotted half, 8 = whole.
+const RHYTHM_NAMES={1:'Eighth note',2:'Quarter note',3:'Dotted quarter',4:'Half note',6:'Dotted half',8:'Whole note'};
 
-Each measure must add up to the time signature
-(8 units for 4/4). For every note we list the
-likely durations with a "cost" for how far each
-one is from what the image shows, then pick the
-cheapest combination that fills the measure.
-*/
-
-const RHYTHM_NAMES={
-1:'Eighth note',
-2:'Quarter note',
-3:'Dotted quarter',
-4:'Half note',
-6:'Dotted half',
-8:'Whole note'
-};
-
-function rhythmLabel(units){
-return RHYTHM_NAMES[units]||`${units/2} beats`;
-}
+function rhythmLabel(units){return RHYTHM_NAMES[units]||`${units/2} beats`;}
 
 function rhythmOptions(ev,index,count){
-
-/* Earlier notes are slightly harder to change than later ones. */
 const bias=.05*(1-index/Math.max(1,count));
-
 let list;
-
 if(ev.hollow){
-
-list=ev.stem
-?[[4,0],[6,1.6],[8,2.6]]
-:[[8,0],[4,2.6],[6,3.2]];
-
+list=ev.stem?[[4,0],[6,1.6],[8,2.6]]:[[8,0],[4,2.6],[6,3.2]];
 }else if(ev.flag){
-
 list=[[1,0],[2,1.0],[3,1.6]];
-
 }else{
-
 list=[[2,0],[1,1.0],[3,1.6],[4,2.2],[6,3.0]];
-
 }
-
-return list.map(([u,c])=>({
-u,
-c:c>0?c+bias:0
-}));
-
+return list.map(([u,c])=>({u,c:c>0?c+bias:0}));
 }
 
 function solveMeasure(evs,target){
-
 const n=evs.length;
-
 if(!n||n>16)return null;
-
 const opts=evs.map((e,i)=>rhythmOptions(e,i,n));
-
 const minRest=new Array(n+1).fill(0);
 const maxRest=new Array(n+1).fill(0);
-
 for(let i=n-1;i>=0;i--){
-
 minRest[i]=minRest[i+1]+Math.min(...opts[i].map(o=>o.u));
 maxRest[i]=maxRest[i+1]+Math.max(...opts[i].map(o=>o.u));
-
 }
-
 let best=null;
-
 const pick=new Array(n);
-
 (function dfs(i,sum,cost){
-
 if(best&&cost>=best.cost)return;
-
 if(sum+minRest[i]>target||sum+maxRest[i]<target)return;
-
-if(i===n){
-
-best={cost,units:pick.slice()};
-return;
-
-}
-
+if(i===n){best={cost,units:pick.slice()};return;}
 for(const o of opts[i]){
-
 pick[i]=o.u;
 dfs(i+1,sum+o.u,cost+o.c);
-
 }
-
 })(0,0,0);
-
 return best;
-
 }
 
 function evaluateTarget(groups,target,edge){
-
 let total=0;
-
 const plans=new Map();
-
 groups.forEach((evs,key)=>{
-
 const sol=solveMeasure(evs,target);
-
 if(sol&&sol.cost<=7){
-
 plans.set(key,sol.units);
 total+=sol.cost;
-
 }else if(!edge.has(key)){
-
 total+=12;
-
 }
-
 });
-
 return{total,plans};
-
 }
 
 function applyMeasureRhythm(events,staffs,setting){
-
-/* Default durations straight from the image. */
-
 events.forEach(ev=>{
-
-ev.units=ev.hollow
-?(ev.stem?4:8)
-:(ev.flag?1:2);
-
+ev.units=ev.hollow?(ev.stem?4:8):(ev.flag?1:2);
 ev.measure=0;
-
 for(const b of staffs[ev.staff].barlines){
-
 if(b<ev.x)ev.measure++;
-
 }
-
 });
-
-/* Group events by staff + measure (only where barlines exist). */
 
 const groups=new Map();
 const bounds=new Map();
 
 events.forEach(ev=>{
-
 if(!staffs[ev.staff].barlines.length)return;
-
 const key=ev.staff+':'+ev.measure;
-
 if(!groups.has(key))groups.set(key,[]);
-
 groups.get(key).push(ev);
-
-const b=bounds.get(ev.staff)||{
-min:ev.measure,
-max:ev.measure
-};
-
+const b=bounds.get(ev.staff)||{min:ev.measure,max:ev.measure};
 b.min=Math.min(b.min,ev.measure);
 b.max=Math.max(b.max,ev.measure);
-
 bounds.set(ev.staff,b);
-
 });
-
-/* First and last measures may be pickup / final bars. */
 
 const edge=new Set();
-
 bounds.forEach((b,s)=>{
-
 edge.add(s+':'+b.min);
 edge.add(s+':'+b.max);
-
 });
 
-const targets=setting==='auto'
-?[8,6,4,10,12]
-:[Number(setting)||8];
-
+const targets=setting==='auto'?[8,6,4,10,12]:[Number(setting)||8];
 let chosen=null;
 
 for(const t of targets){
-
 const r=evaluateTarget(groups,t,edge);
-
-if(!chosen||r.total<chosen.total-1e-9){
-
-chosen={...r,target:t};
-
-}
-
+if(!chosen||r.total<chosen.total-1e-9){chosen={...r,target:t};}
 }
 
 let unresolved=0;
 
 if(chosen){
-
 groups.forEach((evs,key)=>{
-
 const plan=chosen.plans.get(key);
-
 if(plan){
-
-evs.forEach((ev,i)=>{
-ev.units=plan[i];
-});
-
+evs.forEach((ev,i)=>{ev.units=plan[i];});
 }else if(!edge.has(key)){
-
 unresolved++;
-
 }
-
 });
-
 }
 
 events.forEach(ev=>{
-
 ev.beats=ev.units/2;
-
 ev.notes.forEach(n=>{
-
 n.units=ev.units;
 n.beats=ev.beats;
 n.measure=ev.measure;
 n.label=rhythmLabel(ev.units);
-
 });
-
 });
 
 return{
@@ -2676,7 +1530,6 @@ target:chosen?chosen.target:(Number(setting)||8),
 measures:groups.size,
 unresolved
 };
-
 }
 
 /* =========================
@@ -2684,71 +1537,41 @@ unresolved
 ========================= */
 
 function drawOverlay(ctx,staffs,notes){
-
 ctx.save();
 
 ctx.lineWidth=2;
-ctx.strokeStyle='#2563eb';
-
+ctx.strokeStyle='#6b7fd7';
 staffs.forEach(s=>{
-
 s.lines.forEach(y=>{
-
 ctx.beginPath();
-
 ctx.moveTo(s.left,y);
 ctx.lineTo(s.right,y);
-
 ctx.stroke();
-
 });
-
 });
-
-/* Barlines */
 
 ctx.lineWidth=3;
-ctx.strokeStyle='#16a34a';
-
+ctx.strokeStyle='#3fa97c';
 staffs.forEach(s=>{
-
 (s.barlines||[]).forEach(x=>{
-
 ctx.beginPath();
-
 ctx.moveTo(x,s.lines[0]-3);
 ctx.lineTo(x,s.lines[4]+3);
-
 ctx.stroke();
-
 });
-
 });
 
 notes.forEach(n=>{
-
 ctx.beginPath();
-
-ctx.arc(
-n.x,
-n.y,
-Math.max(5,staffs[n.staff].gap*.24),
-0,
-Math.PI*2
-);
-
-ctx.fillStyle=n.manual?'#7c3aed':n.recovered?'#f59e0b':'#ef4444';
+ctx.arc(n.x,n.y,Math.max(5,staffs[n.staff].gap*.24),0,Math.PI*2);
+ctx.fillStyle=n.manual?'#8a5cd6':n.recovered?'#f0a030':'#e0527a';
 ctx.fill();
-
 ctx.strokeStyle='white';
 ctx.lineWidth=1.5;
-
 ctx.stroke();
-
 });
 
 ctx.restore();
-
 }
 
 /* =========================
@@ -2756,38 +1579,18 @@ ctx.restore();
 ========================= */
 
 async function detectSheet(blob){
-
-if(!cvReady){
-
-throw new Error(
-'Recognition engine is still loading.'
-);
-
-}
+if(!cvReady){throw new Error('Recognition engine is still loading.');}
 
 const im=await loadImage(blob);
-
-const scale=Math.min(
-1,
-1800/im.naturalWidth
-);
-
-const w=Math.max(
-1,
-Math.round(im.naturalWidth*scale)
-);
-
-const h=Math.max(
-1,
-Math.round(im.naturalHeight*scale)
-);
+const scale=Math.min(1,1800/im.naturalWidth);
+const w=Math.max(1,Math.round(im.naturalWidth*scale));
+const h=Math.max(1,Math.round(im.naturalHeight*scale));
 
 canvas.width=w;
 canvas.height=h;
 canvas.hidden=false;
 
 const ctx=canvas.getContext('2d');
-
 ctx.drawImage(im,0,0,w,h);
 
 let src=cv.imread(canvas);
@@ -2798,153 +1601,62 @@ let lineMask=new cv.Mat();
 let lineKernel=null;
 
 try{
+cv.cvtColor(src,gray,cv.COLOR_RGBA2GRAY);
+cv.GaussianBlur(gray,blur,new cv.Size(3,3),0);
+cv.threshold(blur,binary,0,255,cv.THRESH_BINARY_INV+cv.THRESH_OTSU);
 
-cv.cvtColor(
-src,
-gray,
-cv.COLOR_RGBA2GRAY
-);
+lineKernel=cv.getStructuringElement(cv.MORPH_RECT,new cv.Size(Math.max(22,Math.round(w*.16)),1));
+cv.morphologyEx(binary,lineMask,cv.MORPH_OPEN,lineKernel);
 
-cv.GaussianBlur(
-gray,
-blur,
-new cv.Size(3,3),
-0
-);
-
-cv.threshold(
-blur,
-binary,
-0,
-255,
-cv.THRESH_BINARY_INV+cv.THRESH_OTSU
-);
-
-lineKernel=cv.getStructuringElement(
-cv.MORPH_RECT,
-new cv.Size(
-Math.max(22,Math.round(w*.16)),
-1
-)
-);
-
-cv.morphologyEx(
-binary,
-lineMask,
-cv.MORPH_OPEN,
-lineKernel
-);
-
-const staffs=findStaffGroups(
-lineMask,w,h
-);
+const staffs=findStaffGroups(lineMask,w,h);
 
 if(!staffs.length){
-
-throw new Error(
-'Five staff lines could not be detected. Try a clearer, straighter image.'
-);
-
+throw new Error('Five staff lines could not be detected. Try a clearer, straighter image.');
 }
 
 const clef=$('clef').value;
 const key=$('keySignature').value;
 
-/* Header end + barlines for every staff. */
-
 for(const staff of staffs){
-
 staff.minX=findNoteStart(binary,staff,key);
 staff.barlines=detectBarlines(binary,staff);
-
 }
 
 const allNotes=[];
 
 for(let s=0;s<staffs.length;s++){
-
-const found=detectStaffNotes(
-binary,
-staffs[s],
-s,
-clef,
-key
-);
-
+const found=detectStaffNotes(binary,staffs[s],s,clef,key);
 for(const n of found){
-
-const rhythm=estimateRhythm(
-binary,
-n,
-staffs[s]
-);
-
-allNotes.push({
-...n,
-...rhythm
-});
-
+const rhythm=estimateRhythm(binary,n,staffs[s]);
+allNotes.push({...n,...rhythm});
 }
-
 }
 
 if(!allNotes.length){
-
-throw new Error(
-'Staff lines were found, but no noteheads were recognized. Try cropping closer to the music.'
-);
-
+throw new Error('Staff lines were found, but no noteheads were recognized. Try cropping closer to the music.');
 }
 
-allNotes.sort((a,b)=>
-a.staff-b.staff||a.x-b.x
-);
+allNotes.sort((a,b)=>a.staff-b.staff||a.x-b.x);
 
-const events=groupEvents(
-allNotes,
-staffs
-);
-
-const info=applyMeasureRhythm(
-events,
-staffs,
-$('timeSig').value
-);
+const events=groupEvents(allNotes,staffs);
+const info=applyMeasureRhythm(events,staffs,$('timeSig').value);
 
 ctx.drawImage(im,0,0,w,h);
-
-drawOverlay(
-ctx,
-staffs,
-allNotes
-);
+drawOverlay(ctx,staffs,allNotes);
 
 lastImage=im;
 lastStaffs=staffs;
 
-return{
-
-notes:allNotes,
-events,
-staffs,
-info
-
-};
+return{notes:allNotes,events,staffs,info};
 
 }finally{
-
 src.delete();
 gray.delete();
 blur.delete();
 binary.delete();
 lineMask.delete();
-
-if(lineKernel){
-lineKernel.delete();
+if(lineKernel){lineKernel.delete();}
 }
-
-}
-
 }
 
 /* =========================
@@ -2952,88 +1664,45 @@ lineKernel.delete();
 ========================= */
 
 function esc(s){
-
-return String(s).replace(
-/[&<>"']/g,
-c=>({
-
-'&':'&amp;',
-'<':'&lt;',
-'>':'&gt;',
-'"':'&quot;',
-"'":'&#39;'
-
-}[c])
-
-);
-
+return String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 }
 
 function renderNotes(){
-
 notesBox.replaceChildren();
-
 let previous=null;
 
 playbackEvents.forEach(ev=>{
-
 const key=ev.staff+':'+ev.measure;
 
 if(previous!==null&&key!==previous){
-
 const bar=document.createElement('div');
-
 bar.className='bar-chip';
 bar.textContent='|';
-
 notesBox.appendChild(bar);
-
 }
 
 previous=key;
 
 ev.notes.forEach(n=>{
-
 const el=document.createElement('div');
-
 el.className='note-chip';
 el.dataset.index=detectedNotes.indexOf(n);
-
-el.innerHTML=
-`${esc(n.name)}
-<small>
-${esc(n.label)} · n.beatsbeat{n.beats===1?'':'s'}
-</small>`;
-
+el.innerHTML=`esc(n.name)<small>{esc(n.label)} · n.beatsbeat{n.beats===1?'':'s'}</small>`;
 notesBox.appendChild(el);
-
 });
-
 });
-
 }
 
 function sequenceText(events){
-
 let text='';
 let previous=null;
-
 events.forEach(ev=>{
-
 const key=ev.staff+':'+ev.measure;
-
-if(previous!==null){
-text+=key!==previous?' | ':' ';
-}
-
+if(previous!==null){text+=key!==previous?' | ':' ';}
 text+=ev.notes.map(n=>n.name).join('+');
-
 previous=key;
-
 });
-
 return text;
-
 }
 
 /* =========================
@@ -3041,19 +1710,12 @@ return text;
 ========================= */
 
 function showSummary(info){
-
 const staffs=lastStaffs;
-
-const barCount=staffs.reduce(
-(sum,s)=>sum+s.barlines.length,0
-);
+const barCount=staffs.reduce((sum,s)=>sum+s.barlines.length,0);
 
 const rows=staffs.map((s,i)=>{
-
 const n=detectedNotes.filter(x=>x.staff===i).length;
-
 return `row ${i+1}: ${n} notes, ${s.barlines.length+1} measures`;
-
 }).join('; ');
 
 const recoveredCount=detectedNotes.filter(n=>n.recovered).length;
@@ -3063,36 +1725,18 @@ let message=
 `Found ${staffs.length} staff system(s), ${barCount} measure barline(s) and detectedNotes.lengthnotehead(s)({rows}). `+
 `Measure length: ${info.target/2} beats. `;
 
-if(recoveredCount){
-
-message+=
-`${recoveredCount} missed note(s) recovered automatically (orange). `;
-
-}
-
-if(manualCount){
-
-message+=
-`${manualCount} note(s) added by you (purple). `;
-
-}
+if(recoveredCount){message+=`${recoveredCount} missed note(s) recovered automatically (orange). `;}
+if(manualCount){message+=`${manualCount} note(s) added by you (purple). `;}
 
 if(!barCount){
-
-message+=
-'No measure barlines were detected, so rhythm could not be checked against measures. ';
-
+message+='No measure barlines were detected, so rhythm could not be checked against measures. ';
 }else if(info.unresolved){
-
-message+=
-`${info.unresolved} measure(s) did not add up, so their rhythm was left as detected. `;
-
+message+=`${info.unresolved} measure(s) did not add up, so their rhythm was left as detected. `;
 }
 
 message+=`Sequence: ${sequenceText(playbackEvents)}.`;
 
 status(message);
-
 }
 
 /* =========================
@@ -3100,7 +1744,6 @@ status(message);
 ========================= */
 
 async function runDetection(){
-
 if(!imageBlob)return;
 
 $('detectBtn').disabled=true;
@@ -3108,15 +1751,11 @@ $('redetectBtn').disabled=true;
 $('playBtn').disabled=true;
 
 notesBox.replaceChildren();
-
 stopMusic();
 
-status(
-'Scanning staff lines, barlines and noteheads...'
-);
+status('Scanning staff lines, barlines and noteheads...');
 
 try{
-
 const result=await detectSheet(imageBlob);
 
 detectedNotes=result.notes;
@@ -3126,43 +1765,26 @@ renderNotes();
 
 $('playBtn').disabled=false;
 $('redetectBtn').disabled=false;
-
 $('editRow').hidden=false;
 $('editHint').hidden=false;
 
 showSummary(result.info);
 
 }catch(e){
-
 detectedNotes=[];
 playbackEvents=[];
-
 status('Detection error: '+e.message);
-
 console.error(e);
-
 }finally{
-
 $('detectBtn').disabled=false;
-
 }
-
 }
 
 $('detectBtn').onclick=runDetection;
-
 $('redetectBtn').onclick=runDetection;
 
 ['clef','keySignature','timeSig'].forEach(id=>{
-
-$(id).onchange=()=>{
-
-if(imageBlob){
-$('redetectBtn').disabled=false;
-}
-
-};
-
+$(id).onchange=()=>{if(imageBlob){$('redetectBtn').disabled=false;}};
 });
 
 /* =========================
@@ -3170,64 +1792,34 @@ $('redetectBtn').disabled=false;
 ========================= */
 
 function rebuildFromNotes(){
-
 stopMusic();
 
-detectedNotes.sort((a,b)=>
-a.staff-b.staff||a.x-b.x
-);
+detectedNotes.sort((a,b)=>a.staff-b.staff||a.x-b.x);
 
-const events=groupEvents(
-detectedNotes,
-lastStaffs
-);
-
-const info=applyMeasureRhythm(
-events,
-lastStaffs,
-$('timeSig').value
-);
+const events=groupEvents(detectedNotes,lastStaffs);
+const info=applyMeasureRhythm(events,lastStaffs,$('timeSig').value);
 
 playbackEvents=events;
 
 const ctx=canvas.getContext('2d');
-
-ctx.drawImage(
-lastImage,0,0,canvas.width,canvas.height
-);
-
-drawOverlay(
-ctx,
-lastStaffs,
-detectedNotes
-);
+ctx.drawImage(lastImage,0,0,canvas.width,canvas.height);
+drawOverlay(ctx,lastStaffs,detectedNotes);
 
 renderNotes();
 
 $('playBtn').disabled=!detectedNotes.length;
 
 showSummary(info);
-
 }
 
 function addManualNote(x,y){
-
 let staffIndex=-1;
 let bestD=Infinity;
 
 lastStaffs.forEach((s,i)=>{
-
 const center=(s.lines[0]+s.lines[4])/2;
-
 const d=Math.abs(y-center);
-
-if(d<bestD){
-
-bestD=d;
-staffIndex=i;
-
-}
-
+if(d<bestD){bestD=d;staffIndex=i;}
 });
 
 if(staffIndex<0)return false;
@@ -3236,19 +1828,9 @@ const staff=lastStaffs[staffIndex];
 
 if(bestD>staff.gap*6)return false;
 
-const step=Math.max(
--4,
-Math.min(
-12,
-Math.round((staff.lines[4]-y)/(staff.gap/2))
-)
-);
+const step=Math.max(-4,Math.min(12,Math.round((staff.lines[4]-y)/(staff.gap/2))));
 
-const pitch=pitchForStep(
-step,
-$('clef').value,
-$('keySignature').value
-);
+const pitch=pitchForStep(step,('clef').value,('keySignature').value);
 
 const shapes={
 auto:{hollow:false,stem:true,flag:false},
@@ -3261,140 +1843,70 @@ whole:{hollow:true,stem:false,flag:false}
 const shape=shapes[$('addType').value]||shapes.auto;
 
 detectedNotes.push({
-
 ...pitch,
-
 x,
 y:staff.lines[4]-step*staff.gap/2,
-
 staff:staffIndex,
 head:shape.hollow?'hollow':'filled',
-
 ...shape,
-
 manual:true
-
 });
 
 return true;
-
 }
 
 canvas.onclick=e=>{
-
 if(!lastImage||!lastStaffs.length)return;
 
 const rect=canvas.getBoundingClientRect();
-
 const x=(e.clientX-rect.left)*canvas.width/rect.width;
 const y=(e.clientY-rect.top)*canvas.height/rect.height;
 
-/* Clicking an existing dot removes it. */
-
-let hit=-1;
-let hitD=Infinity;
+let hit=-1,hitD=Infinity;
 
 detectedNotes.forEach((n,i)=>{
-
 const g=lastStaffs[n.staff].gap;
-
 const d=Math.hypot(n.x-x,n.y-y);
-
-if(d<g*.8&&d<hitD){
-
-hit=i;
-hitD=d;
-
-}
-
+if(d<g*.8&&d<hitD){hit=i;hitD=d;}
 });
 
 if(hit>=0){
-
 detectedNotes.splice(hit,1);
-
 rebuildFromNotes();
-
 return;
-
 }
 
-if(addManualNote(x,y)){
-rebuildFromNotes();
-}
-
+if(addManualNote(x,y)){rebuildFromNotes();}
 };
 
 /* =========================
    AUDIO PLAYBACK
 ========================= */
 
-function midiFrequency(midi){
+function midiFrequency(midi){return 440*Math.pow(2,(midi-69)/12);}
 
-return 440*Math.pow(
-2,
-(midi-69)/12
-);
-
-}
-
-function playTone(
-midi,
-start,
-duration,
-mode
-){
-
+function playTone(midi,start,duration,mode){
 const f=midiFrequency(midi);
-
-const partials=
-mode==='organ'
-?[1,.5,.25]
-:mode==='soft'
-?[1]
-:[1,.32,.13,.055];
+const partials=mode==='organ'?[1,.5,.25]:mode==='soft'?[1]:[1,.32,.13,.055];
 
 const master=audioContext.createGain();
-
 master.gain.setValueAtTime(.0001,start);
-
-master.gain.linearRampToValueAtTime(
-.13,
-start+.018
-);
-
-master.gain.setTargetAtTime(
-.0001,
-start+Math.max(.06,duration*.72),
-Math.max(.025,duration*.16)
-);
-
+master.gain.linearRampToValueAtTime(.13,start+.018);
+master.gain.setTargetAtTime(.0001,start+Math.max(.06,duration*.72),Math.max(.025,duration*.16));
 master.connect(audioContext.destination);
 
 partials.forEach((amp,i)=>{
-
 const osc=audioContext.createOscillator();
-
 const gain=audioContext.createGain();
-
-osc.type=mode==='organ'
-?'sine'
-:i===0?'triangle':'sine';
-
+osc.type=mode==='organ'?'sine':i===0?'triangle':'sine';
 osc.frequency.value=f*(i+1);
-
 gain.gain.value=amp;
-
 osc.connect(gain);
 gain.connect(master);
-
 osc.start(start);
 osc.stop(start+duration+.05);
-
 activeOscillators.push(osc);
-
 });
-
 }
 
 /* =========================
@@ -3402,7 +1914,6 @@ activeOscillators.push(osc);
 ========================= */
 
 $('playBtn').onclick=async()=>{
-
 if(!playbackEvents.length)return;
 
 stopMusic();
@@ -3410,110 +1921,62 @@ stopMusic();
 const token=playbackToken;
 
 try{
-
-const AC=
-window.AudioContext||
-window.webkitAudioContext;
-
-if(!AC){
-
-throw new Error(
-'Web Audio is not supported.'
-);
-
-}
-
-if(!audioContext){
-audioContext=new AC();
-}
-
+const AC=window.AudioContext||window.webkitAudioContext;
+if(!AC){throw new Error('Web Audio is not supported.');}
+if(!audioContext){audioContext=new AC();}
 await audioContext.resume();
 
-const tempo=Math.min(
-220,
-Math.max(40,Number($('tempo').value)||100)
-);
-
+const tempo=Math.min(220,Math.max(40,Number($('tempo').value)||100));
 const beat=60/tempo;
 const mode=$('sound').value;
-
 const start=audioContext.currentTime+.12;
-
 let cursor=0;
 
 $('stopMusicBtn').disabled=false;
+document.body.classList.add('playing');
 
 status(`Playing at ${tempo} BPM.`);
 
 playbackEvents.forEach(event=>{
-
 const eventStart=start+cursor;
 
 event.notes.forEach(n=>{
-
-playTone(
-n.midi,
-eventStart,
-Math.max(.08,event.beats*beat*.90),
-mode
-);
+playTone(n.midi,eventStart,Math.max(.08,event.beats*beat*.90),mode);
 
 const i=detectedNotes.indexOf(n);
 
 playbackTimers.push(setTimeout(()=>{
-
 if(token!==playbackToken)return;
-
-document.querySelectorAll('.note-chip.active')
-.forEach(el=>el.classList.remove('active'));
-
-const chip=notesBox.querySelector(
-`[data-index="${i}"]`
-);
-
+document.querySelectorAll('.note-chip.active').forEach(el=>el.classList.remove('active'));
+const chip=notesBox.querySelector(`[data-index="${i}"]`);
 if(chip){
 chip.classList.add('active');
+chip.scrollIntoView({block:'nearest',behavior:'smooth'});
 }
-
 },cursor*1000));
-
 });
 
 cursor+=event.beats*beat;
-
 });
 
 playbackTimers.push(setTimeout(()=>{
-
 if(token!==playbackToken)return;
-
 activeOscillators=[];
-
 $('stopMusicBtn').disabled=true;
-
-document.querySelectorAll('.note-chip.active')
-.forEach(el=>el.classList.remove('active'));
-
+document.body.classList.remove('playing');
+document.querySelectorAll('.note-chip.active').forEach(el=>el.classList.remove('active'));
 status('Playback finished.');
-
 },(cursor+.3)*1000));
 
 }catch(e){
-
 stopMusic();
-
 status('Audio error: '+e.message);
-
 }
-
 };
 
 $('stopMusicBtn').onclick=()=>{
-
 stopMusic();
-
 status('Playback stopped.');
-
 };
 
 /* =========================
@@ -3521,12 +1984,7 @@ status('Playback stopped.');
 ========================= */
 
 if(navigator.mediaDevices?.addEventListener){
-
-navigator.mediaDevices.addEventListener(
-'devicechange',
-refreshCameras
-);
-
+navigator.mediaDevices.addEventListener('devicechange',refreshCameras);
 }
 
 refreshCameras();
